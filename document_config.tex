@@ -1,0 +1,170 @@
+% extra balíky a jejich nastavení
+
+\usepackage{todonotes} % todos
+\usepackage{minted}    % code listings 
+\usepackage{blindtext} % lorem
+\usepackage{csquotes}  % quotes
+\usepackage{wrapfig}
+\usepackage{svg}
+\usepackage[all]{nowidow} % fix for orphaned lines of text
+\usepackage{fancyvrb}
+\usepackage{siunitx}
+\usepackage{sectsty}
+\usepackage{titlecaps}
+
+\newcommand{\uF}{\micro\farad}
+\newcommand{\nF}{\nano\farad}
+\newcommand{\cm}{\centi\metre}
+\newcommand{\VperA}{\V/\A}
+
+%nobreak dash
+
+
+\usepackage[style=numeric,backend=biber,sorting=none]{biblatex}
+
+\usepackage{xpatch,letltxmacro}
+\LetLtxMacro{\cminted}{\minted}
+\let\endcminted\endminted
+\xpretocmd{\cminted}{\RecustomVerbatimEnvironment{Verbatim}{BVerbatim}{}}{}{}
+
+% More space in table cells
+\renewcommand{\arraystretch}{1.4}
+
+% Fix overful hbox
+\setlength{\emergencystretch}{.5em}
+
+\setsvg{svgpath=img/}
+
+% Nastavení ctuthesis
+
+\ctusetup{
+	xdoctype = M,
+	front-list-of-tables = false,
+	mainlanguage = english,
+	%
+	author = {Ondřej Hruška},
+	supervisor = {doc. Ing. Radislav Šmíd, Ph.D.},
+	%
+	title-english = {Learning and automation GPIO platform},
+	title-czech = {Výuková a automatizační GPIO platforma},
+	%
+	xfaculty = F3,
+	department-czech = {Katedra měření},  
+	fieldofstudy-czech = {Kybernetika a~robotika},
+	subfieldofstudy-czech = {Senzory a~přístrojová technika},
+	%
+	department-english = {Department of Measurement},
+	fieldofstudy-english = {Cybernetics and Robotics},
+	subfieldofstudy-english = {Sensors and Instrumentation},
+	front-specification = true,
+	specification-file = {zadani-zakryto.pdf},
+	%specification-file = {zadani-doc.pdf},
+	%specification-file = {zadani-doc.pdf},
+	%
+	keywords-czech = {},
+	keywords-english = {},
+	%
+	day = 0,     % ???
+	month = 0,  % ???
+	year = 2018, % ???
+}
+
+
+\ctuprocess
+
+
+\hypersetup{
+	pdftitle = {Learning and automation GPIO platform},
+	pdfauthor = {Ondřej Hruška}
+}
+
+
+% Extra info na titulní stránce
+\addto\ctucaptionsczech{%
+	\def\supervisorname{Vedoucí}%
+	\def\subfieldofstudyname{Studijní program}%
+}
+
+% Abstrakt, poděkování atd
+\ctutemplateset{maketitle twocolumn default}{
+	\begin{twocolumnfrontmatterpage}
+		\ctutemplate{twocolumn.thanks}
+		\ctutemplate{twocolumn.declaration}
+		\ctutemplate{twocolumn.abstract.in.titlelanguage}
+		\ctutemplate{twocolumn.abstract.in.secondlanguage}
+		\ctutemplate{twocolumn.tableofcontents}
+		\ctutemplate{twocolumn.listoffigures}
+	\end{twocolumnfrontmatterpage}
+}
+
+
+% Uvozovky v češtině
+% \DeclareQuoteStyle{czech}
+% 	{\quotedblbase}
+% 	{\textquotedblleft}
+% 	{\textquoteleft}
+% 	{\textquoteright}
+
+% ??? what does this do
+\makeatletter
+\newcommand*{\centerfloat}{%
+	\parindent \z@
+	\leftskip \z@ \@plus 1fil \@minus \textwidth
+	\rightskip\leftskip
+	\parfillskip \z@skip}
+\makeatother
+
+% makro pro uvozovky
+% \renewcommand\uv[1]{\enquote{#1}}
+
+% monospace
+\newcommand\mono[1]{\texttt{#1}}
+
+% library name
+\newcommand\lib[1]{\textit{#1}}
+
+% add blank page unless current is left
+%\newcommand*\cleartoleftpage{%
+%	\clearpage
+%	\ifodd\value{page}\hbox{}\newpage\fi
+%}
+
+% \newcommand\zdroj[1]{\textit{Zdroj: #1}}
+
+% -- odstavce --
+\setlength\parskip{1.5ex plus 1pt minus 1 pt}
+%\setlength{\parskip}{1.5ex plus 0.2ex minus 0.1ex} % po změně je potřeba doladit nadpisy
+%\renewcommand{\baselinestretch}{1.1}
+\setlength\parindent{.5cm}
+
+
+% -- set link colors ---
+\usepackage{xcolor}
+\hypersetup{
+	colorlinks,
+	linkcolor={red!50!black},
+	citecolor={blue!50!black},
+	urlcolor={blue!80!black}
+}
+
+
+% název listing figure
+% \renewcommand\listingscaption{Program}
+
+% don't clear page before chapter
+%\renewcommand{\cleardoublepage}{\clearpage}
+
+
+% -- section on new page, except first --
+%\pretocmd{\section}{%
+%	\ifnum\value{section}=0 \else\clearpage\fi
+%}{}{}
+\usepackage{wasysym} % some symbols
+
+% Pretty mono font
+%\usepackage[scaled=.9]{beramono}
+%\usepackage{cm}
+
+\newcommand\nobr[1]{\mbox{#1}}
+
+\usepackage{pmboxdraw}

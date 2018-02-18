@@ -1,0 +1,30 @@
+\documentclass[twoside]{ctuthesis}
+
+\input{document_config} % import balíků a nastavení ctuthesis
+
+% --- obsah zvláštních oddílů ---
+
+\input{sec_abstract}
+\input{sec_thanks}
+\input{sec_declaration}
+
+\addbibresource{thesis.bib}
+
+% --- vlastní dokument ---
+
+\begin{document}
+
+\maketitle % titulní strana a automatické oddíly
+
+\input{ch.introduction}
+\input{ch.requirements}
+\input{ch.existing_solutions}
+
+\appendix % začátek příloh
+
+% seznam bibliografie
+\printbibliography
+
+% ... appendices
+
+\end{document}

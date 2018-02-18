@@ -1,0 +1,51 @@
+\chapter{Goals and Requirements}
+
+This chapter analyzes the project requirements and presents a vision of the final outcome.
+
+\section{Project Name}
+
+Referring to the project only as "the project" or "the device" would be clumsy and lead to confusion. Henceforth, the project should be known as \textbf{GEX}, an acronym originating in the term \textit{GPIO Expander}, which, although not describing its scope perfectly, alludes to the project's primary purpose of providing low level GPIO capabilities to personal computers.
+
+\section{Expected Use-Cases}
+
+A first step must necessarily be to consider the situations in which the device is expected to be useful. As was mentioned in the introduction, one of the problems addressed is making it possible to easily attach electronic circuits and components to a PC. This could be in order to familiarize oneself with a new chip or a module, to measure a characteristic curve of a component, to collect experimental data from a test setup, or, for instance, to control a positioning motor.
+
+The applications can have a temporary character, a simple setup that is used once and then dismantled, or a more permanent one. An example of the latter could be laboratory tasks where the measurement framework and user interface is prepared beforehand and connecting the circuit or simply performing measurements while varying some physical properties is left as an exercise to students. Another example could be the use of GEX as a data acquisition module, replacing more expensive professional devices.
+
+As such, the device must be easy to configure without having to modify the embedded firmware and should provide the hardware interfaces and functions that are be needed for such applications. The module can be either attached directly to a PC via USB or controlled wirelessly. It would also be possible to design it as a PCI Express card, however that would limit its use to desktop computers and make the installation and software support more complicated. The wireless connection will find use in mobile robotic projects, when installed in less accessible places, or outdoors.
+
+\section{Hardware Interfaces to Implement}
+
+Given the project's broad range of potential applications, predicting precisely what hardware interfaces and connections might be needed is hardly possible. A good approach appears to be to implement the most common protocols and interfaces and provide access to selected low level features offered by the used microcontroller, like timers and direct pin access, while keeping the firmware open to future expansions should the need arise.
+
+\subsection{Direct Digital Input/Output}
+
+The most basic form of interaction with hardware is by changing the logic levels of output pins and reading input pins. With this feature alone it would be possible to analyze logic circuits, trigger some transient effect we want to observe using an oscilloscope, read a contact state, sense a button push, drive LED displays and more. Almost anything digital that doesn't require precise or fast timing could be achieved by this simple function.
+
+To make this feature more versatile, it should be possible to receive an asynchronous event on a pin state change, avoiding the need for polling loops in the control application.
+
+\subsection{Common Digital Buses}
+
+A popular way to attach peripheral devices to a microcontroller are hardware buses, the most well known of which are SPI (\textit{Serial Peripheral Interface}), I$^2$C (or IIC, \textit{Inter-Integrated-Circuit}) and USART (\textit{Universal Synchronous Asynchronous Receiver Transmitter}), in the asynchronous variant referred to as UART. A large majority of peripheral integrated circuits, digital-interface sensors and modules can be accessed using those buses. They also have hardware support in most microcontrollers, removing the burden of precise timing from the firmware.
+
+Another hardware interface that might fall into this category is I$^2$S (or IIS, \textit{Inter IC Sound}). I$^2$S is used for streaming sampled audio streams or analog samples and finds far less use than the previously mentioned buses.
+
+More information about those interfaces (excluding I$^2$S) can be found in later chapters. \todo{link to actual place}
+
+\subsection{Specialized Buses}
+
+Some devices exist that do not use any of the common buses, instead requiring their own proprietary protocol. An example of this group is the Dallas Semiconductor\footnote{Acquired by Maxim Integrated in 2001}\todo{source} 1-Wire bus, used by the popular DS18x20 digital thermometers. Another example might be some types of addressable LED strips.
+
+A common characteristic of those buses is that they require precise timing and have no native hardware support like the above mentioned common buses. This means that we can't depend on the direct GPIO access and have to implement low level driver utilities to achieve reliable communication.
+
+\subsection{Analog Input/Output}
+
+Microcontrollers typically include an ADC (\textit{Analog to Digital Converter}) with a 10-12 bits of resolution, sometimes accompanied by a DAC (\textit{Digital to Analog Converter}), its output counterpart. In the lack of a real DAC, the analog output, albeit with worse dynamic parameters, can be realized using a PWM signal (\textit{Pulse Width Modulation}, pulse train) followed by a low-pass filter.
+
+While we mainly focused on digital interfaces thus far, providing means of generating and capturing analog signals is also valuable. This capability makes it possible to read sensors with voltage output and it can substitute a simple oscilloscope when sampled periodically at a sufficient frequency. Analog input channels, even with lower resolution or sample rate, may in some cases avoid the need for a dedicated acquisition device.
+
+In conjunction, the analog output and input can be used for automated characterization of electronic components, such as diodes. Should the analog output be modulated, we could further use them to measure frequency-dependent characteristics, such as the frequency response of analog filters.
+
+
+
+
