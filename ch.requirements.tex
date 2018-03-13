@@ -1,51 +1,64 @@
 \chapter{Goals and Requirements}
 
-This chapter analyzes the project requirements and presents a vision of the final outcome.
+This chapter discusses the project requirements and presents our expectations of the final outcome.
+
+The work's main objective is the implementation of a reconfigurable embedded firmware, a physical module providing the required digital buses, signal generation and acquisition capabilities, and the PC libraries to work with it. It's expected that several prototypes of the hardware platform will be developed to evaluate different form factors.
 
 \section{Project Name}
 
-Referring to the project only as "the project" or "the device" would be clumsy and lead to confusion. Henceforth, the project should be known as \textbf{GEX}, an acronym originating in the term \textit{GPIO Expander}, which, although not describing its scope perfectly, alludes to the project's primary purpose of providing low level GPIO capabilities to personal computers.
+Every project needs a memorable name. During the development, the name "GEX" was chosen, an acronym originating in the term \textit{GPIO Expander}, which, although not describing its scope perfectly, alludes to the project's primary purpose of providing low level GPIO capabilities to personal computers. The term GEX may be used through the text to refer to the whole project or hardware modules developed for it.
 
 \section{Expected Use-Cases}
 
-A first step must necessarily be to consider the situations in which the device is expected to be useful. As was mentioned in the introduction, one of the problems addressed is making it possible to easily attach electronic circuits and components to a PC. This could be in order to familiarize oneself with a new chip or a module, to measure a characteristic curve of a component, to collect experimental data from a test setup, or, for instance, to control a positioning motor.
+First, we must consider in which situations the module could be helpful. As we explained in the introduction, GEX should allow the user to connect digital sensors and electronic circuits to a PC and work with them using high level application software.
 
-The applications can have a temporary character, a simple setup that is used once and then dismantled, or a more permanent one. An example of the latter could be laboratory tasks where the measurement framework and user interface is prepared beforehand and connecting the circuit or simply performing measurements while varying some physical properties is left as an exercise to students. Another example could be the use of GEX as a data acquisition module, replacing more expensive professional devices.
+This could be used to get familiar with a new chip or a module before using it in some hardware project, to measure characteristic curves of a component, to collect experimental data from a test setup, or, for instance, to control a positioning motor.
 
-As such, the device must be easy to configure without having to modify the embedded firmware and should provide the hardware interfaces and functions that are be needed for such applications. The module can be either attached directly to a PC via USB or controlled wirelessly. It would also be possible to design it as a PCI Express card, however that would limit its use to desktop computers and make the installation and software support more complicated. The wireless connection will find use in mobile robotic projects, when installed in less accessible places, or outdoors.
+The applications can have a temporary character, a simple setup that is used once and then dismantled, or a more permanent one. An example of the latter could be students' laboratory tasks where the measurement setup is prepared beforehand by an instructor. Another example could be the use of GEX as a data acquisition module for process or environment monitoring.
 
-\section{Hardware Interfaces to Implement}
+The module should either be directly attached to the PC via a USB port, or controlled wirelessly (possibly powered by a battery or a solar cell). A wireless connection can find use in mobile robotic projects where the wired attachment isn't practical, or when used outdoors or in hardly accessible places.
 
-Given the project's broad range of potential applications, predicting precisely what hardware interfaces and connections might be needed is hardly possible. A good approach appears to be to implement the most common protocols and interfaces and provide access to selected low level features offered by the used microcontroller, like timers and direct pin access, while keeping the firmware open to future expansions should the need arise.
+\section{Supported Hardware Interfaces}
+
+The project's scope is very broad and it's hardly possible to enumerate all the use cases. To achieve the greatest flexibility, it appears as a good strategy to divide the features into smaller functional blocks that can be used independently or combined as needed.
 
 \subsection{Direct Digital Input/Output}
 
-The most basic form of interaction with hardware is by changing the logic levels of output pins and reading input pins. With this feature alone it would be possible to analyze logic circuits, trigger some transient effect we want to observe using an oscilloscope, read a contact state, sense a button push, drive LED displays and more. Almost anything digital that doesn't require precise or fast timing could be achieved by this simple function.
+The most basic interaction with hardware is simply changing the logic levels of output pins, and reading input pins. With this feature alone it would be possible to analyze logic circuits, trigger some transient effect we want to observe using an oscilloscope, sense a button push, drive LED displays and more. Almost anything digital that doesn't require precise or fast timing\footnote{We're limited by the latencies of USB and the PC software.} could be achieved by this simple function.
 
 To make this feature more versatile, it should be possible to receive an asynchronous event on a pin state change, avoiding the need for polling loops in the control application.
 
 \subsection{Common Digital Buses}
 
-A popular way to attach peripheral devices to a microcontroller are hardware buses, the most well known of which are SPI (\textit{Serial Peripheral Interface}), I$^2$C (or IIC, \textit{Inter-Integrated-Circuit}) and USART (\textit{Universal Synchronous Asynchronous Receiver Transmitter}), in the asynchronous variant referred to as UART. A large majority of peripheral integrated circuits, digital-interface sensors and modules can be accessed using those buses. They also have hardware support in most microcontrollers, removing the burden of precise timing from the firmware.
+A popular way to attach peripheral devices to a microcontroller are hardware buses, the most well known of which are SPI (\textit{Serial Peripheral Interface}), I$^2$C (or IIC, \textit{Inter-Integrated-Circuit}) and USART (\textit{Universal Synchronous Asynchronous Receiver Transmitter}). There is a hardware support in most microcontrollers for those buses, removing the burden of precise timing from the firmware.
 
-Another hardware interface that might fall into this category is I$^2$S (or IIS, \textit{Inter IC Sound}). I$^2$S is used for streaming sampled audio streams or analog samples and finds far less use than the previously mentioned buses.
-
-More information about those interfaces (excluding I$^2$S) can be found in later chapters. \todo{link to actual place}
+More information about those interfaces can be found in later chapters. \todo{link to actual place}
 
 \subsection{Specialized Buses}
 
-Some devices exist that do not use any of the common buses, instead requiring their own proprietary protocol. An example of this group is the Dallas Semiconductor\footnote{Acquired by Maxim Integrated in 2001}\todo{source} 1-Wire bus, used by the popular DS18x20 digital thermometers. Another example might be some types of addressable LED strips.
+Some devices exist that use their own proprietary protocol, usually to reduce the number of data pins. An example of this group is the Dallas Semiconductor\footnote{Acquired by Maxim Integrated in 2001} 1-Wire bus, used by the popular DS18x20 digital thermometers. Another such protocol is used by some types of addressable LED strips.
 
-A common characteristic of those buses is that they require precise timing and have no native hardware support like the above mentioned common buses. This means that we can't depend on the direct GPIO access and have to implement low level driver utilities to achieve reliable communication.
+A common characteristic of those buses is that they require precise timing and have no native hardware support in the microcontroller. We can't use the direct GPIO access here due to latencies and jitter; those protocols need a custom low level routine in the firmware that performs such "bit banging" more accurately.
 
 \subsection{Analog Input/Output}
 
-Microcontrollers typically include an ADC (\textit{Analog to Digital Converter}) with a 10-12 bits of resolution, sometimes accompanied by a DAC (\textit{Digital to Analog Converter}), its output counterpart. In the lack of a real DAC, the analog output, albeit with worse dynamic parameters, can be realized using a PWM signal (\textit{Pulse Width Modulation}, pulse train) followed by a low-pass filter.
+Microcontrollers typically include a 10-12 bit ADC (\textit{Analog to Digital Converter}), often accompanied by a DAC (\textit{Digital to Analog Converter}), its output counterpart. In the lack of a real DAC, the analog output, albeit with worse dynamic parameters, can be realized using a PWM signal (\textit{Pulse Width Modulation}, pulse train) followed by a low-pass filter.
 
-While we mainly focused on digital interfaces thus far, providing means of generating and capturing analog signals is also valuable. This capability makes it possible to read sensors with voltage output and it can substitute a simple oscilloscope when sampled periodically at a sufficient frequency. Analog input channels, even with lower resolution or sample rate, may in some cases avoid the need for a dedicated acquisition device.
+While we mainly focused on digital interfaces thus far, providing means of generating and capturing analog signals is also valuable. This capability makes it possible to read sensors with voltage output and it can substitute a simple oscilloscope when sampled periodically at a sufficient speed. 
 
-In conjunction, the analog output and input can be used for automated characterization of electronic components, such as diodes. Should the analog output be modulated, we could further use them to measure frequency-dependent characteristics, such as the frequency response of analog filters.
+The analog output and input together can be used for automated characterization of electronic components, or for analog feedback regulation. Should the analog output be modulated, we could further use them to measure frequency-dependent characteristics, such as the frequency response of analog filters.
 
+\subsection{Frequency Measurement and Generation}
 
+Some sensors have a variable frequency or a pulse-width modulated (PWM) output. To capture those signals and convert them to a more useful digital value, we can use the Input Capture or External Clock function of a general purpose timer/counter in the used microcontroller. Those timers have a wide range of possible configurations and can be also used for pulse counting or PWM generation.
 
+\section{User Interface}
+
+USB will be the primary way of connecting the module to a PC. Thanks to USB's flexibility, GEX can present itself to the computer as any kind of device, or even multiple devices at once. 
+
+The most straightforward method of interfacing the board is by passing binary messages in a fashion similar to USART. This can be done either using a "Virtual COM port" driver (the CDC/ACM class), or through a raw access to the corresponding USB endpoints. Using a raw access avoids potential problems with the operating system's driver interfering or not recognizing the device correctly; on the other hand, having GEX appear as a serial port makes it easier to integrate into older development platforms that have a good serial port support (such as National Instruments LabWindows CVI).
+
+As for configuring the module, given the possible permanent nature of the experimental setups built with it, it makes sense to store the settings inside its flash memory; it should at the same time be possible to temporarily change them as needed. 
+
+We could load those settings using the serial interface, and indeed this should be implemented for its flexibility. The serial interface will be, in some form, also used for the wireless connection. However, having the power of USB at our disposal, we can make the board appear as a mass storage device and expose the configuration as text files. This approach, inspired by ARM mbed\footnote{A similar mechanism is used for flashing firmware images to mbed-enabled development kits}, avoids the need to create a configuration utility and can work cross-platform thanks to using the same driver as a real removable disk. Further, we can expose any useful information (such as a README file with instructions, or a pin-out reference) using this virtual disk as separate files.
 
