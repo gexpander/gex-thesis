@@ -8,7 +8,7 @@ The work's main objective is the implementation of a reconfigurable embedded fir
 
 Every project needs a memorable name. During the development, the name "GEX" was chosen, an acronym originating in the term \textit{GPIO Expander}, which, although not describing its scope perfectly, alludes to the project's primary purpose of providing low level GPIO capabilities to personal computers. The term GEX may be used through the text to refer to the whole project or hardware modules developed for it.
 
-\section{Expected Use-Cases}
+\section{Expected Use Cases}
 
 First, we must consider in which situations the module could be helpful. As we explained in the introduction, GEX should allow the user to connect digital sensors and electronic circuits to a PC and work with them using high level application software.
 
@@ -54,11 +54,53 @@ Some sensors have a variable frequency or a pulse-width modulated (PWM) output. 
 
 \section{User Interface}
 
-USB will be the primary way of connecting the module to a PC. Thanks to USB's flexibility, GEX can present itself to the computer as any kind of device, or even multiple devices at once. 
+USB will be the primary way of connecting the module to a PC. Thanks to USB's flexibility, it can present itself to the computer as any kind of device or even multiple devices at once.
 
-The most straightforward method of interfacing the board is by passing binary messages in a fashion similar to USART. This can be done either using a "Virtual COM port" driver (the CDC/ACM class), or through a raw access to the corresponding USB endpoints. Using a raw access avoids potential problems with the operating system's driver interfering or not recognizing the device correctly; on the other hand, having GEX appear as a serial port makes it easier to integrate into older development platforms that have a good serial port support (such as National Instruments LabWindows CVI).
+The most straightforward method of interfacing the board is by passing binary messages in a fashion similar to USART. This can be done either using a "Virtual COM port" driver (the CDC/ACM class), or through a raw access to the corresponding USB endpoints. Using a raw access avoids potential problems with the operating system's driver interfering or not recognizing the device correctly; on the other hand, having GEX appear as a serial port makes it easier to integrate it into existing platforms that have a good serial port support (such as National Instruments LabWindows CVI or MATLAB).
 
-As for configuring the module, given the possible permanent nature of the experimental setups built with it, it makes sense to store the settings inside its flash memory; it should at the same time be possible to temporarily change them as needed. 
+The module should be reconfigurable. Given the settings are almost always going to be tied on the connected external hardware, it would be practical to have an option to store them permanently in the microcontroller's non-volatile memory.
 
-We could load those settings using the serial interface, and indeed this should be implemented for its flexibility. The serial interface will be, in some form, also used for the wireless connection. However, having the power of USB at our disposal, we can make the board appear as a mass storage device and expose the configuration as text files. This approach, inspired by ARM mbed\footnote{A similar mechanism is used for flashing firmware images to mbed-enabled development kits}, avoids the need to create a configuration utility and can work cross-platform thanks to using the same driver as a real removable disk. Further, we can expose any useful information (such as a README file with instructions, or a pin-out reference) using this virtual disk as separate files.
+We could load those settings into GEX using the serial interface, and indeed this should be implemented for its flexibility. The serial interface may be, in some form, also used for the wireless connection. However, having the power of USB at our disposal, we can make the board appear as a mass storage device and expose the configuration as text files. This approach, inspired by ARM mbed\footnote{A similar mechanism is used for flashing firmware images to mbed-enabled development kits}, avoids the need to create a configuration utility and it can work cross-platform thanks to using the same driver as a real removable disk. Further, we can expose any useful information (such as a README file with instructions, or a pin-out reference) using this virtual disk as separate files.
+
+\section{Form Factor and MCU Selection}
+
+It has been established that the designed device should be small and easily portable. It should support USB and wireless connection to a PC. Further, a plain UART interface should be offered in place of USB; this makes it easier to integrate GEX into other systems or use development kits fitted with a USB-UART converter.
+
+The following protocols and features should be implemented as a minimum; Other functions may be added based on input from prototype testing in model situations. 
+
+\begin{itemize}
+	\item Low level hardware functions
+		\begin{itemize}
+			\item I/O pin direct access
+			\item Input pin change reporting
+			\item Single pulse generation
+			\item PWM signal generation
+			\item Analog/Digital converter (analog input)
+			\item Digital/Analog converter (analog output)
+			\item Frequency measurement
+			\item Pulse measurement
+		\end{itemize}
+	\item Common hardware interfaces
+		\begin{itemize}
+			\item SPI
+			\item I$^2$C
+			\item UART/USART
+		\end{itemize}
+	\item Low level support for proprietary buses
+		\begin{itemize}
+			\item Dallas 1-Wire
+			\item NeoPixel (addressable LED strips)
+		\end{itemize}
+\end{itemize}
+
+Considering the requirements, availability, and cost, the STM32F072 microcontroller will be used for the first prototypes, with the expectation of later porting the project to more powerful or power-efficient devices, like the STM32L072, STM32F103, STM32F303, or other STM32 microcontrollers. 
+
+The STM32F072 is a Cortex M0 device with 128\,KiB of flash memory, 16\,KiB of RAM and running at up to of 48\,MHz. It is equipped with a USB Full Speed peripheral block, a 12-bit ADC and DAC, a number of general purpose timers/counters, SPI, I$^2$C, and USART peripherals. It further supports a crystal-less USB operation, using the USB SOF packet for synchronization.
+
+To utilize the time frame available for this work effectively, only the STM32F072 firmware will be initially developed, while making sure the planned future expansion will be as straightforward as possible.
+
+\todo[inline]{info about form factor choices + some sketches}
+
+
+
 

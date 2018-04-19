@@ -1,0 +1,3 @@
+USB ENGINEERING CHANGE NOTICE
+Pull-up/pull-down resistors
+Universal Serial Bus Specification Revision 2.0

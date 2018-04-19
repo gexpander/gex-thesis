@@ -1,32 +1,32 @@
 \chapter{Existing Solutions}
 
-The idea of making it easier to interact with low level hardware from a PC is not new. Several solutions to this problem have been developed over the past years, each with its own advantages and drawbacks. Some of the existing solutions will be presented in this section.
+The idea of making it easier to interact with low level hardware from a PC is not new. Several solutions to this problem have been developed over the past years, each with its own advantages and drawbacks. Some of the existing solutions will be presented in this chapter to give the reader some idea about the current possibilities.
 
 \section{Bus Pirate}
 
-\todo{pictures}
+\todo[inline]{pictures}
 
-http://dangerousprototypes.com/blog/about/
+%http://dangerousprototypes.com/blog/about/
 
-Bus Pirate, developed by \todo{link}Ian Lesnet at Dangerous Prototypes and manufactured by Seeed Studio\todo{link}, is a "tinkering kit" providing access to hardware interfaces like SPI, I$^2$C, USART and 1-Wire (those will be described later  \todo{link to actual place}), as well as frequency measurement and direct pin access.
+Bus Pirate, developed by \todo{link}Ian Lesnet at Dangerous Prototypes and manufactured by Seeed Studio\todo{link}, is a USB-attached device providing access to hardware interfaces like SPI, I$^2$C, USART and 1-Wire (those will be described later  \todo{link to actual place}), as well as frequency measurement and direct pin access.
 
-The board aims to make it easy for the user to familiarize themself with new chips and modules; it also provides a range of programming interfaces for flashing microcontroller firmwares and memories. It communicates with the PC using a FTDI USB-serial bridge
+The board aims to make it easy for the users to familiarize themselves with new chips and modules; it also provides a range of programming interfaces for flashing microcontroller firmwares and memories. It communicates with the PC using a FTDI USB-serial bridge
 
 Bus Pirate is open source and in scope it is similar to what we want to achieve here. It can be scripted and controlled from languages like Python or Perl, connects to USB and provides a wide selection of hardware interfaces.
 
-The board is based on a PIC16 microcontroller running at 32\,MHz. Its analog/digital converter (ADC) only has a resolution of 10 bits (1024 levels). There is no digital/analog converter (DAC) available on the chip, making applications that require a varied output voltage more difficult. Another limitation of the board is its low number of GPIO pins which may be insufficient for certain applications, such as multi-channel sampling, parallel interfaces, or connecting multiple different devices at once.
-
-Those limitations, however, hardly impede on Bus Pirate's primary purpose, which is to provide an easy access to digital buses.
+The board is based on a PIC16 microcontroller running at 32\,MHz. Its analog/digital converter (ADC) only has a resolution of 10 bits (1024 levels). There is no digital/analog converter (DAC) available on the chip, making applications that require a varied output voltage more difficult. Another limitation of the board is its low number of GPIO pins, which may be insufficient for certain applications, such as multi-channel sampling, parallel interfaces, or connecting multiple different devices at once. The Bus Pirate, at the time of writing, can be purchased for a price similar to some Raspberry Pi models.
 
 \section{Raspberry Pi}
 
 \todo[inline]{link, pictures}
 
-Another device worth mentioning, albeit of a very different kind, is the Raspberry Pi. It is a belief of the author that the inclusion of a GPIO (\textit{general purpose I/O}) header on the Raspberry Pi mini-computers was a significant factor in their success in the hobbyist circles and school environments. This GPIO header exposes various hardware interfaces to user programs running on the computer.
+Another device worth mentioning, albeit of a different kind, is the Raspberry Pi. All models of the Raspberry Pi include a GPIO header which can be directly controlled by user applications. The pins broken out to this header can be used as general purpose I/O and some have alternate functions such as SPI or I$^2$C.
 
-The responsibility of controlling the experimental hardware then lies on the user application which also provides the user interface, much simplifying the development process. The control application can be written in almost any programming language the experimenter chooses; the most popular choices appear to be Python and JavaScript. The embedded firmware, should an external microcontroller be used instead, would typically have to be written in C, C++, or assembly.
+The responsibility of controlling the attached external hardware lies on the user application, which also commonly provides the user interface, which greatly simplifies the development process. The control application can be written in almost any programming language. Python is a popular choice thanks to its simplicity, but it's by no means the only way to interact with the pins.
 
-A disadvantage of using a Raspberry Pi's GPIO header is that the experiments would have to be conducted directly on the mini-computer instead of using the more powerful computer the researchers already have available\footnote{An exception may be the use of such a device in developing countries, where the Raspberry Pi serves as a low-cost PC on its own.}. This introduces complications with data export or remote control. Further, should the experiment use a software package like MATLAB, installing it on the ARM-based Raspberry Pi may prove problematic.
+The Raspberry Pi is commonly used in primary schools as a low-cost PC alternative that encourage students' interest in electronics and science. The board is, further, often built into more permanent projects that make use of its powerful processor, such as camera traps for wildlife observations. 
+
+The Raspberry Pi could be used for the quick evaluations or experiments we want to perform with GEX, however they would either have to be performed directly on the mini-computer itself (with attached monitor and keyboard), or use some form of remote access. 
 
 \section{The Firmata protocol}
 
@@ -41,8 +41,12 @@ Implementing the Firmata protocol in a universal hardware interfacing module wou
 
 \section{Professional DAQ modules}
 
-There are several offerings from professional laboratory instrument manufacturers, however their common property is a very high price. This renders them inaccessible for users with a limited budget, such as hobbyists or students who would like to keep such a device for personal use. An example falling into this category is the National Instruments "I²C/SPI Interface Device", which also includes several GPIO lines. 
+A range of professional tools that would fulfill our needs exist on the market,
+however their common property is a high price. This makes them inaccessible for users with a limited budget, such as hobbyists or students who would like to keep such a device for personal use. An example falling into this category is the National Instruments "I²C/SPI Interface Device", which also includes several GPIO lines, or some of the Total Phase I²C/SPI gadgets which sell for about \$300 a piece. 
+
+The performance GEX can provide will certainly be far inferior to those professional tools, however this drawback is balanced by its greater flexibility and for most applications it should be perfectly sufficient, and at a fraction of the cost.
 
 \todo[inline]{http://www.ni.com/en-gb/shop/select/i2c-spi-interface-device} 
 
-The decoding of hardware buses like USART, SPI or I²C is a common feature in digital storage oscilloscopes, as is the sampling of digital channels with "logic analyzer" add-ons. They are valuable debugging tools, but hardly ever provide a way to interact with the bus beyond passively intercepting an ongoing communication.
+\todo[inline]{pictures}
+

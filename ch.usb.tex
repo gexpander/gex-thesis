@@ -1,8 +1,10 @@
 \chapter{Universal Serial Bus}
 
-This chapter presents an overview of the USB Full Speed interface, with focus on the features used in the GEX firmware. USB is a versatile but complex interface, thus explaining it in its entirety is beyond the scope of this text. References to external materials which explain the protocol in greater detail will be provided for the interested reader.\todo{add those refs}
+This chapter presents an overview of the \textit{Universal Serial Bus} (USB) \textit{Full Speed} interface, with focus on the features used in the GEX firmware. USB is a versatile but complex interface, thus explaining it in its entirety is beyond the scope of this text. References to external materials which explain the protocol in greater detail will be provided for the interested reader.\todo{add those refs}
 
 \section{Basic Principles and Terminology}
+
+%TODO add a diagram of the hierarchical topology
 
 USB is a hierarchical bus with a single master (\textit{host}) and multiple slave devices. A USB device that provides functionality to the host is called a \textit{function}. Communication between the host and a function is organized into virtual channels called \textit{pipes}. Each pipe is identified by an \textit{endpoint} number. 
 
@@ -22,11 +24,22 @@ The endpoint transfer type and other characteristics, together with other inform
 The function's endpoints are grouped into \textit{interfaces}. An interface describes a logical connection of endpoints, such as the reception and transmission endpoint that belong together. An interface is assigned a \textit{class} defining how it should be used. Standard classes are defined by the USB specification to provide a uniform way of interfacing devices of the same type, such as human-interface devices (mice, keyboards, gamepads) or mass storage devices. The use of standard classes makes it possible to re-use the same driver software for devices from different manufacturers. The class used for the GEX's "virtual COM port" function was originally meant for telephone modems, a common way of connecting to the Internet at the time the first versions of USB were developed. A device using this class will show as \verb|/dev/ttyACM0| on Linux and as a COM port on Windows, provided the system supports it natively or the right driver is installed.
 %TODO add reference to the document
 
+%TODO fix: massive gap here
+
 %function - https://technet.microsoft.com/en-us/library/cc939102.aspx
+
+\newpage
+\input{fig.gex-descriptors}
 
 \section{USB Physical Layer}
 
-USB uses differential signaling with NRZI encoding (\textit{Non Return to Zero Inverted}) and bit stuffing. The encoding, together with frame formatting, checksum verification, retransmission, and other low level aspects of the USB connection are entirely handled by the USB block in the microcontroller's silicon. Normally we do not need to worry about those details. What needs more attention are the electrical characteristics of the bus, which need to be understood correctly for a successful PCB design.
+USB uses differential signaling with NRZI encoding (\textit{Non Return to Zero Inverted}, fig. \ref{fig:nrzi}) and bit stuffing. The encoding, together with frame formatting, checksum verification, retransmission, and other low level aspects of the USB connection are entirely handled by the USB block in the microcontroller's silicon; normally we do not need to worry about those details. What needs more attention are the electrical characteristics of the bus, which need to be understood correctly for a successful schematic and PCB design.
+
+\begin{wrapfigure}[4]{r}{0.4\textwidth}
+	\centering
+	\includegraphics[width=0.3\textwidth]{img/usb-nrzi-diagram.png}
+	\caption{\label{fig:nrzi}NRZI encoding example}
+\end{wrapfigure}
 
 The USB cable contains 4 conductors:
 
@@ -37,14 +50,23 @@ The USB cable contains 4 conductors:
 	\item Ground
 \end{itemize}
 
-D+ and D-- are commonly labeled DP and DM. The differential pair should be routed in parallel and keep approximately the same length. The USB speed is determined by the presence of a 1.5\,k$\Omega$ pull-up resistor to 3.3\,V on one of the data lines: for Low Speed, D-- is pulled high, for Full Speed it's the D+ line. The polarity of the differential signals is inverted depending on the used speed. Some microcontrollers integrate the correct pull-up resistor inside the USB block, removing the need for an external resistor.
+The data lines, D+ and D--, are also commonly labeled DP and DM. This differential pair should be routed in parallel and kept at approximately the same length.
 
-When the function needs the host to re-enumerate it, that is, reload the descriptors and re-attach the correct drivers, it can momentarily remove the pull-up resistor. In the case of an internal pull-up, this can be done by flipping a control bit. An external resistor could be connected through a transistor to facilitate re-enumeration, or it might be driven directly by a GPIO pin.
+USB revisions are, where possible, backwards compatible, often even keeping the same connector shape. The bus speed is negotiated by the device using a 1.5\,k$\Omega$ pull-up resistor (to 3.3\,V) on one of the data lines: for Full Speed, D+ is pulled high (fig. \label{fig:usb-pullup-fs}), for Low Speed the pull-up is on the D-- line. The polarity of the differential signals is inverted depending on the used speed. Some microcontrollers integrate the correct pull-up resistor inside the USB block, removing the need for an external resistor.
+
+
+\begin{figure}
+	\centering
+	\includegraphics[width=\textwidth]{img/usb-pullup-fs.png}
+	\caption{\label{fig:usb-pullup-fs}Pull-up and pull-down resistors of a Full Speed function, as prescribed by the USB specification rev. 2.0}
+\end{figure}
+
+When a function needs the host to re-enumerate it, that is, reload the descriptors and re-attach the correct drivers, it can momentarily remove the pull-up resistor, which the host will interpret as if the device was plugged out. In the case of an internal pull-up, this can be done by flipping a control bit. An external resistor could be connected through a transistor to facilitate re-enumeration, or it might be driven directly by a GPIO pin. 
 
 %https://www.eevblog.com/forum/projects/driving-the-1k5-usb-pull-up-resistor-on-d/
 %http://www.beyondlogic.org/usbnutshell/usb2.shtml
 
-The V$_\mathrm{BUS}$ line provides a power supply to the function in the case of \textit{bus-powered} devices. \textit{Self-powered} devices can leave this pin unconnected and instead use an external power supply. The current that can be drawn from the V$_\mathrm{BUS}$ line is configured using a descriptor and should not be exceeded. However, this limitation is often not enforced, especially when USB hubs are used, and can't be relied upon as a safety measure.
+The V$_\mathrm{BUS}$ line supplies power to the function in the case of a \textit{bus-powered} device. \textit{Self-powered} devices can leave this pin unconnected and instead use an external power supply. The maximal current drawn from the V$_\mathrm{BUS}$ line is configured using a descriptor and should not be exceeded.
 
 \section{USB Classes}
 
@@ -88,6 +110,8 @@ An interesting property of this class is that the bulk endpoints transport raw d
 Since it's creation, the USB specification expected that each function will have only one interface enabled at a time. After it became apparent that there is a need for having multiple unrelated interfaces work in parallel, a workaround called the \textit{Interface Association Descriptor} (IAD) was devised. IAD is an entry in the descriptor table that defines which interfaces belong together and should be handled by the same driver.
 
 To use the IAD, the function's class must be set to 239 (EFh), subclass 2, protocol 1 (in the top level descriptor), so the OS knows to look for the presence of IADs before binding drivers to any interfaces. 
+
+% TODO link to some references..
 
 In GEX, the IAD is used to tie together the CDC and ACM interfaces while leaving out the MSC interface which should be handled by a different driver. To make this work, a new \textit{composite class} had to be created as a wrapper for the library-provided MSC and CDC/ACM implementations.
 
