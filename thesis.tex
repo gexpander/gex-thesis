@@ -16,15 +16,34 @@
 
 \maketitle % titulní strana a automatické oddíly
 
+% thanks
+% abstract
+% TOC
+
+\part{Introduction}
 \input{ch.introduction}
-\input{ch.requirements}
+\input{ch.requirement_analysis}
 \input{ch.existing_solutions}
+
+\part{Theoretical Background}
+
 \input{ch.usb}
 \input{ch.freertos}
-\input{ch.fat16}
+\input{ch.fat16} % TODO
+\input{ch.hw_buses} % TODO
+
+\part{Firmware Implementation}
+
+\input{ch.fw_structure}
 \input{ch.gex_units}
+
+\part{Hardware Design}
+
 \input{ch.prototype1_hw}
 
+
+
+ 
 \appendix % začátek příloh
 
 % seznam bibliografie

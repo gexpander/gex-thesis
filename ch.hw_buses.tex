@@ -1,0 +1,39 @@
+\chapter{Supported Hardware Buses}
+
+\section{UART and USART}
+
+The \textit{Universal Synchronous / Asynchronous Receiver Transmitter} has a long history and is still in widespread use today. It is the protocol used in RS-232, which can be considered a predecessor of USB in some aspects. RS-232 was once a common way of connecting modems, printers, mice and other devices to personal computers. UART framing is also used in the industrial bus RS-485.
+
+UART, as implemented by microcontrollers, is a two-wire full duplex interface that uses 3.3\,V or 5\,V logic levels. The data lines are high when idle. A frame starts by a start-bit (low) followed by \textit{n} data bits (typically eight), an optional parity bit and 0.5 to 2 stop bits (high). Variants with fewer or more bits exist, especially in older hardware. The parity bit can be odd, even, or missing entirely. A stop bit is usually 1 clock cycle long; other lengths are used in protocols derived from UART, such as in the SmartCard interface. \todo{reference}
+
+\todo[inline]{figure}
+
+UART and USART are two variants of the same interface. USART includes a clock signal and should therefore support higher frequencies. UART timing relies on a well-known clock speed and is synchronized by start bits. In RS-232 the two data lines (Rx and Tx) are accompanied by RTS (Ready To Send), CTS (Clear To Send) and DTR (Data Terminal Ready) that facilitate handshaking and hardware flow control.
+
+\todo[inline]{examples}
+
+\section{SPI}
+
+SPI (Serial Peripheral Interface) is a point-to-point or multi-drop master-slave interface based on shift registers. It uses at least 4 wires: SCK (Serial Clock), MOSI (Master Out Slave In), MISO (Master In Slave Out) and SS (Slave Select). SS is often marked CSB (Chip Select Bar) or NSS (Negated Slave Select) to indicate it's active low. Slave devices are addressed using their Slave Select input while the other wires are shared. A slave that's not addressed releases the MISO line to a high impedance state so it doesn't interfere in ongoing communication.
+
+Transmission and reception on the SPI bus happen at the same time. A bus master asserts the SS pin of a slave it wishes to address and then sends data on the MOSI line while receiving a response on MISO. The slave doesn't know the command before the first byte is completed, so it usually responds with zeros or sends a status byte in this phase.
+
+\todo[inline]{figure}
+
+SPI devices often provide a number of control, configuration and status registers that can be read and written by the bus master. The first byte of a command usually contains one bit that determines if it's a read or write access, and an address field selecting the target register.
+
+\todo[inline]{examples}
+
+\section{I2C}
+
+Last of the three common protocols covered here is be I2C. It's a two-wire, open-drain bus that supports multi-master operation. I2C is more complicated than either UART or SPI; it supports 3 speeds \todo{speeds}.
+
+\todo[inline]{diagrams and more from the specification}
+
+\section{1-Wire}
+
+1-Wire uses a bi-directional data line that can also power the connected devices, giving the bus its name. TODO ,,,,,
+
+\section{NeoPixel}
+
+...m,,,

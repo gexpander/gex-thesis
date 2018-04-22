@@ -1,0 +1,99 @@
+\chapter{Application Structure}
+
+GEX was designed to be modular and easy to extend. At its core lies a general framework that provides services to the functional blocks configured and used by the user script running on the host PC. Functional blocks, or internally called \textit{units}, implement functions like SPI, I2C, GPIO access etc. 
+
+In this chapter we'll focus on the general function of the GEX module, look at implementation details of the core framework, and in the next chapter some space will be given to each of the functional blocks.
+
+\textit{A writing style note:} This and the following parts were written after implementing and evaluating the first hardware prototype and its firmware, therefore rather than describing the development process, it tends to talk about the completed solution. All design choices will nevertheless be explained as well as possible.
+
+\section{User's View of GEX}
+
+Before going into implementation details, we'll have a look at GEX from the outside, how an end user will see it. This should give the reader some context to better orient themselves in the following sections and chapters investigating the internal structure of the firmware and the communication protocol.
+
+The GEX firmware can be flashed to a STM32 Nucleo or Discovery board or a custom PCB. It's equipped with a USB connector to connect to the host PC.  GEX loads its configuration from the non-volatile memory, configures its peripherals, sets up the function blocks and enables the selected communication interface(s). When USB is connected to the board, the PC enumerates it and either recognizes the communication interface as CDC/ACM (Virtual serial port), or leaves it without a software driver attached, to be accessed directly as raw USB endpoints. This can be configured. The user can now access the functional blocks using the client library and the serial protocol, as well as modify the configuration files.
+
+The board is equipped with a button or a jumper labeled LOCK. When the button is pressed or the jumper removed, the Mass Storage USB interface is enabled. For the user this means a new disk will be detected by their PC's operating system that they can open in a file manager. This disk provides read and write access to configuration INI files and other files with useful information, like a list of supported features and available hardware resources. The user now edits a configuration file and saves it back to the disk. GEX processes the new content, tries to apply the changes and generates an updated version of the file that includes error messages if there was a problem. For the PC OS to recognize this change, the Mass Storage device momentarily reports that the media is unavailable to force the OS to reload it. This is a similar mechanism to what happens when a memory card is removed from a reader. Now the user must reload the file in their editor, inspect the updated content and perform any changes needed. The settings, when applied successfully, should now be available to test using the communication interface. When everything is to the user's satisfaction, the updated settings are committed to the device's non-volatile memory by pressing the LOCK button again, or replacing the jumper. 
+
+For boards without a USB re-enumeration capability (notably with older microcontrollers like the STM32F103) that use a jumper, this must be removed before plugging the board to the host USB so that the Mass Storage is enabled immediately at start-up and a re-enumeration is not needed.
+
+In the case when a wireless communication module is installed on the PCB and GEX is configured to use it, this will be used as a fallback when the USB peripheral does not receive an address (get enumerated) within a short time after start-up. The wireless link works in the same way as any other communication interface: it can be used to read and modify the configuration files and to access the functional blocks. To use it, the user needs to connect a wireless gateway module to their host PC and use the radio link instead of a USB cable. The gateway could support more than once GEX board at once.
+
+Now that GEX is connected and configured, the user can start using it. This involves writing a program in C or Python that uses the GEX client library, using the Python library from MATLAB, or controlling GEX using a GUI front-end built on those libraries. The configuration can be stored in the module, but it's also possible to temporarily (or permanently) replace it using the communication API. This way the settings can be loaded automatically when the user's program starts.
+
+\section{The Core Framework Functions}
+
+The core framework forms the skeleton of the firmware and usually doesn't need any changes when new user-facing features are added. It provides:
+
+\begin{itemize}
+	\item Hardware resource allocation
+	\item Settings storage and loading
+	\item Functional block initialization
+	\item Communication port with different back-ends (USB, UART, wireless)
+	\item Message sending and delivery
+	\item Interrupt management and routing to functional blocks
+	\item Virtual mass storage to allow editing of the configuration files
+\end{itemize}
+
+When the firmware needs to be ported to a different STM32 microcontroller, the core framework is relatively straightforward to adapt and the whole process can be accomplished in a few hours. The time consuming part is modifying the functional blocks to work correctly with the new device's hardware. 
+
+\subsection{Source Code Layout}
+
+Looking at the source code repository, at the root we'll find device specific driver libraries and files provided by ST Microelectronics, the FreeRTOS middleware, and a folder \verb|User| containing the GEX firmware. This folder is a git submodule. The GEX core framework consists of everything in \verb|User|, excluding the \verb|units| folder. The USB Device library, which had to be modified to support a composite class, is stored inside the \verb|User| folder as well. Hardware configuration, such as the status LED position or clock settings, are defined using compile flags set in the top level Makefile.
+
+\section{Functional Blocks} \label{sec:units-function}
+
+GEX's functional blocks, internally called \textit{units}, have been mentioned a few times but until now haven't been properly explained. GEX's user-facing functions are implemented in \textit{unit drivers}. Those are stand-alone modules that the user can enable and configure using the configuration file. In principle, there can be multiple instances of each unit type. However, in practice, we have to work with hardware constraints: there is only one ADC peripheral, two SPI ports and so on. This limitation is handled using resource allocation, as explained below.
+
+Each unit is defined by a section in the configuration file \verb|UNITS.INI|. It is given a name and a \textit{callsign}, a number which serves as an address for messages from the host PC, or, conversely, to indicate which unit sent an event report (such as a pin change interrupt). A unit is internally represented by an object that holds its configuration, internal state, and a link to the unit driver. The driver handles commands sent from the host PC, initializes and de-initializes the unit based on its settings and implements other aspects of a unit's function, such as periodic updates and interrupt handling.
+
+\section{Resource Allocation}
+
+The microcontroller provides a number of hardware resources that require exclusive access: GPIO pins, peripheral blocks (SPI, I2C, UART\textellipsis), and DMA channels. When two units tried to control the same pin, the results would be unpredictable; worse, with a multiple access to a serial port, the output would be a mix of the data streams and completely useless. 
+
+To prevent multiple access, the firmware includes a \textit{resource registry}. Each individual resource is represented by a field in a resource table together with its owner. Initially, all resources are free, except those not available on the particular platform (i.e. a GPIO port E may be disabled if not present on the microcontroller's package). On start-up, the resources used by the core framework are taken by a virtual unit \verb|SYSTEM| to prevent interference by user's units. This is the case of the status LED, the LOCK button, GPIO pins used for connecting USB, communication UART, the wireless module and the crystal oscillator, as well as the timer/counter which keeps the system timebase.
+
+\todo[inline]{resources diagram}
+
+\section{Settings Storage}
+
+The system and unit settings are written, in a binary form, into designated pages of the microcontroller's Flash memory. The unit settings serialization and parsing is implemented by the respective unit drivers.
+
+As the settings persist after a firmware update, it's important to maintain backwards compatibility. This is achieved by prefixing the unit's settings by a version number. When the settings are loaded by a new version of the firmware, it first checks the version and decides whether to use the old or new format. When the settings are next changed, the new format will be used.
+
+The mentioned INI files that can be edited through the communication API or using a text editor with the virtual mass storage, are parsed and generated on demand and are never stored in the Flash or RAM, other than in short temporary buffers. The INI parser processes the byte stream on-the-fly as it is received, and a similar method is used to build a INI file from the configured units and system settings.
+
+\todo[inline]{a diagram}
+
+\section{Communication Ports}
+
+The firmware supports three different communication ports: hardware UART, USB (virtual serial port), and a wireless connection. Each interface is configured and accessed in a different way, but for the rest of the firmware (and for the PC-side application) they all appear as a full duplex serial port. To use interfaces other than USB, the user must configure those in the system settings (a file \verb|SYSTEM.INI| on the configuration disk).
+
+At start-up, the firmware enables the USB peripheral, configures the device library and waits for enumeration by the host PC. When not enumerated, it concludes the USB cable is not connected, and tries some other interface. The UART interface can't be tested as reliably, but it's possible to measure the voltage on the Rx pin. When idle, a UART Rx line should be high (here 3.3\,V). The wireless module, when connected using SPI, can be detected by reading a register with a known value and comparing those.
+
+\subsection{USB Connection}
+
+GEX uses vid:pid \verb|1209:4c60| and the wireless gateway \verb|1209:4c61|. The USB interface uses the CDC/ACM USB class (\ref{sec:cdc-acm}) and consists of two bulk endpoints with a payload size of up to 64 bytes.
+
+\subsection{Communication UART}
+
+The parameters of the communication UART (such as the baud rate) are defined in \verb|SYSTEM.INI|. It's mapped to pins PA2 and PA3; this is useful with STM32 Nucleo boards that don't include a User USB connector, but provide a USB-serial bridge using the on-board ST-Link programmer, connected to those pins. 
+
+This is identical to the USB connection from the PC application's side, except a physical UART is necessarily slower and does not natively support flow control. The use of the Xon and Xoff software flow control is not practical with binary messages that could include those bytes by accident, and the ST-Link USB-serial adapter does not implement hadware flow control.
+
+\subsection{Wireless Connection}
+
+The wireless connection uses an on-board communication module and a separate device, a wireless gateway, that connects to the PC. The wireless gateway is interfaced differently from the GEX board itself, but it also shows as a virtual serial port on the host PC. This is required to allow communicating with the gateway itself through the CDC/ACM interface in addition to addressing the end devices.
+
+This interface will be explained in more detail in chapter XX\todo{LINK}.
+
+\section{Message Passing}
+
+One of the key functions of the core framework is to deliver messages from the host PC to the right units. This functionality resides above the framing protocol, which will be described in chapter XX \todo{Link to tinyframe description}.
+
+A message that is not a response in a multi-part session (this is handled by the framing library) is identified by its Type field. Two main groups of messages exist: \textit{system messages} and \textit{unit messages}. System messages can access the INI files, query a list of the available units, restart the module etc. Unit messages are addressed to a particular unit by their callsign (see \ref{sec:units-function}), and their payload format is defined by the unit driver. The framework reads the message type, then the callsign byte, and tries to find a matching unit in the unit list. If no unit with the callsign is found, an error response is sent back, otherwise the unit driver is given the message to handle it as required.
+
+The framework provides one more messaging service to the units: event reporting. An asynchronous event, such as an external interrupt, an ADC trigger or an UART data reception needs to be reported to the host. This message is annotated by the unit callsign so the user application knows it's origin.
+
+
+
+

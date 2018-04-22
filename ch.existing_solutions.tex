@@ -1,6 +1,6 @@
-\chapter{Existing Solutions}
+\chapter{\label{sec:prior-art}Existing Solutions}
 
-The idea of making it easier to interact with low level hardware from a PC is not new. Several solutions to this problem have been developed over the past years, each with its own advantages and drawbacks. Some of the existing solutions will be presented in this chapter to give the reader some idea about the current possibilities.
+The idea of making it easier to interact with low level hardware from a PC is not new. Several solutions to this problem have been developed, each with its own advantages and drawbacks. Some examples will be presented in this chapter.
 
 \section{Bus Pirate}
 
@@ -8,45 +8,39 @@ The idea of making it easier to interact with low level hardware from a PC is no
 
 %http://dangerousprototypes.com/blog/about/
 
-Bus Pirate, developed by \todo{link}Ian Lesnet at Dangerous Prototypes and manufactured by Seeed Studio\todo{link}, is a USB-attached device providing access to hardware interfaces like SPI, I$^2$C, USART and 1-Wire (those will be described later  \todo{link to actual place}), as well as frequency measurement and direct pin access.
+Bus Pirate, developed by \todo{link}Ian Lesnet at Dangerous Prototypes and manufactured by Seeed Studio\todo{link}, is a USB-attached device providing access to hardware interfaces like SPI, I$^2$C, USART and 1-Wire, as well as frequency measurement and direct pin access.
 
-The board aims to make it easy for the users to familiarize themselves with new chips and modules; it also provides a range of programming interfaces for flashing microcontroller firmwares and memories. It communicates with the PC using a FTDI USB-serial bridge
+The board aims to make it easy for users to familiarize themselves with new chips and modules; it also provides a range of programming interfaces for flashing microcontroller firmwares and memories. It communicates with the PC using a FTDI USB-serial bridge.
 
-Bus Pirate is open source and in scope it is similar to what we want to achieve here. It can be scripted and controlled from languages like Python or Perl, connects to USB and provides a wide selection of hardware interfaces.
+Bus Pirate is open source and in scope it's similar to GEX. It can be scripted and controlled from languages like Python or Perl, connects to USB and provides a good selection of hardware interfaces.
 
-The board is based on a PIC16 microcontroller running at 32\,MHz. Its analog/digital converter (ADC) only has a resolution of 10 bits (1024 levels). There is no digital/analog converter (DAC) available on the chip, making applications that require a varied output voltage more difficult. Another limitation of the board is its low number of GPIO pins, which may be insufficient for certain applications, such as multi-channel sampling, parallel interfaces, or connecting multiple different devices at once. The Bus Pirate, at the time of writing, can be purchased for a price similar to some Raspberry Pi models.
+The board is based on a PIC16 microcontroller running at 32\,MHz. Its analog/digital converter (ADC) only has a resolution of 10 bits (1024 levels). There is no digital/analog converter (DAC) available on the chip, making applications that require a varied output voltage more difficult. Another limitation of the board is its low number of GPIO pins which may be insufficient for certain applications. The Bus Pirate, at the time of writing, can be purchased for a price similar to some Raspberry Pi models.
 
 \section{Raspberry Pi}
 
 \todo[inline]{link, pictures}
 
-Another device worth mentioning, albeit of a different kind, is the Raspberry Pi. All models of the Raspberry Pi include a GPIO header which can be directly controlled by user applications. The pins broken out to this header can be used as general purpose I/O and some have alternate functions such as SPI or I$^2$C.
+The Raspberry Pi's GPIO header, which can be directly controlled by user applications, was one of the primary inspirations behind GEX. It can be controlled using C and Python (among others) and offers general purpose I\O, SPI, I2C, UART and PWM, with other protocols being easy to emulate thanks to the high speed of the system processor.
 
-The responsibility of controlling the attached external hardware lies on the user application, which also commonly provides the user interface, which greatly simplifies the development process. The control application can be written in almost any programming language. Python is a popular choice thanks to its simplicity, but it's by no means the only way to interact with the pins.
+The Raspberry Pi is commonly used in schools as a low-cost PC alternative that encourage students' interest in electronics, programming and science. The board is often built into more permanent projects that make use of its powerful processor, such as wildlife camera traps or home automation projects.
 
-The Raspberry Pi is commonly used in primary schools as a low-cost PC alternative that encourage students' interest in electronics and science. The board is, further, often built into more permanent projects that make use of its powerful processor, such as camera traps for wildlife observations. 
+The Raspberry Pi could be used for the same quick evaluations or experiments we want to perform with GEX, however they would either have to be performed directly on the mini-computer itself with attached monitor and keyboard, or use some form of remote access (e.g. SSH). When we have a more powerful computer available, a USB device like GEX would be more convenient.
 
-The Raspberry Pi could be used for the quick evaluations or experiments we want to perform with GEX, however they would either have to be performed directly on the mini-computer itself (with attached monitor and keyboard), or use some form of remote access. 
+\section{Professional DAQ Modules}
 
-\section{The Firmata protocol}
+Various professional tools that would fulfill our needs exist on the market, but their high price makes them inaccessible for users with a limited budget, such as hobbyists or students who would like to keep such a device for personal use. An example is the National Instruments "I²C/SPI Interface Device", which also includes several GPIO lines, or some of the Total Phase I²C/SPI gadgets which sell for about \$300 a piece. 
 
-\todo[inline]{links}
-\todo[inline]{Move this elsewhere}
-
-Firmata is a serial communication protocol based on MIDI (\textit{Musical Instrument Digital Interface}) for passing data to and from embedded microcontrollers. MIDI is primarily used for attaching electronic musical instruments, such as synthesizers, keyboards, mixers etc., to each other or to a PC.
-
-Firmata was designed for use with the Arduino firmware to allow easy construction of user programs (called \textit{sketches} in the Arduino environment) that communicate with a client application running on the PC without having to worry about technical details.\todo{citation}
-
-Implementing the Firmata protocol in a universal hardware interfacing module would make it possible to use existing Firmata client libraries. However, it is constricted by the limitations of the encompassing MIDI protocol and offers little flexibility.
-
-\section{Professional DAQ modules}
-
-A range of professional tools that would fulfill our needs exist on the market,
-however their common property is a high price. This makes them inaccessible for users with a limited budget, such as hobbyists or students who would like to keep such a device for personal use. An example falling into this category is the National Instruments "I²C/SPI Interface Device", which also includes several GPIO lines, or some of the Total Phase I²C/SPI gadgets which sell for about \$300 a piece. 
-
-The performance GEX can provide will certainly be far inferior to those professional tools, however this drawback is balanced by its greater flexibility and for most applications it should be perfectly sufficient, and at a fraction of the cost.
+The performance GEX can provide may be inferior to those professional tools, but in many cases it'll be a sufficient substitute at a fraction of the cost.
 
 \todo[inline]{http://www.ni.com/en-gb/shop/select/i2c-spi-interface-device} 
 
 \todo[inline]{pictures}
+
+\section{The Firmata Protocol}
+
+\todo[inline]{links}
+
+Firmata is a communication protocol based on MIDI (\textit{Musical Instrument Digital Interface}) for passing data to and from embedded microcontrollers. MIDI is mainly used for attaching electronic musical instruments, such as synthesizers, keyboards, mixers etc., to each other or to a PC. Firmata was designed for Arduino as a high level abstraction for its connection to the PC, typically using a FTDI chip or equivalent.
+
+Implementing Firmata in the GEX firmware would make it possible to use existing Firmata libraries on the PC side. However, the protocol is limited by the encompassing MIDI format and isn't very flexible. 
 

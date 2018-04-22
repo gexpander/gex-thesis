@@ -4,7 +4,7 @@ This chapter presents an overview of the \textit{Universal Serial Bus} (USB) \te
 
 \section{Basic Principles and Terminology}
 
-%TODO add a diagram of the hierarchical topology
+\todo[inline]{add a diagram of the hierarchical topology}
 
 USB is a hierarchical bus with a single master (\textit{host}) and multiple slave devices. A USB device that provides functionality to the host is called a \textit{function}. Communication between the host and a function is organized into virtual channels called \textit{pipes}. Each pipe is identified by an \textit{endpoint} number. 
 
@@ -22,11 +22,12 @@ There are four types of transfers: control, bulk, isochronous, and interrupt. Ea
 The endpoint transfer type and other characteristics, together with other information about the device, such as the serial number, are defined in a \textit{descriptor table}. This is a tree-like binary structure defined in the function's memory. The descriptor table is loaded by the host to learn about the used endpoints and to attach the right driver to it.
 
 The function's endpoints are grouped into \textit{interfaces}. An interface describes a logical connection of endpoints, such as the reception and transmission endpoint that belong together. An interface is assigned a \textit{class} defining how it should be used. Standard classes are defined by the USB specification to provide a uniform way of interfacing devices of the same type, such as human-interface devices (mice, keyboards, gamepads) or mass storage devices. The use of standard classes makes it possible to re-use the same driver software for devices from different manufacturers. The class used for the GEX's "virtual COM port" function was originally meant for telephone modems, a common way of connecting to the Internet at the time the first versions of USB were developed. A device using this class will show as \verb|/dev/ttyACM0| on Linux and as a COM port on Windows, provided the system supports it natively or the right driver is installed.
-%TODO add reference to the document
 
-%TODO fix: massive gap here
+\todo[inline]{add reference to the document}
 
-%function - https://technet.microsoft.com/en-us/library/cc939102.aspx
+\todo[inline]{fix: massive gap here}
+
+\todo[inline]{function - https://technet.microsoft.com/en-us/library/cc939102.aspx}
 
 \newpage
 \input{fig.gex-descriptors}
@@ -52,8 +53,7 @@ The USB cable contains 4 conductors:
 
 The data lines, D+ and D--, are also commonly labeled DP and DM. This differential pair should be routed in parallel and kept at approximately the same length.
 
-USB revisions are, where possible, backwards compatible, often even keeping the same connector shape. The bus speed is negotiated by the device using a 1.5\,k$\Omega$ pull-up resistor (to 3.3\,V) on one of the data lines: for Full Speed, D+ is pulled high (fig. \label{fig:usb-pullup-fs}), for Low Speed the pull-up is on the D-- line. The polarity of the differential signals is inverted depending on the used speed. Some microcontrollers integrate the correct pull-up resistor inside the USB block, removing the need for an external resistor.
-
+USB revisions are, where possible, backwards compatible, often even keeping the same connector shape. The bus speed is negotiated by the device using a 1.5\,k$\Omega$ pull-up resistor to 3.3\,V on one of the data lines: for Full Speed, D+ is pulled high (fig. \label{fig:usb-pullup-fs}), for Low Speed it's on D--. The polarity of the differential signals is inverted depending on the used speed. Some microcontrollers integrate the correct pull-up resistor inside the USB block (including out STM32F072), removing the need for an external resistor.
 
 \begin{figure}
 	\centering
@@ -61,27 +61,29 @@ USB revisions are, where possible, backwards compatible, often even keeping the 
 	\caption{\label{fig:usb-pullup-fs}Pull-up and pull-down resistors of a Full Speed function, as prescribed by the USB specification rev. 2.0}
 \end{figure}
 
-When a function needs the host to re-enumerate it, that is, reload the descriptors and re-attach the correct drivers, it can momentarily remove the pull-up resistor, which the host will interpret as if the device was plugged out. In the case of an internal pull-up, this can be done by flipping a control bit. An external resistor could be connected through a transistor to facilitate re-enumeration, or it might be driven directly by a GPIO pin. 
+When a function wants to be re-enumerated by the host, which is needed to reload the descriptors and re-attach the correct drivers, it can momentarily remove the pull-up resistor, which the host will interpret as if the device was plugged out. With an internal pull-up this can be done by flipping a bit in a control register. An external resistor can be connected through a transistor controlled by a GPIO pin. 
 
-%https://www.eevblog.com/forum/projects/driving-the-1k5-usb-pull-up-resistor-on-d/
-%http://www.beyondlogic.org/usbnutshell/usb2.shtml
+\todo[inline]{https://www.eevblog.com/forum/projects/driving-the-1k5-usb-pull-up-resistor-on-d/}
+\todo[inline]{http://www.beyondlogic.org/usbnutshell/usb2.shtml}
 
-The V$_\mathrm{BUS}$ line supplies power to the function in the case of a \textit{bus-powered} device. \textit{Self-powered} devices can leave this pin unconnected and instead use an external power supply. The maximal current drawn from the V$_\mathrm{BUS}$ line is configured using a descriptor and should not be exceeded.
+The V$_\mathrm{BUS}$ line supplies power to \textit{bus-powered} devices. \textit{Self-powered} devices can leave this pin unconnected and instead use an external power supply. The maximal current drawn from the V$_\mathrm{BUS}$ line is configured using a descriptor and should not be exceeded, but experiments suggest this is often not enforced.
 
 \section{USB Classes}
 
-This section explains the function of the Mass Storage class and the CDC/ACM class that find use in the GEX firmware. A list of all standard classes with a more detailed explanation can be found in \todo{link to the ref manual}.
+This section explains the Mass Storage class and the CDC/ACM class that are used in the GEX firmware. A list of all standard classes with a more detailed explanation can be found in \todo{link to the ref manual}.
 
 \subsection{Mass Storage Class}
 
-The Mass Storage class (MSC) is natively supported by all modern operating systems (MS Windows, MacOS, GNU/Linux, FreeBSD etc.) and finds use in thumb drives, external disks, memory card readers and other storage devices. 
+The Mass Storage class (MSC) is supported by all modern operating systems (MS Windows, MacOS, GNU/Linux, FreeBSD etc.) to support thumb drives, external disks, memory card readers and other storage devices.
+\todo[inline]{links}
 %http://www.usb.org/developers/docs/devclass_docs/Mass_Storage_Specification_Overview_v1.4_2-19-2010.pdf
 %http://www.usb.org/developers/docs/devclass_docs/usbmassbulk_10.pdf
 
 The MSC specification defines multiple \textit{transport protocols} that can be selected using the descriptors. For it's simplicity, the \textit{Bulk Only Transport} (BOT) will be used. BOT uses two bulk endpoints for reading and writing blocks of data and for the exchange of control commands and status messages. For the device to be recognized by the operating system, it must also implement a \textit{command set}. Most mass storage devices use the \textit{SCSI Transparent command set} 
-\footnote{To confirm this assertion, the descriptors of five thumb drives and an external hard disk were analyzed using \verb|lsusb|. All but one device used the SCSI command set, one (incidentally the oldest) used \textit{SFF-8070i}. A list of possible different command sets can be found in TODO (usb spec overview)}.
-The defined commands let the host read information about the attached storage, such as its capacity, and check for media presence and readiness to write or detach.
+\footnote{To confirm this assertion, the descriptors of five thumb drives and an external hard disk were analyzed using \verb|lsusb|. All but one device used the SCSI command set, one (the oldest thumb drive) used \textit{SFF-8070i}. A list of possible command sets can be found in TODO (usb spec overview)}.
+The command set's commands let the host read information about the attached storage, such as its capacity, and check for media presence and readiness to write or detach. This is used e.g. for the "Safely Remove" function which checks that all internal buffers have been written to Flash.
 
+\todo[inline]{links}
 
 % weird flash - SFF-8070i subclass
 
@@ -91,25 +93,26 @@ The defined commands let the host read information about the attached storage, s
 
 %http://janaxelson.com/mass_storage_faq.htm
 
-The MSC class together with the SCSI command set are rather complicated, thankfully a driver library is provided by ST Microelectronics that can be used as given, or customized. The library also includes a CDC/ACM implementation.
+The MSC class together with the SCSI command set are implemented in a USB Device library provided by ST Microelectronics. The library also includes a basic CDC/ACM implementation (see below).
 
-In order to emulate a mass storage device without having a physical storage medium, we need to generate and parse the filesystem on-the-fly, as the host OS tries to access it. This will be discussed in chapter ??\todo{chapter num}.
+In order to emulate a mass storage device without having a physical storage medium, we need to generate and parse the filesystem on-the-fly as the host OS tries to access it. This will be discussed in chapter ??\todo{chapter num}.
 
-\subsection{CDC/ACM Class}
+\subsection{CDC/ACM Class} \label{sec:cdc-acm}
 
 %https://www.keil.com/pack/doc/mw/USB/html/group__usbd__cdc_functions__acm.html
 
-Historically meant for modem communication, this class is now the de facto standard way of making USB devices appear as serial ports on the host OS. The CDC (\textit{Communication Device Class}) class uses three endpoints: bulk IN and OUT, and an interrupt endpoint. 
+Historically meant for modem communication, this class is now the de facto standard way of making USB devices appear as serial ports on the host OS. The CDC (\textit{Communication Device Class}) uses three endpoints: bulk IN and OUT, and an interrupt endpoint. 
 
-The interrupt endpoint is used for commands and notifications about the modem line, while the bulk endpoints are used for useful data. ACM stands for \textit{Abstract Control Model} and it's a CDC's subclass that defines the control messages format. Since we don't use any physical serial port in this implementation and the line is virtual both on the PC and in the end device, the interrupt endpoint can mostly be ignored.
+\todo{verify this vvv}
+The interrupt endpoint is used for control commands and notifications while the bulk endpoints are used for useful data. ACM stands for \textit{Abstract Control Model} and it's a CDC's subclass that defines the control messages format. Since we don't use a physical UART and the line is virtual both on the PC and in the end device, the control commands can be ignored.
 
-An interesting property of this class is that the bulk endpoints transport raw data without any wrapping frames. By changing the device class in the descriptor table to 255 (\textit{Vendor Specific Class}), we can retain the messaging functionality of the designated endpoints and access the device directly using e.g. libUSB, whereas the OS will ignore the device and won't try to attach the serial port driver, which would otherwise interfere. The same trick can be used to hide the mass storage class, when not needed.
+An interesting property of this class is that the bulk endpoints transport raw data without any wrapping frames. By changing the device class in the descriptor table to 255 (\textit{Vendor Specific Class}), we can retain the messaging functionality of the designated endpoints and access the device directly using e.g. libUSB, while the OS will ignore it and won't try to attach any driver that could interfere otherwise. The same trick can be used to hide the mass storage class when not needed.
 
 \subsection{Interface Association: Composite Class}
 
-Since it's creation, the USB specification expected that each function will have only one interface enabled at a time. After it became apparent that there is a need for having multiple unrelated interfaces work in parallel, a workaround called the \textit{Interface Association Descriptor} (IAD) was devised. IAD is an entry in the descriptor table that defines which interfaces belong together and should be handled by the same driver.
+Since it's creation, the USB specification expected that each function will have only one interface enabled at a time. After it became apparent that there is a need for having multiple unrelated interfaces work in parallel, a workaround called the \textit{Interface Association Descriptor} (IAD) was introduced. IAD is an entry in the descriptor table that defines which interfaces belong together and should be handled by the same software driver.
 
-To use the IAD, the function's class must be set to 239 (EFh), subclass 2, protocol 1 (in the top level descriptor), so the OS knows to look for the presence of IADs before binding drivers to any interfaces. 
+To use the IAD, the function's class must be set to 239 (EFh), subclass 2 and protocol 1, so the OS knows to look for the presence of IADs before binding drivers to any interfaces. 
 
 % TODO link to some references..
 
@@ -117,7 +120,6 @@ In GEX, the IAD is used to tie together the CDC and ACM interfaces while leaving
 
 %http://www.usb.org/developers/docs/whitepapers/iadclasscode_r10.pdf
 
-\todo{examples of descriptors?}
 
 
 

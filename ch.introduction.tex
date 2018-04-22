@@ -1,16 +1,24 @@
-\chapter{Introduction}
+\chapter{Motivation}
 
-Prototyping, design evaluation and the measurement of physical properties in experiments make a daily occurrence in the engineering praxis. This task typically involves the generation and capture of electrical signals coming to and from specialized sensors, actuators and other circuitry. As the technology advanced, mainly driven by the consumer electronics market and the automotive industry, a variety of affordable integrated sensors became available. Those devices can provide a sufficient accuracy and precision for the task at hand while keeping the circuit complexity down by integrating a large portion of the necessary circuitry together with the sensor on a single chip or in a compact module. Those modern components gives as a low cost alternative to expensive laboratory equipment and much larger instruments previously used.\todo{concrete examples}
+Prototyping, design evaluation and the measurement of physical properties in experiments make a daily occurrence in the engineering praxis. Those tasks typically involve the generation and sampling of electrical signals coming to and from sensors, actuators, and other circuitry. 
 
-However, the drive for miniaturization and the advent of modern hardware buses, in particular USB (Universal Serial Bus), lead to the disappearance of low level computer ports, such as the once ubiquitous parallel port, that would provide an easy way of connecting those digital devices (and low level hardware in general) to personal computers. 
+In the recent years a wide range of intelligent sensors became available thanks to the drive for miniaturization in the consumer electronics industry. Those devices often provide a sufficient accuracy and precision while keeping the circuit complexity and cost low. In contrast to analog sensors, here the signal conditioning and processing circuits are built into the sensor itself and we interface it using a digital connection.
 
-Today, when one wants to perform some measurements using a digital sensor, the usual route is to implement an embedded firmware for a microcontroller that can be connected to the PC through USB. This approach makes it possible to optimize the solution for a particular task and achieve high performance. However, building such a specialized tool, or even writing the firmware alone, is time-consuming and requires domain knowledge that is entirely removed from the measurements we want to perform with it.
+It's natural that we'd want to communicate with those integrated sensors from our computers and laptops to perform experiments or even to just get familiar with the particular device before using it in a project. It's also convenient to have a direct access to hardware, be it analog signal sampling, generation, or even just logic level inputs and outputs. However, the drive for miniaturization and the advent of USB (Universal Serial Bus) lead to the disappearance of low level computer ports, such as the printer port (LPT), that would provide an easy way of doing so.
 
-Clearly it would be advantageous to have a way to easily attach those integrated devices and low other level hardware to a PC without having to burden ourselves with technicalities of the connection, even at the cost of lower performance compared to a specialized device or a professional tool. The design and implementation of such a user-friendly, general purpose hardware interfacing system is the object of this work.
+Today, when one wants to perform some measurements using a digital sensor, the usual route is to implement an embedded firmware for a microcontroller that connects to the PC through USB, or perhaps just shows the results on a display. This approach has some advantages, but is time-consuming and requires knowledge entirely unrelated to the measurements we wish to perform. It would be advantageous to have a way to interface hardware without having to burden ourselves with the technicalities of the connection, even at the cost of lower performance compared to a specialized device or a professional tool. 
 
+The design and implementation of such a universal instrument is the object of this work. For technical reasons, such as naming the source code repositories, we need a name for the project; it'll hereafter be referred to as \textit{GEX}, originating from GPIO Expander.
 
+\section{Project's Expected Outcome}
 
+The idea behind GEX has formed over many years, and it's the author's belief that many engineers have at some point wanted to build something similar, and often did so. Indeed, several projects approaching this problem from different angles can be found on the internet; those will be presented in chapter \ref{sec:prior-art}. The aim here is to build an extensible open source platform that others could re-use and adapt to their specific needs.
 
+Building on the experience with earlier embedded projects, a STM32 microcontroller shall be used. Those are ARM Cortex M devices with a wide range of hardware peripherals that appear be a good fit for the project. Low-cost evaluation boards are widely available that could be used as a hardware platform instead of developing a custom PCB. In addition, those chips are relatively cheap and popular in the embedded hardware community; there's a good possibility of the project building a community around it and growing beyond what will be presented in this paper.
+
+Besides the use of existing development boards, custom PCBs will be developed in different form factors. Those could use the Arduino connector or the Raspberry Pi Zero GPIO header (and board shape) to exploit the cases and boxes available for the minicomputer on the market, as well as add-on boards (\textit{shields} and \textit{HATs}).
+
+The possibilities of wireless connection should be evaluated. This feature would make GEX more convenient to use when it's attached e.g. to a mobile robot or installed in poorly accessible locations.
 
 
 
