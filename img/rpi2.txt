@@ -1,0 +1,4 @@
+img   https://www.raspberrypi.org/app/uploads/2015/01/Pi2ModB1GB_-comp.jpeg
+page  https://www.raspberrypi.org/blog/raspberry-pi-2-on-sale/
+Raspberry PI 2
+RASPBERRY PI FOUNDATION

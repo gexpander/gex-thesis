@@ -1,12 +1,24 @@
 \chapter{Universal Serial Bus}
 
-This chapter presents an overview of the \textit{Universal Serial Bus} (USB) \textit{Full Speed} interface, with focus on the features used in the GEX firmware. USB is a versatile but complex interface, thus explaining it in its entirety is beyond the scope of this text. References to external materials which explain the protocol in greater detail will be provided for the interested reader.\todo{add those refs}
+This chapter presents an overview of the \textit{Universal Serial Bus} (USB) \textit{Full Speed} interface, with focus on the features used in the GEX firmware. USB is a versatile but complex interface, thus explaining it in its entirety is beyond the scope of this text. References to external material which explains the protocol in greater detail will be provided where appropriate.\todo{add those refs}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth] {img/usb-hierarchy.png}
+	\caption{\label{fig:usb-hierarchy}A diagram from the USB specification rev. 1.1 showing the hierarchical structure of the USB bus; The PC (Host) controls the bus and initiates all transactions.}
+\end{figure}
 
 \section{Basic Principles and Terminology}
 
-\todo[inline]{add a diagram of the hierarchical topology}
+\todo[inline]{review and correct inaccuracies}
 
-USB is a hierarchical bus with a single master (\textit{host}) and multiple slave devices. A USB device that provides functionality to the host is called a \textit{function}. Communication between the host and a function is organized into virtual channels called \textit{pipes}. Each pipe is identified by an \textit{endpoint} number. 
+USB is a hierarchical bus with a single master (\textit{host}) and multiple slave devices. A USB device that provides functionality to the host is called a \textit{function}. Communication between the host and a function is organized into virtual channels called \textit{pipes}. Each pipe is identified by an \textit{endpoint} number.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\textwidth] {img/usb-structure.png}
+	\caption{\label{fig:usb-logical}A detailed view of the host-device connection (\textit{USB specification rev. 1.1})}
+\end{figure}
 
 Endpoints can be either unidirectional or bidirectional; the direction from the host to a function is called \textit{OUT}, the other direction (function the host) is called IN. A bidirectional endpoint is technically composed of a IN and OUT endpoint with the same number. All transactions (both IN and OUT) are initiated by the host; functions have to wait for their turn. Endpoint 0 is bidirectional, always enabled, and serves as a \textit{control endpoint}. The host uses the control endpoint to read information about the device and configure it as needed.
 
@@ -25,9 +37,7 @@ The function's endpoints are grouped into \textit{interfaces}. An interface desc
 
 \todo[inline]{add reference to the document}
 
-\todo[inline]{fix: massive gap here}
-
-\todo[inline]{function - https://technet.microsoft.com/en-us/library/cc939102.aspx}
+% function - https://technet.microsoft.com/en-us/library/cc939102.aspx}
 
 \newpage
 \input{fig.gex-descriptors}
@@ -57,7 +67,7 @@ USB revisions are, where possible, backwards compatible, often even keeping the 
 
 \begin{figure}
 	\centering
-	\includegraphics[width=\textwidth]{img/usb-pullup-fs.png}
+	\includegraphics[width=.8\textwidth]{img/usb-pullup-fs.png}
 	\caption{\label{fig:usb-pullup-fs}Pull-up and pull-down resistors of a Full Speed function, as prescribed by the USB specification rev. 2.0}
 \end{figure}
 
@@ -70,12 +80,13 @@ The V$_\mathrm{BUS}$ line supplies power to \textit{bus-powered} devices. \texti
 
 \section{USB Classes}
 
-This section explains the Mass Storage class and the CDC/ACM class that are used in the GEX firmware. A list of all standard classes with a more detailed explanation can be found in \todo{link to the ref manual}.
+This section explains the Mass Storage class and the CDC/ACM class that are used in the GEX firmware. A list of all standard classes with a more detailed explanation can be found on the USB.org website at \url{http://www.usb.org/developers/defined\_class}.
 
 \subsection{Mass Storage Class}
 
 The Mass Storage class (MSC) is supported by all modern operating systems (MS Windows, MacOS, GNU/Linux, FreeBSD etc.) to support thumb drives, external disks, memory card readers and other storage devices.
-\todo[inline]{links}
+
+\todo[inline]{references}
 %http://www.usb.org/developers/docs/devclass_docs/Mass_Storage_Specification_Overview_v1.4_2-19-2010.pdf
 %http://www.usb.org/developers/docs/devclass_docs/usbmassbulk_10.pdf
 
@@ -95,7 +106,7 @@ The command set's commands let the host read information about the attached stor
 
 The MSC class together with the SCSI command set are implemented in a USB Device library provided by ST Microelectronics. The library also includes a basic CDC/ACM implementation (see below).
 
-In order to emulate a mass storage device without having a physical storage medium, we need to generate and parse the filesystem on-the-fly as the host OS tries to access it. This will be discussed in chapter ??\todo{chapter num}.
+In order to emulate a mass storage device without having a physical storage medium, we need to generate and parse the filesystem on-the-fly as the host OS tries to access it. This will be discussed in chapter \ref{sec:fat16}.
 
 \subsection{CDC/ACM Class} \label{sec:cdc-acm}
 

@@ -1,0 +1,2 @@
+USB Interlayer Communications Model
+the usb spec

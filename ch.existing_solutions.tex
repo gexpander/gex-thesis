@@ -4,7 +4,13 @@ The idea of making it easier to interact with low level hardware from a PC is no
 
 \section{Bus Pirate}
 
-\todo[inline]{pictures}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.6\textwidth] {img/buspirate.jpg}
+	\caption{\label{fig:buspirate}Bus Pirate v.4 (picture by \textit{Seeed Studio})}
+\end{figure}
+
+\todo[inline]{link to pic source page}
 
 %http://dangerousprototypes.com/blog/about/
 
@@ -18,7 +24,11 @@ The board is based on a PIC16 microcontroller running at 32\,MHz. Its analog/dig
 
 \section{Raspberry Pi}
 
-\todo[inline]{link, pictures}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.6\textwidth] {img/rpi2.jpg}
+	\caption{\label{fig:rpi2}Raspberry Pi 2 (picture by \textit{Raspberry Pi Foundation})}
+\end{figure}
 
 The Raspberry Pi's GPIO header, which can be directly controlled by user applications, was one of the primary inspirations behind GEX. It can be controlled using C and Python (among others) and offers general purpose I\O, SPI, I2C, UART and PWM, with other protocols being easy to emulate thanks to the high speed of the system processor.
 
@@ -28,13 +38,29 @@ The Raspberry Pi could be used for the same quick evaluations or experiments we 
 
 \section{Professional DAQ Modules}
 
-Various professional tools that would fulfill our needs exist on the market, but their high price makes them inaccessible for users with a limited budget, such as hobbyists or students who would like to keep such a device for personal use. An example is the National Instruments "I²C/SPI Interface Device", which also includes several GPIO lines, or some of the Total Phase I²C/SPI gadgets which sell for about \$300 a piece. 
+Various professional tools that would fulfill our needs exist on the market, but their high price makes them inaccessible for users with a limited budget, such as hobbyists or students who would like to keep such a device for personal use. An example is the National Instruments (NI) "I²C/SPI Interface Device" which also includes several GPIO lines, the NI USB DAQ module, or some of the Total Phase I²C/SPI gadgets (figure \ref{fig:profidaq}). The performance GEX can provide may not always match that of those professional tools, but in many cases it'll be a sufficient substitute at a fraction of the cost.
 
-The performance GEX can provide may be inferior to those professional tools, but in many cases it'll be a sufficient substitute at a fraction of the cost.
+\begin{figure}
+	\centering
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=.8\linewidth]{img/ni-i2c-device.jpg}
+		\caption{NI I²C/SPI Interface Device}
+	\end{subfigure}%
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=.8\linewidth]{img/nidaq.jpg}
+		\caption{NI USB DAQ module}
+	\end{subfigure}
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=.8\linewidth]{img/total-phase-spi-i2c.jpg}
+		\caption{Total Phase SPI/I²C Host "Aardwark"}
+	\end{subfigure}
+	\caption[Professional tools that GEX can replace]{\label{fig:profidaq}An example of professional tools that GEX could replace in less demanding scenarios (pictures taken from marketing materials)}
+\end{figure}
 
-\todo[inline]{http://www.ni.com/en-gb/shop/select/i2c-spi-interface-device} 
-
-\todo[inline]{pictures}
+%http://www.ni.com/en-gb/shop/select/i2c-spi-interface-device}
 
 \section{The Firmata Protocol}
 
