@@ -1,0 +1,1 @@
+SPI single-slave connection, source STM F072 reference manual

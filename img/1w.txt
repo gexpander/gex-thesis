@@ -1,0 +1,1 @@
+Dallas Semiconductor AN162 - Interfacing the DS18x20

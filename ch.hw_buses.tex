@@ -2,38 +2,89 @@
 
 \section{UART and USART}
 
-The \textit{Universal Synchronous / Asynchronous Receiver Transmitter} has a long history and is still in widespread use today. It is the protocol used in RS-232, which can be considered a predecessor of USB in some aspects. RS-232 was once a common way of connecting modems, printers, mice and other devices to personal computers. UART framing is also used in the industrial bus RS-485.
+The \textit{Universal Synchronous / Asynchronous Receiver Transmitter} has a long history and is still in widespread use today. It is the protocol used in RS-232, which was once a common way of connecting modems, printers, mice and other devices to personal computers. UART framing is also used in the industrial bus RS-485.
 
-UART, as implemented by microcontrollers, is a two-wire full duplex interface that uses 3.3\,V or 5\,V logic levels. The data lines are high when idle. A frame starts by a start-bit (low) followed by \textit{n} data bits (typically eight), an optional parity bit and 0.5 to 2 stop bits (high). Variants with fewer or more bits exist, especially in older hardware. The parity bit can be odd, even, or missing entirely. A stop bit is usually 1 clock cycle long; other lengths are used in protocols derived from UART, such as in the SmartCard interface. \todo{reference}
+UART and USART are two variants of the same interface. USART includes a separate clock signal, while the UART timing relies on a well-known clock speed and the bit clock is synchronized by start bits. USART was historically used in modems to achieve higher bandwidth, but is now mostly obsolete.
 
-\todo[inline]{figure}
+USART, as implemented by microcontrollers such as the STM32 family, is a two-wire full duplex interface that uses 3.3\,V or 5\,V logic levels. The data lines are in the high logical level when idle. A frame, pictured in figure \ref{fig:uart-frame} starts by a start-bit (low level for the period of one bit) followed by \textit{n} data bits (typically eight), an optional parity bit and a period of high level called a stop bit or stop bits, usually between one and two bits long.
 
-UART and USART are two variants of the same interface. USART includes a clock signal and should therefore support higher frequencies. UART timing relies on a well-known clock speed and is synchronized by start bits. In RS-232 the two data lines (Rx and Tx) are accompanied by RTS (Ready To Send), CTS (Clear To Send) and DTR (Data Terminal Ready) that facilitate handshaking and hardware flow control.
+\begin{figure}
+	\centering
+	\includegraphics[width=.8\textwidth] {img/usart.png}
+	\caption{\label{fig:uart-frame}UART frame, as shown by the STM32F072 Reference Manual. Break frames are used by some UART based protocols, like LIN (Local Interconnect Network).}
+\end{figure}
+ 
+RS-232 uses the UART framing, but its logic levels are different: logical 1 is represented by negative voltages $-3$ to $-25$\,V and logical 0 uses the same range, but positive. To convert between RS232 levels and TTL (5\,V) levels, a level-shifting circuit such as the MAX232 can be used. In RS232, the two data lines (Rx and Tx) are accompanied by RTS (Ready To Send), CTS (Clear To Send) and DTR (Data Terminal Ready) which facilitate handshaking and hardware flow control. In practice, those additional signals are often unused or their function differs; for instance, Arduino boards (using a USB-serial converter) use the DTR line as a reset signal to automatically enter their bootloader for firmware flashing.
 
 \todo[inline]{examples}
 
 \section{SPI}
 
-SPI (Serial Peripheral Interface) is a point-to-point or multi-drop master-slave interface based on shift registers. It uses at least 4 wires: SCK (Serial Clock), MOSI (Master Out Slave In), MISO (Master In Slave Out) and SS (Slave Select). SS is often marked CSB (Chip Select Bar) or NSS (Negated Slave Select) to indicate it's active low. Slave devices are addressed using their Slave Select input while the other wires are shared. A slave that's not addressed releases the MISO line to a high impedance state so it doesn't interfere in ongoing communication.
+SPI (Serial Peripheral Interface) is a point-to-point or multi-drop master-slave interface based on shift registers. The SPI connection with multiple slave devices is depicted in figure \ref{fig:spi-multislave}. It uses at least 4 wires: SCK (Serial Clock), MOSI (Master Out Slave In), MISO (Master In Slave Out) and SS (Slave Select). SS is often marked CSB (Chip Select Bar) or NSS (Negated Slave Select) to indicate it's active low. Slave devices are addressed using their Slave Select input while the data connections are shared. A slave that's not addressed releases the MISO line to a high impedance state so it doesn't interfere in ongoing communication.
 
-Transmission and reception on the SPI bus happen at the same time. A bus master asserts the SS pin of a slave it wishes to address and then sends data on the MOSI line while receiving a response on MISO. The slave doesn't know the command before the first byte is completed, so it usually responds with zeros or sends a status byte in this phase.
-
-\todo[inline]{figure}
+Transmission and reception on the SPI bus happen simultaneously. A bus master asserts the SS pin of a slave it wishes to address and then sends data on the MOSI line while receiving a response on MISO. It's customary that the slave responds with zeros or a status byte as the first byte of the response.
 
 SPI devices often provide a number of control, configuration and status registers that can be read and written by the bus master. The first byte of a command usually contains one bit that determines if it's a read or write access, and an address field selecting the target register.
+
+\begin{figure}
+	\centering
+	\includegraphics[width=.9\textwidth] {img/spi-multislave.png}
+	\caption{\label{fig:spi-multislave}A SPI bus with 1 master and 3 slaves, each enabled by its own Slave Select signal (\textit{STM32F072 Reference Manual})}
+\end{figure}
 
 \todo[inline]{examples}
 
 \section{I2C}
 
-Last of the three common protocols covered here is be I2C. It's a two-wire, open-drain bus that supports multi-master operation. I2C is more complicated than either UART or SPI; it supports 3 speeds \todo{speeds}.
+I2C is a two-wire (SDA--\textit{Serial Data}, SCL--\textit{Serial Clock}), open-drain bus that supports multi-master operation. The protocol was developed by Philips Semiconductor (now NXP Semiconductors) and until 2006 implementors were required to pay licensing fees, leading to the development of compatible implementations with different names, such as Atmel's Two Wire Interface (TWI). I2C is the basis of the SMBus and PMBus protocols which add additional constraints and rules for a more robust operation.
 
-\todo[inline]{diagrams and more from the specification}
+I2C uses two addressing modes: 7-bit and 10-bit. Due to the small address space, exacerbated by many devices implementing only the 7-bit addressing, collisions between chips from different manufacturers are common; many devices thus offer several pins to let the board designer choose a few bits of the address by connecting them to different logic levels. I2C allows slow slave devices to stop the master from sending more data by holding the SCL line low at the end of a byte. As the bus is open-drain, the line can't go high until all participants release it. This function is called \textit{Clock Stretching}.
+
+\begin{figure}
+	\centering
+	\includegraphics[width=.9\textwidth] {img/i2c-frame.png}
+	\caption{\label{fig:i2c-frame}An I2C message. The frame starts with a start condition and stops with a stop condition, defined by an SDA edge while SCL is high. The address and data bytes are acknowledged by the slave by sending a 0 on the open-drain SDA line in the following clock cycle. A slave can terminate the transaction by sending 1 in place of the acknowledge bit. (\textit{Diagram taken from the I2C specification UM10204 by NXP Semiconductors})}
+\end{figure}
+
+The bus supports multi-master operation, which leads to the problem of collisions. Multi-master capable devices must implement a bus arbitration scheme as specified by the I2C standard. This feature is not often used in intelligent sensors and modules; the most common topology is multi-drop single-master, similar to SPI, with the advantage of using only two pins on the microcontroller.
 
 \section{1-Wire}
 
-1-Wire uses a bi-directional data line that can also power the connected devices, giving the bus its name. TODO ,,,,,
+The 1-Wire bus, developed by Dallas Semiconductor, uses a single bi-directional data line which can also power the slave devices, reducing the number of required wires to just two (compare with 3 in I2C and 5 in SPI, all including GND). 
+
+1-Wire is open-drain and the communication consists of short pulses sent by the master and (for bit reading) the line continuing to be held low by the slave. The pulse timing (fig. \ref{fig:1w-pulses}) defines if it's a read or write operation and what bit value it carries. A transaction is started by a 480us long "reset" pulse send by master and ended by a 1-byte CRC checksum.
+
+\begin{figure}
+	\centering
+	\includegraphics[width=.9\textwidth] {img/1w-topology.png}
+	\caption{\label{fig:1w-topology}1-Wire topology (by \textit{Dallas Semiconductor})}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth] {img/1w-rw.png}
+\includegraphics[width=\textwidth] {img/1w-reset.png}
+\caption{\label{fig:1w-pulses}1-Wire DIO pulse timing (by \textit{Dallas Semiconductor})}
+\end{figure}
+
+1-Wire is a master-slave multi-drop bus. Devices are addressed by their unique 64-bit ID numbers (called ROMs); those IDs are found by the bus master with the cooperation from slaves using a ROM search protocol. If only one device is connected, a special command set can be used to skip addressing.
 
 \section{NeoPixel}
 
-...m,,,
+NeoPixel is a marketing name of the WS2811, WS2812 and compatible intelligent LED drivers that is commonly used in "addressable LED strips". Those chips include the control logic, PWM drivers and usually the LED diodes all in one miniature package.
+
+The NeoPixel protocol is unidirectional, using only one data pin. The LED drivers are chained together. Ones and zeros are encoded by a pulse length on the data pin; after loading the color data to the LED string, a longer "reset" pulse is issued by the bus master and the set colors are displayed.
+
+The NeoPixel timing is very sensitive to pulse length accuracy. Reliable ways to implement it use DMA with a hardware timer, or a I2S peripheral. An easier method that does not use any additional hardware resources is implementing the protocol as delay loops in the firmware; care must be taken to disable interrupts in the sensitive parts of the timing.
+
+
+
+
+
+
+
+
+
+
+
+
