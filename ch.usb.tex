@@ -5,7 +5,7 @@ This chapter presents an overview of the \textit{Universal Serial Bus} (USB) \te
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.8\textwidth] {img/usb-hierarchy.png}
-	\caption{\label{fig:usb-hierarchy}A diagram from the USB specification rev. 1.1 showing the hierarchical structure of the USB bus; The PC (Host) controls the bus and initiates all transactions.}
+	\caption[USB hierarchical structure]{\label{fig:usb-hierarchy}A diagram from the USB specification rev. 1.1 showing the hierarchical structure of the USB bus; The PC (Host) controls the bus and initiates all transactions.}
 \end{figure}
 
 \section{Basic Principles and Terminology}
@@ -63,12 +63,12 @@ The USB cable contains 4 conductors:
 
 The data lines, D+ and D--, are also commonly labeled DP and DM. This differential pair should be routed in parallel and kept at approximately the same length.
 
-USB revisions are, where possible, backwards compatible, often even keeping the same connector shape. The bus speed is negotiated by the device using a 1.5\,k$\Omega$ pull-up resistor to 3.3\,V on one of the data lines: for Full Speed, D+ is pulled high (fig. \label{fig:usb-pullup-fs}), for Low Speed it's on D--. The polarity of the differential signals is inverted depending on the used speed. Some microcontrollers integrate the correct pull-up resistor inside the USB block (including out STM32F072), removing the need for an external resistor.
+USB revisions are, where possible, backwards compatible, often even keeping the same connector shape. The bus speed is negotiated by the device using a 1.5\,k$\Omega$ pull-up resistor to 3.3\,V on one of the data lines: for Full Speed, D+ is pulled high (fig. \ref{fig:usb-pullup-fs}), for Low Speed it's on D--. The polarity of the differential signals is inverted depending on the used speed. Some microcontrollers integrate the correct pull-up resistor inside the USB block (including out STM32F072), removing the need for an external resistor.
 
 \begin{figure}
 	\centering
 	\includegraphics[width=.8\textwidth]{img/usb-pullup-fs.png}
-	\caption{\label{fig:usb-pullup-fs}Pull-up and pull-down resistors of a Full Speed function, as prescribed by the USB specification rev. 2.0}
+	\caption[USB pull-ups]{\label{fig:usb-pullup-fs}Pull-up and pull-down resistors of a Full Speed function, as prescribed by the USB specification rev. 2.0}
 \end{figure}
 
 When a function wants to be re-enumerated by the host, which is needed to reload the descriptors and re-attach the correct drivers, it can momentarily remove the pull-up resistor, which the host will interpret as if the device was plugged out. With an internal pull-up this can be done by flipping a bit in a control register. An external resistor can be connected through a transistor controlled by a GPIO pin. 
