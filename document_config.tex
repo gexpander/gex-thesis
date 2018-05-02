@@ -20,6 +20,8 @@
 
 \usepackage{bigfoot} % verbatin in footnote
 
+\usepackage{makecell}
+
 \newcommand{\uF}{\micro\farad}
 \newcommand{\nF}{\nano\farad}
 \newcommand{\cm}{\centi\metre}
@@ -43,7 +45,8 @@
 % Fix overful hbox
 \setlength{\emergencystretch}{.5em}
 
-\setsvg{svgpath=img/}
+%\setsvg{svgpath=img/}
+\svgpath{img/}
 
 % Nastavení ctuthesis
 
@@ -178,3 +181,15 @@
 \newcommand\nobr[1]{\mbox{#1}}
 
 \usepackage{pmboxdraw}
+
+
+% ---- Booktabs config ----
+
+%\setlength{\heavyrulewidth}{0.11em}
+%\setlength{\lightrulewidth}{0.05em}
+%\setlength{\cmidrulewidth}{0.03em}
+
+\setlength{\heavyrulewidth}{0.5mm}
+\setlength{\lightrulewidth}{0.25mm}
+\setlength{\cmidrulewidth}{0.25mm}
+

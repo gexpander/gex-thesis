@@ -48,7 +48,52 @@ A good approach to a universal measurement, when we don't know the expected freq
 
 The system clock's frequency, which we use to measure pulse lengths and to gate the pulse counter, will be affected by tolerances of the used components, the layout of the PCB, temperature effects etc., causing measurement errors. A higher accuracy could be achieved using a temperature-compensated oscillator (TCO), or, in the direct method, by using the synchronization pulse provided by a GPS receiver to time the measurement interval.
 
-\section{Waveform Generation with Direct Digital Synthesis}
+\section{Waveform Generation}
 
-\todo[inline]{todo}
+A waveform generator is a useful tool in many experiments and measurements. A sine stimulus is the basis of a lock-in amplifier; it can be used to measure impedance; with a frequency sweep, we can obtain the frequency response of an analog filter, etc. We can, of course, generate other waveforms, such as a triangle, ramp, or rectangle wave.
+
+The DAC peripheral can produce a DC level on the output pin based on a control word. When we periodically change its digital input, it produces an analog waveform. 
+
+\subsection{Waveform Generation with DMA and a Timer}
+
+A straightforward implementation of the waveform generator is illustrated in figure \ref{fig:wavegen-naive}. This approach has its advantages: it's simple and works entirely in the background, with no interrupt handling required. It could even be implemented entirely in software, using a loop periodically updating the DAC values, of course such approach is less flexible and we would run into problems with asynchronous interrupts.
+
+\begin{figure}
+	\centering
+	\includegraphics[scale=1] {img/wavegen-naive.pdf}
+	\caption{\label{fig:wavegen-naive}A simple implementation of the waveform generator}
+\end{figure}
+
+The highest achievable output frequency largely depends on the size of our look-up table. For instance, assuming a timer frequency of 48\,MHz and a 8192-word table, holding one period of the waveform, the maximum frequency would be short of 6\,kHz, whereas if we shorten the table to just 1024 words, we can get almost 47\,kHz on the analog output. The downside of a shorter table is a lower resolution, which will appear as DC plateaus or steps when observed with an oscilloscope, producing harmonic components similar to those of a square wave.
+
+A major disadvantage of this simple generation method is given by the limitations of the used timer, which defines the output frequency. Its output trigger fires when the internal counter reaches a pre-defined value, after which the counting register is reset. The counting speed is derived from the system clock frequency $f_\mathrm{c}$ using a prescaller $P$ and the set maximum value $N$. Only output frequencies that can be exactly expressed as $f=f_\mathrm{c}/(P\cdot N \cdot \mathrm{TableSize})$ can be accurately produced. Still, this simple and efficient method may be used where fine tuning is not required to take advantage of its fully asynchronous operation.
+
+\subsection{Direct Digital Synthesis}
+
+There are situations where the simple waveform generation method is not sufficient, particularly when a fine tuning or on-line frequency and phase changes are required. Those are the strengths of a signal generation method called \textit{Direct Digital Synthesis} (DDS).
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=1] {img/wavegen-dds.pdf}
+	\caption{\label{fig:wavegen-dds}A block diagram of a direct digital synthesis waveform generator}
+\end{figure}
+
+A diagram of a possible DDS implementation in the STM32 firmware is shown in figure \ref{fig:wavegen-dds}. It is based on a \textit{numerically controlled oscillator} (NCO). NCO consists of a \textit{phase accumulator} register and a \textit{tuning word} which is periodically added to it at a constant rate in a timer interrupt handler. The value of the tuning word determines the output waveform frequency. The look-up table must have a power-of-two length so that it can be addressed by the \textit{n} most significant bits of the phase accumulator. An additional control word could be added to this address to implement a phase offset for applications like a phase-shift modulation.
+
+The output frequency is calculated as \(f_\mathrm{out} = \dfrac{M\cdot f_\mathrm{c}}{2^n}\), where $M$ is the tuning word, $n$ is the bit length of the phase accumulator, and $f_c$ is the frequency of the phase-updating interrupt. The number of bits used to address the look-up table does not affect the output frequency; the table can be as large as the storage space allows. A tuning word value exceeding the lower part of the phase accumulator (including bits which directly enter the look-up address) will cause some values from the table to be skipped. A smaller tuning word, conversely, makes some values appear on the output more than once. This can be observed as steps or flat areas on the output. When the tuning word does not evenly divide $2^n$, that is, the modulo is non-zero, we can also observe jitter.
+
+\subsubsection{DDS Implemented in Hardware}
+
+DDS may be implemented in hardware, including the look-up table, often together with the DAC itself, which is then called a \textit{Complete DDS}. That is the case of e.g. AD9833 from Analog Devices. As the software implementation depends on a periodic interrupt, it's often advantageous to use a component like this when we need higher output frequencies where the use of an interrupt is not possible. GEX can control an external waveform generator like the AD9833 using an SPI port.
+
+\todo[inline]{screenshots of a real demo, also reference to all-about-direct-digital-synthesis.pdf}
+
+
+
+
+
+
+
+
+
 

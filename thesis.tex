@@ -20,6 +20,16 @@
 % abstract
 % TOC
 
+%TODO FAT 16 and its emulation
+%TODO touch sensing -> hw functions
+%TODO wireless
+%TODO schematics, pcb, photos
+
+%TODO add references (datasheet, specs)
+%TODO look for liberty free photos
+%TODO add image source references
+%TODO retrace diagrams?
+
 \part{Introduction}
 \input{ch.introduction}
 \input{ch.requirement_analysis}
@@ -29,13 +39,15 @@
 
 \input{ch.usb}
 \input{ch.freertos}
-\input{ch.fat16} % TODO
-\input{ch.hw_buses} % TODO
-\input{ch.hw_functions} % TODO
+\input{ch.fat16}
+\input{ch.hw_buses}
+\input{ch.hw_functions}
 
 \part{Firmware Implementation}
 
 \input{ch.fw_structure}
+\input{ch.tinyframe}
+\input{ch.wireless}
 \input{ch.gex_units}
 
 \part{Hardware Design}

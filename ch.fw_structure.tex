@@ -1,10 +1,10 @@
 \chapter{Application Structure}
 
-GEX was designed to be modular and easy to extend. At its core lies a general framework that provides services to the functional blocks configured and used by the user script running on the host PC. Functional blocks, or internally called \textit{units}, implement functions like SPI, I2C, GPIO access etc. 
+GEX is designed to be modular and easy to extend. It's composed of a set of functional blocks, sometimes available in more than one instance, which can be configured by the user to fit their application needs. The firmware is built around a \textit{core framework} which provides services to the functional blocks, such as a settings storage, resource allocation, message delivery and periodic updates.
 
-In this chapter we'll focus on the general function of the GEX module, look at implementation details of the core framework, and in the next chapter some space will be given to each of the functional blocks.
+In this chapter, we will focus on the general function of the GEX module and will look at the services provided by the core framework. Individual functional blocks and the control API will be described in the following chapters.\todo{references}
 
-\textit{A writing style note:} This and the following parts were written after implementing and evaluating the first hardware prototype and its firmware, therefore rather than describing the development process, it tends to talk about the completed solution. All design choices will nevertheless be explained as well as possible.
+\textit{A writing style note:} This and the following parts were written after implementing and evaluating the first hardware prototype and its firmware, therefore rather than describing the development process, it tends to talk about the completed solution and the decisions taken.
 
 \section{User's View of GEX}
 
@@ -20,51 +20,114 @@ In the case when a wireless communication module is installed on the PCB and GEX
 
 Now that GEX is connected and configured, the user can start using it. This involves writing a program in C or Python that uses the GEX client library, using the Python library from MATLAB, or controlling GEX using a GUI front-end built on those libraries. The configuration can be stored in the module, but it's also possible to temporarily (or permanently) replace it using the communication API. This way the settings can be loaded automatically when the user's program starts.
 
-\section{The Core Framework Functions}
 
-The core framework forms the skeleton of the firmware and usually doesn't need any changes when new user-facing features are added. It provides:
+\section{Functions of the Core Framework}
+
+The core framework forms the skeleton of the firmware and usually doesn't need any changes when new user-facing features are added. It provides the following services:
 
 \begin{itemize}
-	\item Hardware resource allocation
-	\item Settings storage and loading
-	\item Functional block initialization
-	\item Communication port with different back-ends (USB, UART, wireless)
-	\item Message sending and delivery
-	\item Interrupt management and routing to functional blocks
-	\item Virtual mass storage to allow editing of the configuration files
+	\item Hardware resource allocation (\ref{sec:res-allocation})
+	\item Settings storage and loading (\ref{sec:settings-storage})
+	\item Functional block (\textit{units}) initialization (\ref{sec:units-function})
+	\item The communication port with different back-ends: USB, UART, wireless (\ref{sec:com-ports})
+	\item Message sending and delivery (\ref{sec:message_passing})
+	\item Interrupt management and routing to functional blocks (\ref{sec:irq-routing})
+	\item Virtual mass storage for configuration file editing
 \end{itemize}
 
 When the firmware needs to be ported to a different STM32 microcontroller, the core framework is relatively straightforward to adapt and the whole process can be accomplished in a few hours. The time consuming part is modifying the functional blocks to work correctly with the new device's hardware. 
 
-\subsection{Source Code Layout}
 
-Looking at the source code repository, at the root we'll find device specific driver libraries and files provided by ST Microelectronics, the FreeRTOS middleware, and a folder \verb|User| containing the GEX firmware. This folder is a git submodule. The GEX core framework consists of everything in \verb|User|, excluding the \verb|units| folder. The USB Device library, which had to be modified to support a composite class, is stored inside the \verb|User| folder as well. Hardware configuration, such as the status LED position or clock settings, are defined using compile flags set in the top level Makefile.
+\section{Resource Allocation} \label{sec:res-allocation}
 
-\section{Functional Blocks} \label{sec:units-function}
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=1] {img/resource-repository.pdf}
+	\caption{\label{fig:resource-repository}An example allocation in the resource registry}
+\end{figure}
 
-GEX's functional blocks, internally called \textit{units}, have been mentioned a few times but until now haven't been properly explained. GEX's user-facing functions are implemented in \textit{unit drivers}. Those are stand-alone modules that the user can enable and configure using the configuration file. In principle, there can be multiple instances of each unit type. However, in practice, we have to work with hardware constraints: there is only one ADC peripheral, two SPI ports and so on. This limitation is handled using resource allocation, as explained below.
+The microcontroller provides a number of hardware resources that require exclusive access: GPIO pins, peripheral blocks (SPI, I2C, UART\textellipsis), DMA channels. If two units tried to control the same pin, the results would be unpredictable; similarly, with a multiple access to a serial port, the output would be a mix of the data streams and completely useless. 
 
-Each unit is defined by a section in the configuration file \verb|UNITS.INI|. It is given a name and a \textit{callsign}, a number which serves as an address for messages from the host PC, or, conversely, to indicate which unit sent an event report (such as a pin change interrupt). A unit is internally represented by an object that holds its configuration, internal state, and a link to the unit driver. The driver handles commands sent from the host PC, initializes and de-initializes the unit based on its settings and implements other aspects of a unit's function, such as periodic updates and interrupt handling.
+To prevent a multiple access, the firmware includes a \textit{resource registry} (fig. \ref{fig:resource-repository}). Each individual resource is represented by a field in a resource table together with its owner's callsign. Initially all resources are free, except for those not available on the particular platform (i.e. a GPIO pin PD1 may be disabled if not present on the microcontroller's package). 
 
-\section{Resource Allocation}
+The resources used by the core framework are taken by a virtual unit \verb|SYSTEM| on start-up to prevent conflicts with the user's units. This is the case of the status LED, the LOCK button, USB pins, the communication UART, the pins and an SPI peripheral connecting the wireless module, pins used for the crystal oscillator, and the timer/counter which provides the system timebase.
 
-The microcontroller provides a number of hardware resources that require exclusive access: GPIO pins, peripheral blocks (SPI, I2C, UART\textellipsis), and DMA channels. When two units tried to control the same pin, the results would be unpredictable; worse, with a multiple access to a serial port, the output would be a mix of the data streams and completely useless. 
 
-To prevent multiple access, the firmware includes a \textit{resource registry}. Each individual resource is represented by a field in a resource table together with its owner. Initially, all resources are free, except those not available on the particular platform (i.e. a GPIO port E may be disabled if not present on the microcontroller's package). On start-up, the resources used by the core framework are taken by a virtual unit \verb|SYSTEM| to prevent interference by user's units. This is the case of the status LED, the LOCK button, GPIO pins used for connecting USB, communication UART, the wireless module and the crystal oscillator, as well as the timer/counter which keeps the system timebase.
+\section{Settings Storage} \label{sec:settings-storage}
 
-\todo[inline]{resources diagram}
-
-\section{Settings Storage}
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=1] {img/settings-storage.pdf}
+	\caption{\label{fig:settings-storage}Structure of the settings subsystem}
+\end{figure}
 
 The system and unit settings are written, in a binary form, into designated pages of the microcontroller's Flash memory. The unit settings serialization and parsing is implemented by the respective unit drivers.
 
 As the settings persist after a firmware update, it's important to maintain backwards compatibility. This is achieved by prefixing the unit's settings by a version number. When the settings are loaded by a new version of the firmware, it first checks the version and decides whether to use the old or new format. When the settings are next changed, the new format will be used.
 
-The mentioned INI files that can be edited through the communication API or using a text editor with the virtual mass storage, are parsed and generated on demand and are never stored in the Flash or RAM, other than in short temporary buffers. The INI parser processes the byte stream on-the-fly as it is received, and a similar method is used to build a INI file from the configured units and system settings.
+The INI files, which can be edited through the communication API or using a text editor with the virtual mass storage, are parsed and generated on demand and are never stored in the Flash or RAM, other than in short temporary buffers. The INI parser processes the byte stream on-the-fly as it is received, and a similar method is used to build a INI file from the configured units and system settings.
 
-\todo[inline]{a diagram}
+\todo[inline]{add a sample large INI file as an attachment}
 
-\section{Communication Ports}
+\section{Functional Blocks} \label{sec:units-function}
+
+GEX's user-facing functions, also called functional blocks or \textit{units}, are implemented in \textit{unit drivers}. Those are independent modules in the firmware that the user can enable and configure using the GEX configuration files. In principle, there can be multiple instances of each unit type. However, we are limited by hardware constraints: there may be only one ADC peripheral, two SPI ports and so on. The mutually exclusive assignment of resources to units is handled by the \textit{resource registry} (\ref{sec:res-allocation}).
+
+Each unit is defined by a section in the configuration file \verb|UNITS.INI|. It is given a name and a \textit{callsign}, which is a number that serves as an address for message delivery. A unit is internally represented by a data object with the following structure:
+
+\begin{itemize}
+	\item Name
+	\item Callsign
+	\item Configuration parameters loaded from the unit settings
+	\item State variables updated at run-time by user commands or internal functions
+	\item A reference to the unit driver
+\end{itemize}
+
+The unit driver handles commands sent from the host PC, initializes and de-initializes the unit based on its settings, and implements other aspects of the unit's function, such as periodic updates and interrupt handling. Unit drivers may expose public API functions to make it possible to control the unit from a different driver, allowing the creation of "macro units".
+
+\section{Source Code Layout}
+
+\begin{wrapfigure}[20]{r}{0.4\textwidth}
+	\scriptsize\vspace{-3em}
+	\begin{verbatim}
+├── build
+│   ├── firmware.bin
+│   └── firmware.dfu
+├── Drivers
+│   ├── CMSIS
+│   │   └── Device / ST / STM32F0xx
+│   └── STM32F0xx_HAL_Driver
+├── Middlewares / Third_Party / FreeRTOS
+├── Src
+│   └── main.c
+├── User
+│   ├── USB / STM32_USB_Device_Library
+│   │   ├── Class
+│   │   │   ├── CDC
+│   │   │   ├── MSC
+│   │   │   └── MSC_CDC
+│   │   └── Core
+│   ├── platform
+│   │   ├── plat_compat.h
+│   │   └── platform.c
+│   ├── units
+│   │   ├── adc
+│   │   ├── digital_out
+│   │   ...
+│   ├── FreeRTOSConfig.h
+│   └── gex.mk
+└── Makefile	
+	\end{verbatim}
+	\vspace{-1em}
+	\cprotect\caption{\label{fig:repo-structure} The general structure of the source code repository}
+\end{wrapfigure}
+
+Looking at the source code repository (fig. \ref{fig:repo-structure}), at the root we'll find device specific driver libraries and files provided by ST Microelectronics, the FreeRTOS middleware, and a folder called \verb|User| containing the GEX application code. This division is useful when porting the firmware to a different microcontroller, as the GEX folder is mostly platform-independent and can be simply copied (of course, adjustments are needed to accompany different hardware peripheral versions etc.). The GEX core framework consists of everything in the \verb|User| folder, excluding the \verb|units| directory in which the individual units are implemented. Each unit driver must be registered in the file \verb|platform.c| to be available for the user to select. The file \verb|plat_compat.c| includes platform-specific headers and defines e.g. which pin to use for a status LED or the LOCK button.
+
+The USB Device library, which had to be modified to support a composite class, is stored inside the \verb|User| folder too, as it is compatible with all STM32 microcontrollers that support USB.
+
+
+\section{Communication Ports} \label{sec:com-ports}
 
 The firmware supports three different communication ports: hardware UART, USB (virtual serial port), and a wireless connection. Each interface is configured and accessed in a different way, but for the rest of the firmware (and for the PC-side application) they all appear as a full duplex serial port. To use interfaces other than USB, the user must configure those in the system settings (a file \verb|SYSTEM.INI| on the configuration disk).
 
@@ -84,15 +147,41 @@ This is identical to the USB connection from the PC application's side, except a
 
 The wireless connection uses an on-board communication module and a separate device, a wireless gateway, that connects to the PC. The wireless gateway is interfaced differently from the GEX board itself, but it also shows as a virtual serial port on the host PC. This is required to allow communicating with the gateway itself through the CDC/ACM interface in addition to addressing the end devices.
 
-This interface will be explained in more detail in chapter XX\todo{LINK}.
+This interface will be explained in more detail in chapter XX \todo{Link to tinyframe description}.
 
-\section{Message Passing}
+\section{Message Passing} \label{sec:message_passing}
 
-One of the key functions of the core framework is to deliver messages from the host PC to the right units. This functionality resides above the framing protocol, which will be described in chapter XX \todo{Link to tinyframe description}.
+One of the key functions of the core framework is to deliver messages from the host PC to the right units. This functionality resides above the framing protocol, which will be described in chapter \ref{sec:tinyframe}.
 
 A message that is not a response in a multi-part session (this is handled by the framing library) is identified by its Type field. Two main groups of messages exist: \textit{system messages} and \textit{unit messages}. System messages can access the INI files, query a list of the available units, restart the module etc. Unit messages are addressed to a particular unit by their callsign (see \ref{sec:units-function}), and their payload format is defined by the unit driver. The framework reads the message type, then the callsign byte, and tries to find a matching unit in the unit list. If no unit with the callsign is found, an error response is sent back, otherwise the unit driver is given the message to handle it as required.
 
 The framework provides one more messaging service to the units: event reporting. An asynchronous event, such as an external interrupt, an ADC trigger or an UART data reception needs to be reported to the host. This message is annotated by the unit callsign so the user application knows it's origin.
+
+
+\section{Interrupt Routing} \label{sec:irq-routing}
+
+Interrupts are an important part of almost any embedded application. They provide a way to rapidly react to asynchronous external or internal events, temporarily leaving the main program, jumping to an interrupt handler routine, and then returning back after the event is handled. Interrupts are also the way FreeRTOS implements multitasking without a multi-core processor.
+
+In the Cortex-M0-based STM32F072, used in the initial GEX prototypes, the interrupt handlers table, defining which routine is called for which interrupt, is stored in the program memory and can't be changed at run-time. This is a complication for the modular structure of GEX where different unit drivers may use the same peripheral, and we would want to dynamically assign the interrupt handlers based on the active configuration. Let's have a look at an interrupt handler, in this case handling four different DMA channels, as is common in STM32 microcontrollers:
+
+\begin{minted}{c}
+void DMA1_Channel4_5_6_7_IRQHandler(void)
+{
+    if (LL_DMA_IsActiveFlag_GI4(DMA1)) { /* handle DMA1 channel 4 */ }
+    if (LL_DMA_IsActiveFlag_GI5(DMA1)) { /* handle DMA1 channel 5 */ }
+    if (LL_DMA_IsActiveFlag_GI6(DMA1)) { /* handle DMA1 channel 6 */ }
+    if (LL_DMA_IsActiveFlag_GI7(DMA1)) { /* handle DMA1 channel 7 */ }
+}
+\end{minted}
+
+It is evident that multiple units might need to use the same interrupt handler, even at the same time, since each DMA channel is configured, and works, independently. GEX implements a redirection scheme to accomplish such interrupt sharing: All interrupt handlers are defined in one place, accompanied by a table of function pointers. When a unit driver wants to register an interrupt handler, it stores a pointer to it in this redirection table. Then, once an interrupt is invoked, the common handler checks the corresponding entry in the table and calls the referenced routine, if any. Conversely, when a unit driver deinitializes a unit, it removes all interrupt handlers it used, freeing the redirection table slots for other use.
+
+
+
+
+
+
+
 
 
 
