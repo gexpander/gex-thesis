@@ -1,0 +1,96 @@
+\chapter{Functional Blocks}
+
+This chapter describes all functional blocks (units) implemented in GEX at the time of publication of this work. Each unit supports a different set of binary commands and events. A complete specification of this API is attached in an electronic form. \todo{add the github docs repo as a ref}
+
+
+\section{Digital Output Unit}
+
+The digital output unit provides a write access to one or more pins of a GPIO port. The group of pins need not be contiguous (e.g. pin 0 and 6 can be accessed as a 2-bit output). All selected pins are accessed simultaneously using the port control registers. 
+
+This unit additionally supports pulse generation on any of its pins. It is implemented in software with the timing derived from the system timebase, as the hardware timer outputs, otherwise used for PWM or pulse generation, are available only on several dedicated pins. Two pulse length resolutions are available, depending on the scale: microseconds for pulses shorter than 1\,ms, milliseconds for longer ones.
+
+\todo[inline]{Measure jitter and add it here}
+
+
+\section{Digital Input Unit}
+
+The digital input unit is the input counterpart of the digital output unit. 
+
+In addition to reading the immediate digital levels of the selected pins, this unit can generate asynchronous events on a pin change. The state of the entire input port, together with a microsecond timestamp (as is the case for all asynchronous events), is reported to the host either on a rising, falling, or any pin change. 
+
+The pin change event can be configured independently for each pin. In order to receive a pin change event, it must be armed first; The pin can be armed for a single event, or it may be re-armed automatically with a hold-off time. It's further possible to automatically arm selected pin triggers on start-up.
+
+
+\section{Shift Registers Driver Unit}
+
+The shift registers driver unit is designed for the loading of data into \textit{serial-in, parallel-out} (SIPO) shift registers, such as 74HC4094 or 74HC595. Those are commonly used to control segmented LED displays, LED matrices etc.
+
+This unit handles both the \textit{Shift} and \textit{Store} signals and is capable of loading multiple shift registers simultaneously, reducing visible glitches in the display. It's also possible to set the data lines to arbitrary level(s) before sending the Store pulse, which can be latched and used for some additional feature of the LED display, such as brightness control.
+
+
+\section{NeoPixel Unit}
+
+The NeoPixel unit implements the protocol needed to control a digital LED strip with WS2812, WS2811, or compatible LED driver chips. The protocol timing is implemented in software, therefore it is available on any GPIO pin of the module. The unit accepts sequences of RGB color values from the host and loads them into the LED strip.
+
+
+\section{SPI Unit}
+
+The SPI unit provides access to one of the microcontroller's SPI peripherals. It can be configured to use any of the different speeds, clock polarity and phase settings available in its control registers. The unit handles up to 16 slave select (NSS) signals.
+
+Both write-only and read-write (query) transactions are implemented.
+
+\todo[inline]{Query diagram}
+
+
+\section{I2C Unit}
+
+The I2C unit provides access to one of the microcontroller's I2C peripherals. It can be configured to use either of the three speeds (Standard, Fast and Fast+) and supports both 10-bit and 8-bit addressing.
+
+
+\section{USART Unit}
+
+The USART unit provides access to one of the microcontroller's USART peripherals. All USART parameters can be configured to match the application's needs. 
+
+The clock output and hardware flow control may be enabled, as well as the Driver Enable (DE) output used by RS485 transceivers to switch between a reception and transmission mode.
+
+
+\section{1-Wire Unit}
+
+The 1-Wire unit implements the Dallas Semiconductor's 1-Wire protocol, most commonly used to interface smart thermometers (DS18x20). The protocol is explained in section \ref{sec:theory-1wire}. This unit implements the basic protocol, as well as the ROM Search algorithm used to recognizes all unique 1-Wire devices connected to the bus.
+
+
+\section{Frequency Capture Unit}
+
+The frequency capture unit implements both the frequency measurement methods explained in section \ref{sec:theory-fcap}: direct and reciprocal. It can be operated in an on-demand or continuous measurement mode. The unit can be switched to two other modes: pulse counter, and the measurement of a single pulse.
+
+
+\section{ADC Unit}
+
+The analog/digital converter unit is one of the most complicated units implemented in the project. The unit can measure the voltage on an input pin, either as its immediate value, or averaged with exponential forgetting. Isochronous sampling is available as well: It's possible to capture a fixed-length block of data on demand, or as a response to a triggering condition on any of the enabled input pins. The ADC must continuously sample the inputs to make the averaging and level based triggering possible; As a consequence, a pre-trigger buffer is available that can be read together with the block of samples following a trigger. The ADC unit can also be switched to a continuous streaming mode.
+
+It's possible to activate any number of the 16 analog inputs of the ADC peripheral simultaneously. The maximum continuous sampling frequency, which reaches 70\,ksps with one channel, lowers with an increasing number of enabled channels as the amount of data to transfer to the host increases.
+
+
+\section{DAC Unit}
+
+The digital/analog unit works with the two-channel DAC peripheral of the microcontroller. It can be used in two modes: DC output, and waveform generation.
+
+The waveform mode implements direct digital synthesis (explained in section \ref{sec:theory-dac-dds}) of a sine, rectangle, sawtooth or triangle wave. The generated frequency can be set with a sub-hertz precision up to the lower tens of kHz. The two outputs can use a different waveform shape, be synchronized, and their phase offset, as well as frequency, is dynamically adjustable.
+
+
+\section{PWM Unit}
+
+The PWM unit uses a timer/counter to generate a PWM signal. There are four outputs with a common frequency and phase, but independent duty cycles. Each channel can be individually enabled or disabled.
+
+This unit is intended for applications like light dimming, heater regulation, or the control of H-bridges.
+
+
+\section{Touch Sensing Unit}
+
+The touch sensing unit provides an access to the touch sensing controller. Its function is explained in section \ref{sec:theory-touch}. The unit configures the TSC and reads the output values of each enabled touch pad.
+
+
+
+
+
+

@@ -1,0 +1,1304 @@
+<html>
+
+<!-- http://home.teleport.com/~brainy/fat32.htm -->
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=us-ascii">
+<meta name=Generator content="Microsoft Word 10 (filtered)">
+<title>FAT32 Structure Information</title>
+
+<style>
+<!--
+ /* Style Definitions */
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{margin:0in;
+	margin-bottom:.0001pt;
+	font-size:12.0pt;
+	font-family:"Times New Roman";}
+a:link, span.MsoHyperlink
+	{color:blue;
+	text-decoration:underline;}
+a:visited, span.MsoHyperlinkFollowed
+	{color:blue;
+	text-decoration:underline;}
+p
+	{margin-right:0in;
+	margin-left:0in;
+	font-size:12.0pt;
+	font-family:"Times New Roman";}
+@page Section1
+	{size:8.5in 11.0in;
+	margin:1.0in 1.25in 1.0in 1.25in;}
+div.Section1
+	{page:Section1;}
+-->
+</style>
+
+</head>
+
+<body lang=EN-US link=blue vlink=blue>
+
+<div class=Section1>
+
+<p align=center style='text-align:center'><strong><u><span style='font-size:
+13.5pt'>FAT32 Structure Information - Written by Jack Dobiash</span></u></strong></p>
+
+<p align=center style='text-align:center'><em><span style='font-size:10.0pt'>Updated
+: December 4<sup>th</sup>, 2005</span></em></p>
+
+<p>Looking for FAT16 info?&nbsp; Go <a
+href="http://home.teleport.com/~brainy/fat16.htm">here</a>.<br>
+Looking for Information on how to Read and Write to your Hard Drive?&nbsp; Go <a
+href="http://home.teleport.com/~brainy/diskaccess.htm">here</a>.</p>
+
+<p>Microsoft has Released Information on the FAT32 File System!&nbsp; Go <a
+href="http://home.teleport.com/~brainy/fatgen102.pdf">here</a> to get it!</p>
+
+<p>I've written this page for anyone who wishes to write software that can do
+low-level reading and writing of a hard drive, and needs to know what the
+underlying structure of a FAT32 Drive is, in order to interpret the information
+properly.&nbsp; Basically I've searched all over the web, and have compiled
+this information in one spot. &nbsp;&nbsp; Hopefully it can be of use to
+someone.&nbsp; I don't guarantee that all of this information is correct or
+complete, but so far is seems to have been working for me. &nbsp;</p>
+
+<p>A lot of the number references I've made in this document are in
+Hexadecimal.&nbsp; Any that are have an 'h' after them.&nbsp; Also, just in
+case my terminology may be different from yours; a 'WORD' is 2 Bytes and a
+'DOUBLE WORD' is 4 Bytes. </p>
+
+<p>&nbsp;</p>
+
+<p><strong><u>Master Boot Record</u></strong></p>
+
+<blockquote style='margin-top:5.0pt;margin-bottom:5.0pt'>
+
+<p>The Master Boot Record is the same for pretty much all Operating
+Systems.&nbsp; It is located on the first Sector of the Hard Drive, at Cylinder
+0, Head 0, Sector 1.&nbsp; It is the first piece of code that your computer
+runs after it has checked all of your hardware (POST) and turned control of
+loading software over the hard drive.&nbsp; It also contains the partition
+table, which defines the different sections of your hard drive.&nbsp; Basically
+if anything happens to this little 512 byte section, your hard drive is brain
+dead.&nbsp; Kinda scary, eh? :)</p>
+
+</blockquote>
+
+<table class=MsoNormalTable border=1 cellpadding=0 width=503 style='width:377.6pt'
+ height=79>
+ <tr style='height:18.75pt'>
+  <td width=54 style='width:40.45pt;padding:.75pt .75pt .75pt .75pt;height:
+  18.75pt'>
+  <p class=MsoNormal>Offset</p>
+  </td>
+  <td width=329 style='width:247.05pt;padding:.75pt .75pt .75pt .75pt;
+  height:18.75pt'>
+  <p class=MsoNormal>Description</p>
+  </td>
+  <td width=112 style='width:84.1pt;padding:.75pt .75pt .75pt .75pt;height:
+  18.75pt'>
+  <p class=MsoNormal>Size</p>
+  </td>
+ </tr>
+ <tr style='height:18.75pt'>
+  <td width=54 style='width:40.45pt;padding:.75pt .75pt .75pt .75pt;height:
+  18.75pt'>
+  <p class=MsoNormal>000h</p>
+  </td>
+  <td width=329 style='width:247.05pt;padding:.75pt .75pt .75pt .75pt;
+  height:18.75pt'>
+  <p class=MsoNormal>Executable Code (Boots Computer)</p>
+  </td>
+  <td width=112 style='width:84.1pt;padding:.75pt .75pt .75pt .75pt;height:
+  18.75pt'>
+  <p class=MsoNormal>446 Bytes</p>
+  </td>
+ </tr>
+ <tr style='height:16.5pt'>
+  <td width=54 style='width:40.45pt;padding:.75pt .75pt .75pt .75pt;height:
+  16.5pt'>
+  <p class=MsoNormal>1BEh</p>
+  </td>
+  <td width=329 style='width:247.05pt;padding:.75pt .75pt .75pt .75pt;
+  height:16.5pt'>
+  <p class=MsoNormal>1st Partition Entry (See Next Table)</p>
+  </td>
+  <td width=112 style='width:84.1pt;padding:.75pt .75pt .75pt .75pt;height:
+  16.5pt'>
+  <p class=MsoNormal>16 Bytes</p>
+  </td>
+ </tr>
+ <tr style='height:12.75pt'>
+  <td width=54 style='width:40.45pt;padding:.75pt .75pt .75pt .75pt;height:
+  12.75pt'>
+  <p class=MsoNormal>1CEh</p>
+  </td>
+  <td width=329 style='width:247.05pt;padding:.75pt .75pt .75pt .75pt;
+  height:12.75pt'>
+  <p class=MsoNormal>2nd Partition Entry</p>
+  </td>
+  <td width=112 style='width:84.1pt;padding:.75pt .75pt .75pt .75pt;height:
+  12.75pt'>
+  <p class=MsoNormal>16 Bytes</p>
+  </td>
+ </tr>
+ <tr style='height:9.0pt'>
+  <td width=54 style='width:40.45pt;padding:.75pt .75pt .75pt .75pt;height:
+  9.0pt'>
+  <p class=MsoNormal>1DEh</p>
+  </td>
+  <td width=329 style='width:247.05pt;padding:.75pt .75pt .75pt .75pt;
+  height:9.0pt'>
+  <p class=MsoNormal>3rd Partition Entry</p>
+  </td>
+  <td width=112 style='width:84.1pt;padding:.75pt .75pt .75pt .75pt;height:
+  9.0pt'>
+  <p class=MsoNormal>16 Bytes</p>
+  </td>
+ </tr>
+ <tr style='height:15.0pt'>
+  <td width=54 style='width:40.45pt;padding:.75pt .75pt .75pt .75pt;height:
+  15.0pt'>
+  <p class=MsoNormal>1EEh</p>
+  </td>
+  <td width=329 style='width:247.05pt;padding:.75pt .75pt .75pt .75pt;
+  height:15.0pt'>
+  <p class=MsoNormal>4th Partition Entry</p>
+  </td>
+  <td width=112 style='width:84.1pt;padding:.75pt .75pt .75pt .75pt;height:
+  15.0pt'>
+  <p class=MsoNormal>16 Bytes</p>
+  </td>
+ </tr>
+ <tr style='height:12.0pt'>
+  <td width=54 style='width:40.45pt;padding:.75pt .75pt .75pt .75pt;height:
+  12.0pt'>
+  <p class=MsoNormal>1FEh</p>
+  </td>
+  <td width=329 style='width:247.05pt;padding:.75pt .75pt .75pt .75pt;
+  height:12.0pt'>
+  <p class=MsoNormal>Boot Record Signature (55h AAh)</p>
+  </td>
+  <td width=112 style='width:84.1pt;padding:.75pt .75pt .75pt .75pt;height:
+  12.0pt'>
+  <p class=MsoNormal>2 Bytes</p>
+  </td>
+ </tr>
+</table>
+
+<p><br>
+<strong>Partition Entry (Part of MBR)</strong></p>
+
+<table class=MsoNormalTable border=1 cellpadding=0 width=523 style='width:392.25pt'
+ height=236>
+ <tr style='height:5.25pt'>
+  <td width=47 style='width:35.25pt;padding:.75pt .75pt .75pt .75pt;height:
+  5.25pt'>
+  <p class=MsoNormal>Offset</p>
+  </td>
+  <td width=328 style='width:246.0pt;padding:.75pt .75pt .75pt .75pt;
+  height:5.25pt'>
+  <p class=MsoNormal>Description</p>
+  </td>
+  <td width=130 style='width:97.5pt;padding:.75pt .75pt .75pt .75pt;height:
+  5.25pt'>
+  <p class=MsoNormal>Size</p>
+  </td>
+ </tr>
+ <tr style='height:6.0pt'>
+  <td width=47 style='width:35.25pt;padding:.75pt .75pt .75pt .75pt;height:
+  6.0pt'>
+  <p class=MsoNormal>00h</p>
+  </td>
+  <td width=328 style='width:246.0pt;padding:.75pt .75pt .75pt .75pt;
+  height:6.0pt'>
+  <p class=MsoNormal>Current State of Partition (00h=Inactive, 80h=Active)</p>
+  </td>
+  <td width=130 style='width:97.5pt;padding:.75pt .75pt .75pt .75pt;height:
+  6.0pt'>
+  <p class=MsoNormal>1 Byte</p>
+  </td>
+ </tr>
+ <tr style='height:13.5pt'>
+  <td width=47 style='width:35.25pt;padding:.75pt .75pt .75pt .75pt;height:
+  13.5pt'>
+  <p class=MsoNormal>01h</p>
+  </td>
+  <td width=328 style='width:246.0pt;padding:.75pt .75pt .75pt .75pt;
+  height:13.5pt'>
+  <p class=MsoNormal>Beginning of Partition - Head</p>
+  </td>
+  <td width=130 style='width:97.5pt;padding:.75pt .75pt .75pt .75pt;height:
+  13.5pt'>
+  <p class=MsoNormal>1 Byte</p>
+  </td>
+ </tr>
+ <tr style='height:14.25pt'>
+  <td width=47 style='width:35.25pt;padding:.75pt .75pt .75pt .75pt;height:
+  14.25pt'>
+  <p class=MsoNormal>02h </p>
+  </td>
+  <td width=328 style='width:246.0pt;padding:.75pt .75pt .75pt .75pt;
+  height:14.25pt'>
+  <p class=MsoNormal>Beginning of Partition - Cylinder/Sector (See Below)</p>
+  </td>
+  <td width=130 style='width:97.5pt;padding:.75pt .75pt .75pt .75pt;height:
+  14.25pt'>
+  <p class=MsoNormal>1 Word</p>
+  </td>
+ </tr>
+ <tr style='height:11.25pt'>
+  <td width=47 style='width:35.25pt;padding:.75pt .75pt .75pt .75pt;height:
+  11.25pt'>
+  <p class=MsoNormal>04h</p>
+  </td>
+  <td width=328 style='width:246.0pt;padding:.75pt .75pt .75pt .75pt;
+  height:11.25pt'>
+  <p class=MsoNormal>Type of Partition (See List Below)</p>
+  </td>
+  <td width=130 style='width:97.5pt;padding:.75pt .75pt .75pt .75pt;height:
+  11.25pt'>
+  <p class=MsoNormal>1 Byte</p>
+  </td>
+ </tr>
+ <tr style='height:9.75pt'>
+  <td width=47 style='width:35.25pt;padding:.75pt .75pt .75pt .75pt;height:
+  9.75pt'>
+  <p class=MsoNormal>05h</p>
+  </td>
+  <td width=328 style='width:246.0pt;padding:.75pt .75pt .75pt .75pt;
+  height:9.75pt'>
+  <p class=MsoNormal>End of Partition - Head</p>
+  </td>
+  <td width=130 style='width:97.5pt;padding:.75pt .75pt .75pt .75pt;height:
+  9.75pt'>
+  <p class=MsoNormal>1 Byte</p>
+  </td>
+ </tr>
+ <tr style='height:11.25pt'>
+  <td width=47 style='width:35.25pt;padding:.75pt .75pt .75pt .75pt;height:
+  11.25pt'>
+  <p class=MsoNormal>06h</p>
+  </td>
+  <td width=328 style='width:246.0pt;padding:.75pt .75pt .75pt .75pt;
+  height:11.25pt'>
+  <p class=MsoNormal>End of Partition - Cylinder/Sector</p>
+  </td>
+  <td width=130 style='width:97.5pt;padding:.75pt .75pt .75pt .75pt;height:
+  11.25pt'>
+  <p class=MsoNormal>1 Word</p>
+  </td>
+ </tr>
+ <tr style='height:16.5pt'>
+  <td width=47 style='width:35.25pt;padding:.75pt .75pt .75pt .75pt;height:
+  16.5pt'>
+  <p class=MsoNormal>08h</p>
+  </td>
+  <td width=328 style='width:246.0pt;padding:.75pt .75pt .75pt .75pt;
+  height:16.5pt'>
+  <p class=MsoNormal>Number of Sectors Between the MBR and the First Sector in
+  the Partition</p>
+  </td>
+  <td width=130 style='width:97.5pt;padding:.75pt .75pt .75pt .75pt;height:
+  16.5pt'>
+  <p class=MsoNormal>1 Double Word</p>
+  </td>
+ </tr>
+ <tr style='height:16.5pt'>
+  <td width=47 style='width:35.25pt;padding:.75pt .75pt .75pt .75pt;height:
+  16.5pt'>
+  <p class=MsoNormal>0Ch</p>
+  </td>
+  <td width=328 style='width:246.0pt;padding:.75pt .75pt .75pt .75pt;
+  height:16.5pt'>
+  <p class=MsoNormal>Number of Sectors in the Partition</p>
+  </td>
+  <td width=130 style='width:97.5pt;padding:.75pt .75pt .75pt .75pt;height:
+  16.5pt'>
+  <p class=MsoNormal>1 Double Word</p>
+  </td>
+ </tr>
+</table>
+
+<p><br>
+<strong>Cylinder/Sector Encoding</strong></p>
+
+<blockquote style='margin-top:5.0pt;margin-bottom:5.0pt'>
+
+<p>I guess back in the days of 10MB hard drives and 8086's, code was at a
+premium. &nbsp; So they did everything they could to preserve space.&nbsp;
+Unfortunately now we have to live with it, but luckily they created new ways of
+translating the system so the 1024 Cylinder Limit (2^10) isn't too big of a
+problem, for newer computers, at least. &nbsp; Older ones usually need some
+sort of Disk Overlay program to make them see the whole hard drive.&nbsp;&nbsp;
+</p>
+
+<p>Anyway, to get the Sector out of this, you need to apply an AND mask ($3F)
+to it. &nbsp; To get the Cylinder, you take the high byte and OR it with the
+low byte that has been AND masked with ($C0) and then Shifted Left Two.&nbsp;
+It's not very easy to explain, so I'll just show you how I did it with two
+routines I made (In Pascal) for Encoding and Decoding the
+Cylinder/Sector.&nbsp; Hopefully even if you don't know Pascal you'll be able
+to read it.</p>
+
+<p>Function CylSecEncode(Cylinder, Sector : Word) : Word;<br>
+Begin<br>
+&nbsp;&nbsp;&nbsp; CylSecEncode := (Lo(Cylinder) shl 8) or (Hi(Cylinder) shl 6)
+or Sector;<br>
+End;<br>
+<br>
+Procedure CylSecDecode(Var Cylinder, Sector : Word; CylSec : Word);<br>
+Begin<br>
+&nbsp;&nbsp;&nbsp; Cylinder := Hi(CylSec) or ((Lo(CylSec) and $C0) shl 2);<br>
+&nbsp;&nbsp;&nbsp; Sector := (CylSec and $3F);<br>
+End;</p>
+
+</blockquote>
+
+<table class=MsoNormalTable border=1 cellpadding=0 width=418 style='width:313.5pt'
+ height=48>
+ <tr style='height:17.25pt'>
+  <td width=10 style='width:7.5pt;padding:.75pt .75pt .75pt .75pt;height:17.25pt'>
+  <p class=MsoNormal>15</p>
+  </td>
+  <td width=13 style='width:9.75pt;padding:.75pt .75pt .75pt .75pt;height:17.25pt'>
+  <p class=MsoNormal>14</p>
+  </td>
+  <td width=18 style='width:13.5pt;padding:.75pt .75pt .75pt .75pt;height:17.25pt'>
+  <p class=MsoNormal>13</p>
+  </td>
+  <td width=10 style='width:.1in;padding:.75pt .75pt .75pt .75pt;height:17.25pt'>
+  <p class=MsoNormal>12</p>
+  </td>
+  <td width=12 style='width:9.0pt;padding:.75pt .75pt .75pt .75pt;height:17.25pt'>
+  <p class=MsoNormal>11</p>
+  </td>
+  <td width=20 style='width:15.0pt;padding:.75pt .75pt .75pt .75pt;height:17.25pt'>
+  <p class=MsoNormal>10</p>
+  </td>
+  <td width=19 style='width:14.25pt;padding:.75pt .75pt .75pt .75pt;height:
+  17.25pt'>
+  <p class=MsoNormal>9</p>
+  </td>
+  <td width=20 style='width:15.0pt;padding:.75pt .75pt .75pt .75pt;height:17.25pt'>
+  <p class=MsoNormal>8</p>
+  </td>
+  <td width=36 style='width:27.0pt;padding:.75pt .75pt .75pt .75pt;height:17.25pt'>
+  <p class=MsoNormal>7</p>
+  </td>
+  <td width=29 style='width:21.75pt;padding:.75pt .75pt .75pt .75pt;height:
+  17.25pt'>
+  <p class=MsoNormal>6</p>
+  </td>
+  <td width=20 style='width:15.0pt;padding:.75pt .75pt .75pt .75pt;height:17.25pt'>
+  <p class=MsoNormal>5</p>
+  </td>
+  <td width=22 style='width:16.5pt;padding:.75pt .75pt .75pt .75pt;height:17.25pt'>
+  <p class=MsoNormal>4</p>
+  </td>
+  <td width=21 style='width:15.75pt;padding:.75pt .75pt .75pt .75pt;height:
+  17.25pt'>
+  <p class=MsoNormal>3</p>
+  </td>
+  <td width=22 style='width:16.5pt;padding:.75pt .75pt .75pt .75pt;height:17.25pt'>
+  <p class=MsoNormal>2</p>
+  </td>
+  <td width=25 style='width:18.75pt;padding:.75pt .75pt .75pt .75pt;height:
+  17.25pt'>
+  <p class=MsoNormal>1</p>
+  </td>
+  <td width=23 style='width:17.25pt;padding:.75pt .75pt .75pt .75pt;height:
+  17.25pt'>
+  <p class=MsoNormal>0</p>
+  </td>
+ </tr>
+ <tr style='height:9.75pt'>
+  <td width=184 colspan=8 style='width:138.0pt;padding:.75pt .75pt .75pt .75pt;
+  height:9.75pt'>
+  <p class=MsoNormal>Cylinder Bits 7 to 0</p>
+  </td>
+  <td width=67 colspan=2 style='width:50.25pt;padding:.75pt .75pt .75pt .75pt;
+  height:9.75pt'>
+  <p class=MsoNormal>Cylinder Bits 9+8</p>
+  </td>
+  <td width=149 colspan=6 style='width:111.75pt;padding:.75pt .75pt .75pt .75pt;
+  height:9.75pt'>
+  <p class=MsoNormal>Sector Bits 5 to 0</p>
+  </td>
+ </tr>
+</table>
+
+<p><br>
+<strong>Partition Type Listing</strong></p>
+
+<blockquote style='margin-top:5.0pt;margin-bottom:5.0pt'>
+
+<p>There are more than just these shown, but I've only included that ones
+relevant to MS Operating Systems.</p>
+
+</blockquote>
+
+<table class=MsoNormalTable border=1 cellpadding=0 width=418 style='width:313.5pt'
+ height=57>
+ <tr style='height:17.25pt'>
+  <td width=52 style='width:39.0pt;padding:.75pt .75pt .75pt .75pt;height:17.25pt'>
+  <p class=MsoNormal>Value</p>
+  </td>
+  <td width=354 style='width:265.5pt;padding:.75pt .75pt .75pt .75pt;
+  height:17.25pt'>
+  <p class=MsoNormal>Description</p>
+  </td>
+ </tr>
+ <tr style='height:7.5pt'>
+  <td width=52 style='width:39.0pt;padding:.75pt .75pt .75pt .75pt;height:7.5pt'>
+  <p class=MsoNormal>00h</p>
+  </td>
+  <td width=354 style='width:265.5pt;padding:.75pt .75pt .75pt .75pt;
+  height:7.5pt'>
+  <p class=MsoNormal>Unknown or Nothing</p>
+  </td>
+ </tr>
+ <tr style='height:9.75pt'>
+  <td width=52 style='width:39.0pt;padding:.75pt .75pt .75pt .75pt;height:9.75pt'>
+  <p class=MsoNormal>01h</p>
+  </td>
+  <td width=354 style='width:265.5pt;padding:.75pt .75pt .75pt .75pt;
+  height:9.75pt'>
+  <p class=MsoNormal>12-bit FAT</p>
+  </td>
+ </tr>
+ <tr>
+  <td width=52 style='width:39.0pt;padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal>04h</p>
+  </td>
+  <td width=354 style='width:265.5pt;padding:.75pt .75pt .75pt .75pt'>
+  <p class=MsoNormal>16-bit FAT (Partition Smaller than 32MB)</p>
+  </td>
+ </tr>
+ <tr style='height:6.0pt'>
+  <td width=52 style='width:39.0pt;padding:.75pt .75pt .75pt .75pt;height:6.0pt'>
+  <p class=MsoNormal>05h</p>
+  </td>
+  <td width=354 style='width:265.5pt;padding:.75pt .75pt .75pt .75pt;
+  height:6.0pt'>
+  <p class=MsoNormal>Extended MS-DOS Partition</p>
+  </td>
+ </tr>
+ <tr style='height:5.25pt'>
+  <td width=52 style='width:39.0pt;padding:.75pt .75pt .75pt .75pt;height:5.25pt'>
+  <p class=MsoNormal>06h</p>
+  </td>
+  <td width=354 style='width:265.5pt;padding:.75pt .75pt .75pt .75pt;
+  height:5.25pt'>
+  <p class=MsoNormal>16-bit FAT (Partition Larger than 32MB)</p>
+  </td>
+ </tr>
+ <tr style='height:4.5pt'>
+  <td width=52 style='width:39.0pt;padding:.75pt .75pt .75pt .75pt;height:4.5pt'>
+  <p class=MsoNormal>0Bh</p>
+  </td>
+  <td width=354 style='width:265.5pt;padding:.75pt .75pt .75pt .75pt;
+  height:4.5pt'>
+  <p class=MsoNormal>32-bit FAT (Partition Up to 2048GB)</p>
+  </td>
+ </tr>
+ <tr style='height:7.5pt'>
+  <td width=52 style='width:39.0pt;padding:.75pt .75pt .75pt .75pt;height:7.5pt'>
+  <p class=MsoNormal>0Ch</p>
+  </td>
+  <td width=354 style='width:265.5pt;padding:.75pt .75pt .75pt .75pt;
+  height:7.5pt'>
+  <p class=MsoNormal>Same as 0BH, but uses LBA<sub>1</sub> 13h Extensions</p>
+  </td>
+ </tr>
+ <tr style='height:9.0pt'>
+  <td width=52 style='width:39.0pt;padding:.75pt .75pt .75pt .75pt;height:9.0pt'>
+  <p class=MsoNormal>0Eh</p>
+  </td>
+  <td width=354 style='width:265.5pt;padding:.75pt .75pt .75pt .75pt;
+  height:9.0pt'>
+  <p class=MsoNormal>Same as 06H, but uses LBA<sub>1</sub> 13h Extensions</p>
+  </td>
+ </tr>
+ <tr style='height:.75pt'>
+  <td width=52 style='width:39.0pt;padding:.75pt .75pt .75pt .75pt;height:.75pt'>
+  <p class=MsoNormal>0Fh</p>
+  </td>
+  <td width=354 style='width:265.5pt;padding:.75pt .75pt .75pt .75pt;
+  height:.75pt'>
+  <p class=MsoNormal>Same as 05H, but uses LBA<sub>1</sub> 13h Extensions</p>
+  </td>
+ </tr>
+</table>
+
+<p><br>
+<strong><u>Reading Multiple Partitions</u></strong></p>
+
+<blockquote style='margin-top:5.0pt;margin-bottom:5.0pt'>
+
+<p>Although having multiple partitions in FAT32 isn't as likely as in FAT16, it
+still works the same way.&nbsp; The first partition is the Primary Partition, and
+everything else is stored in the Extended Partition.&nbsp; It's a little tricky
+when it comes to reading those extra partitions though (not a lot, just a
+little).&nbsp; The first record in the partition table shows where the Primary
+partition is (how big it is, where it starts, and where it ends).&nbsp; The
+second entry in the partition table shows where the Entire Extended Partition
+is (which may include more than just one partition).&nbsp; To read any more
+partitions, you go to the where it says the Extended Partition starts, and read
+the first sector.&nbsp; It acts just like the MBR.&nbsp; It'll have blank where
+the code is supposed to be, and in the partition table it will have for it's
+first entry the next Partition in the Drive, and if there are anymore, there
+will be another Extended partition, just like before.&nbsp; However, all
+references to Sector Numbers are made using the that new MBR point as the
+reference, making it a virtual drive.&nbsp; Just incase this doesn't make much
+sense (and by the way I explain things I can understand if it doesn't), let me
+show you how a drive with three partitions is setup.</p>
+
+<p>MBR of Whole Drive</p>
+
+<p>&nbsp;&nbsp;&nbsp; Entry #1 - Points to Partition #1<br>
+&nbsp;&nbsp;&nbsp; Entry #2 - Points to the Entire Extended Partition</p>
+
+<p>You would read the first sector of that Extended Partition, and see another
+MBR Structure.</p>
+
+<p>MBR of Extended Partition</p>
+
+<p>&nbsp;&nbsp;&nbsp; Entry #1 - Points to Partition #2<br>
+&nbsp;&nbsp;&nbsp; Entry #2 - Points to Rest of Extended Partition after
+Partition #2</p>
+
+<p>Now, all references to Sector Numbers (most specifically the entry at Offset
+08h) in those Entries wouldn't be referenced from the start of the drive, but
+from the start of the Extended Partition.&nbsp; However, the CHS (Cylinder,
+Head, Sector) numbers would still be right.</p>
+
+<p>Once again, you would read the first sector of that Extended Partition, and
+see the next MBR.</p>
+
+<p>MBR of Rest of Extended Partition</p>
+
+<p>&nbsp;&nbsp;&nbsp; Entry #1 - Points to Partition #3<br>
+&nbsp;&nbsp;&nbsp; No Entry #2, since this was the Last Partition</p>
+
+<p>If there were another partition, the pattern would continue just like
+before, until the last one was reached.</p>
+
+</blockquote>
+
+<p>&nbsp;</p>
+
+<p><br>
+<strong><u>FAT32 Boot Record</u></strong></p>
+
+<blockquote style='margin-top:5.0pt;margin-bottom:5.0pt'>
+
+<p>This information is located in the first sector of every partition.</p>
+
+</blockquote>
+
+<table class=MsoNormalTable border=1 cellpadding=0 width=518 style='width:388.5pt'
+ height=192>
+ <tr style='height:14.25pt'>
+  <td width=60 style='width:45.0pt;padding:.75pt .75pt .75pt .75pt;height:14.25pt'>
+  <p class=MsoNormal>Offset</p>
+  </td>
+  <td width=329 style='width:246.75pt;padding:.75pt .75pt .75pt .75pt;
+  height:14.25pt'>
+  <p class=MsoNormal>Description</p>
+  </td>
+  <td width=110 style='width:82.5pt;padding:.75pt .75pt .75pt .75pt;height:
+  14.25pt'>
+  <p class=MsoNormal>Size</p>
+  </td>
+ </tr>
+ <tr style='height:7.5pt'>
+  <td width=60 style='width:45.0pt;padding:.75pt .75pt .75pt .75pt;height:7.5pt'>
+  <p class=MsoNormal>00h</p>
+  </td>
+  <td width=329 style='width:246.75pt;padding:.75pt .75pt .75pt .75pt;
+  height:7.5pt'>
+  <p class=MsoNormal>Jump Code + NOP</p>
+  </td>
+  <td width=110 style='width:82.5pt;padding:.75pt .75pt .75pt .75pt;height:
+  7.5pt'>
+  <p class=MsoNormal>3 Bytes</p>
+  </td>
+ </tr>
+ <tr style='height:18.75pt'>
+  <td width=60 style='width:45.0pt;padding:.75pt .75pt .75pt .75pt;height:18.75pt'>
+  <p class=MsoNormal>03h</p>
+  </td>
+  <td width=329 style='width:246.75pt;padding:.75pt .75pt .75pt .75pt;
+  height:18.75pt'>
+  <p class=MsoNormal>OEM Name (Probably MSWIN4.1)</p>
+  </td>
+  <td width=110 style='width:82.5pt;padding:.75pt .75pt .75pt .75pt;height:
+  18.75pt'>
+  <p class=MsoNormal>8 Bytes</p>
+  </td>
+ </tr>
+ <tr style='height:4.5pt'>
+  <td width=60 style='width:45.0pt;padding:.75pt .75pt .75pt .75pt;height:4.5pt'>
+  <p class=MsoNormal>0Bh</p>
+  </td>
+  <td width=329 style='width:246.75pt;padding:.75pt .75pt .75pt .75pt;
+  height:4.5pt'>
+  <p class=MsoNormal>Bytes Per Sector</p>
+  </td>
+  <td width=110 style='width:82.5pt;padding:.75pt .75pt .75pt .75pt;height:
+  4.5pt'>
+  <p class=MsoNormal>1 Word</p>
+  </td>
+ </tr>
+ <tr style='height:5.25pt'>
+  <td width=60 style='width:45.0pt;padding:.75pt .75pt .75pt .75pt;height:5.25pt'>
+  <p class=MsoNormal>0Dh</p>
+  </td>
+  <td width=329 style='width:246.75pt;padding:.75pt .75pt .75pt .75pt;
+  height:5.25pt'>
+  <p class=MsoNormal>Sectors Per Cluster</p>
+  </td>
+  <td width=110 style='width:82.5pt;padding:.75pt .75pt .75pt .75pt;height:
+  5.25pt'>
+  <p class=MsoNormal>1 Byte</p>
+  </td>
+ </tr>
+ <tr style='height:9.0pt'>
+  <td width=60 style='width:45.0pt;padding:.75pt .75pt .75pt .75pt;height:9.0pt'>
+  <p class=MsoNormal>0Eh</p>
+  </td>
+  <td width=329 style='width:246.75pt;padding:.75pt .75pt .75pt .75pt;
+  height:9.0pt'>
+  <p class=MsoNormal>Reserved Sectors</p>
+  </td>
+  <td width=110 style='width:82.5pt;padding:.75pt .75pt .75pt .75pt;height:
+  9.0pt'>
+  <p class=MsoNormal>1 Word</p>
+  </td>
+ </tr>
+ <tr style='height:5.25pt'>
+  <td width=60 style='width:45.0pt;padding:.75pt .75pt .75pt .75pt;height:5.25pt'>
+  <p class=MsoNormal>10h</p>
+  </td>
+  <td width=328 style='width:246.0pt;padding:.75pt .75pt .75pt .75pt;
+  height:5.25pt'>
+  <p class=MsoNormal>Number of Copies of FAT</p>
+  </td>
+  <td width=111 style='width:83.25pt;padding:.75pt .75pt .75pt .75pt;
+  height:5.25pt'>
+  <p class=MsoNormal>1 Byte</p>
+  </td>
+ </tr>
+ <tr style='height:3.0pt'>
+  <td width=60 style='width:45.0pt;padding:.75pt .75pt .75pt .75pt;height:3.0pt'>
+  <p class=MsoNormal>11h</p>
+  </td>
+  <td width=328 style='width:246.0pt;padding:.75pt .75pt .75pt .75pt;
+  height:3.0pt'>
+  <p class=MsoNormal>Maximum Root Directory Entries (N/A for FAT32)</p>
+  </td>
+  <td width=111 style='width:83.25pt;padding:.75pt .75pt .75pt .75pt;
+  height:3.0pt'>
+  <p class=MsoNormal>1 Word</p>
+  </td>
+ </tr>
+ <tr style='height:3.75pt'>
+  <td width=60 style='width:45.0pt;padding:.75pt .75pt .75pt .75pt;height:3.75pt'>
+  <p class=MsoNormal>13h</p>
+  </td>
+  <td width=328 style='width:246.0pt;padding:.75pt .75pt .75pt .75pt;
+  height:3.75pt'>
+  <p class=MsoNormal>Number of Sectors in Partition Smaller than 32MB (N/A for
+  FAT32)</p>
+  </td>
+  <td width=111 style='width:83.25pt;padding:.75pt .75pt .75pt .75pt;
+  height:3.75pt'>
+  <p class=MsoNormal>1 Word</p>
+  </td>
+ </tr>
+ <tr style='height:6.0pt'>
+  <td width=60 style='width:45.0pt;padding:.75pt .75pt .75pt .75pt;height:6.0pt'>
+  <p class=MsoNormal>15h</p>
+  </td>
+  <td width=328 style='width:246.0pt;padding:.75pt .75pt .75pt .75pt;
+  height:6.0pt'>
+  <p class=MsoNormal>Media Descriptor (F8h for Hard Disks)</p>
+  </td>
+  <td width=111 style='width:83.25pt;padding:.75pt .75pt .75pt .75pt;
+  height:6.0pt'>
+  <p class=MsoNormal>1 Byte</p>
+  </td>
+ </tr>
+ <tr style='height:3.0pt'>
+  <td width=60 style='width:45.0pt;padding:.75pt .75pt .75pt .75pt;height:3.0pt'>
+  <p class=MsoNormal>16h</p>
+  </td>
+  <td width=328 style='width:246.0pt;padding:.75pt .75pt .75pt .75pt;
+  height:3.0pt'>
+  <p class=MsoNormal>Sectors Per FAT in Older FAT Systems (N/A for FAT32)</p>
+  </td>
+  <td width=111 style='width:83.25pt;padding:.75pt .75pt .75pt .75pt;
+  height:3.0pt'>
+  <p class=MsoNormal>1 Word</p>
+  </td>
+ </tr>
+ <tr style='height:10.5pt'>
+  <td width=61 style='width:45.75pt;padding:.75pt .75pt .75pt .75pt;height:
+  10.5pt'>
+  <p class=MsoNormal>18h</p>
+  </td>
+  <td width=328 style='width:246.0pt;padding:.75pt .75pt .75pt .75pt;
+  height:10.5pt'>
+  <p class=MsoNormal>Sectors Per Track</p>
+  </td>
+  <td width=111 style='width:83.25pt;padding:.75pt .75pt .75pt .75pt;
+  height:10.5pt'>
+  <p class=MsoNormal>1 Word</p>
+  </td>
+ </tr>
+ <tr style='height:17.25pt'>
+  <td width=61 style='width:45.75pt;padding:.75pt .75pt .75pt .75pt;height:
+  17.25pt'>
+  <p class=MsoNormal>1Ah</p>
+  </td>
+  <td width=328 style='width:246.0pt;padding:.75pt .75pt .75pt .75pt;
+  height:17.25pt'>
+  <p class=MsoNormal>Number of Heads</p>
+  </td>
+  <td width=111 style='width:83.25pt;padding:.75pt .75pt .75pt .75pt;
+  height:17.25pt'>
+  <p class=MsoNormal>1 Word</p>
+  </td>
+ </tr>
+ <tr style='height:16.5pt'>
+  <td width=61 style='width:45.75pt;padding:.75pt .75pt .75pt .75pt;height:
+  16.5pt'>
+  <p class=MsoNormal>1Ch</p>
+  </td>
+  <td width=328 style='width:246.0pt;padding:.75pt .75pt .75pt .75pt;
+  height:16.5pt'>
+  <p class=MsoNormal>Number of Hidden Sectors in Partition</p>
+  </td>
+  <td width=111 style='width:83.25pt;padding:.75pt .75pt .75pt .75pt;
+  height:16.5pt'>
+  <p class=MsoNormal>1 Double Word</p>
+  </td>
+ </tr>
+ <tr style='height:16.5pt'>
+  <td width=61 style='width:45.75pt;padding:.75pt .75pt .75pt .75pt;height:
+  16.5pt'>
+  <p class=MsoNormal>20h</p>
+  </td>
+  <td width=328 style='width:246.0pt;padding:.75pt .75pt .75pt .75pt;
+  height:16.5pt'>
+  <p class=MsoNormal>Number of Sectors in Partition</p>
+  </td>
+  <td width=111 style='width:83.25pt;padding:.75pt .75pt .75pt .75pt;
+  height:16.5pt'>
+  <p class=MsoNormal>1 Double Word</p>
+  </td>
+ </tr>
+ <tr style='height:16.5pt'>
+  <td width=61 style='width:45.75pt;padding:.75pt .75pt .75pt .75pt;height:
+  16.5pt'>
+  <p class=MsoNormal>24h</p>
+  </td>
+  <td width=328 style='width:246.0pt;padding:.75pt .75pt .75pt .75pt;
+  height:16.5pt'>
+  <p class=MsoNormal>Number of Sectors Per FAT</p>
+  </td>
+  <td width=111 style='width:83.25pt;padding:.75pt .75pt .75pt .75pt;
+  height:16.5pt'>
+  <p class=MsoNormal>1 Double Word</p>
+  </td>
+ </tr>
+ <tr style='height:16.5pt'>
+  <td width=61 style='width:45.75pt;padding:.75pt .75pt .75pt .75pt;height:
+  16.5pt'>
+  <p class=MsoNormal>28h</p>
+  </td>
+  <td width=328 style='width:246.0pt;padding:.75pt .75pt .75pt .75pt;
+  height:16.5pt'>
+  <p class=MsoNormal>Flags (Bits 0-4 Indicate Active FAT Copy) (Bit 7 Indicates
+  whether FAT Mirroring is Enabled or Disabled &lt;Clear is Enabled&gt;) (If
+  FAT Mirroring is Disabled, the FAT Information is only written to the copy
+  indicated by bits 0-4)</p>
+  </td>
+  <td width=111 style='width:83.25pt;padding:.75pt .75pt .75pt .75pt;
+  height:16.5pt'>
+  <p class=MsoNormal>1 Word</p>
+  </td>
+ </tr>
+ <tr style='height:16.5pt'>
+  <td width=61 style='width:45.75pt;padding:.75pt .75pt .75pt .75pt;height:
+  16.5pt'>
+  <p class=MsoNormal>2Ah</p>
+  </td>
+  <td width=328 style='width:246.0pt;padding:.75pt .75pt .75pt .75pt;
+  height:16.5pt'>
+  <p class=MsoNormal>Version of FAT32 Drive (High Byte = Major Version, Low
+  Byte = Minor Version)</p>
+  </td>
+  <td width=111 style='width:83.25pt;padding:.75pt .75pt .75pt .75pt;
+  height:16.5pt'>
+  <p class=MsoNormal>1 Word</p>
+  </td>
+ </tr>
+ <tr style='height:16.5pt'>
+  <td width=61 style='width:45.75pt;padding:.75pt .75pt .75pt .75pt;height:
+  16.5pt'>
+  <p class=MsoNormal>2Ch</p>
+  </td>
+  <td width=328 style='width:246.0pt;padding:.75pt .75pt .75pt .75pt;
+  height:16.5pt'>
+  <p class=MsoNormal>Cluster Number of the Start of the Root Directory</p>
+  </td>
+  <td width=111 style='width:83.25pt;padding:.75pt .75pt .75pt .75pt;
+  height:16.5pt'>
+  <p class=MsoNormal>1 Double Word</p>
+  </td>
+ </tr>
+ <tr style='height:16.5pt'>
+  <td width=61 style='width:45.75pt;padding:.75pt .75pt .75pt .75pt;height:
+  16.5pt'>
+  <p class=MsoNormal>30h</p>
+  </td>
+  <td width=328 style='width:246.0pt;padding:.75pt .75pt .75pt .75pt;
+  height:16.5pt'>
+  <p class=MsoNormal>Sector Number of the File System Information Sector (See Structure
+  Below) (Referenced from the Start of the Partition)</p>
+  </td>
+  <td width=111 style='width:83.25pt;padding:.75pt .75pt .75pt .75pt;
+  height:16.5pt'>
+  <p class=MsoNormal>1 Word</p>
+  </td>
+ </tr>
+ <tr style='height:16.5pt'>
+  <td width=61 style='width:45.75pt;padding:.75pt .75pt .75pt .75pt;height:
+  16.5pt'>
+  <p class=MsoNormal>32h</p>
+  </td>
+  <td width=328 style='width:246.0pt;padding:.75pt .75pt .75pt .75pt;
+  height:16.5pt'>
+  <p class=MsoNormal>Sector Number of the Backup Boot Sector (Referenced from
+  the Start of the Partition)</p>
+  </td>
+  <td width=111 style='width:83.25pt;padding:.75pt .75pt .75pt .75pt;
+  height:16.5pt'>
+  <p class=MsoNormal>1 Word</p>
+  </td>
+ </tr>
+ <tr style='height:16.5pt'>
+  <td width=61 style='width:45.75pt;padding:.75pt .75pt .75pt .75pt;height:
+  16.5pt'>
+  <p class=MsoNormal>34h</p>
+  </td>
+  <td width=328 style='width:246.0pt;padding:.75pt .75pt .75pt .75pt;
+  height:16.5pt'>
+  <p class=MsoNormal>Reserved</p>
+  </td>
+  <td width=111 style='width:83.25pt;padding:.75pt .75pt .75pt .75pt;
+  height:16.5pt'>
+  <p class=MsoNormal>12 Bytes</p>
+  </td>
+ </tr>
+ <tr style='height:16.5pt'>
+  <td width=61 style='width:45.75pt;padding:.75pt .75pt .75pt .75pt;height:
+  16.5pt'>
+  <p class=MsoNormal>40h</p>
+  </td>
+  <td width=328 style='width:246.0pt;padding:.75pt .75pt .75pt .75pt;
+  height:16.5pt'>
+  <p class=MsoNormal>Logical Drive Number of Partition</p>
+  </td>
+  <td width=111 style='width:83.25pt;padding:.75pt .75pt .75pt .75pt;
+  height:16.5pt'>
+  <p class=MsoNormal>1 Byte</p>
+  </td>
+ </tr>
+ <tr style='height:16.5pt'>
+  <td width=61 style='width:45.75pt;padding:.75pt .75pt .75pt .75pt;height:
+  16.5pt'>
+  <p class=MsoNormal>41h</p>
+  </td>
+  <td width=328 style='width:246.0pt;padding:.75pt .75pt .75pt .75pt;
+  height:16.5pt'>
+  <p class=MsoNormal>Unused (Could be High Byte of Previous Entry)</p>
+  </td>
+  <td width=111 style='width:83.25pt;padding:.75pt .75pt .75pt .75pt;
+  height:16.5pt'>
+  <p class=MsoNormal>1 Byte</p>
+  </td>
+ </tr>
+ <tr style='height:16.5pt'>
+  <td width=61 style='width:45.75pt;padding:.75pt .75pt .75pt .75pt;height:
+  16.5pt'>
+  <p class=MsoNormal>42h</p>
+  </td>
+  <td width=328 style='width:246.0pt;padding:.75pt .75pt .75pt .75pt;
+  height:16.5pt'>
+  <p class=MsoNormal>Extended Signature (29h)</p>
+  </td>
+  <td width=111 style='width:83.25pt;padding:.75pt .75pt .75pt .75pt;
+  height:16.5pt'>
+  <p class=MsoNormal>1 Byte</p>
+  </td>
+ </tr>
+ <tr style='height:16.5pt'>
+  <td width=61 style='width:45.75pt;padding:.75pt .75pt .75pt .75pt;height:
+  16.5pt'>
+  <p class=MsoNormal>43h</p>
+  </td>
+  <td width=328 style='width:246.0pt;padding:.75pt .75pt .75pt .75pt;
+  height:16.5pt'>
+  <p class=MsoNormal>Serial Number of Partition</p>
+  </td>
+  <td width=111 style='width:83.25pt;padding:.75pt .75pt .75pt .75pt;
+  height:16.5pt'>
+  <p class=MsoNormal>1 Double Word</p>
+  </td>
+ </tr>
+ <tr style='height:16.5pt'>
+  <td width=61 style='width:45.75pt;padding:.75pt .75pt .75pt .75pt;height:
+  16.5pt'>
+  <p class=MsoNormal>47h</p>
+  </td>
+  <td width=328 style='width:246.0pt;padding:.75pt .75pt .75pt .75pt;
+  height:16.5pt'>
+  <p class=MsoNormal>Volume Name of Partition</p>
+  </td>
+  <td width=111 style='width:83.25pt;padding:.75pt .75pt .75pt .75pt;
+  height:16.5pt'>
+  <p class=MsoNormal>11 Bytes</p>
+  </td>
+ </tr>
+ <tr style='height:16.5pt'>
+  <td width=61 style='width:45.75pt;padding:.75pt .75pt .75pt .75pt;height:
+  16.5pt'>
+  <p class=MsoNormal>52h</p>
+  </td>
+  <td width=328 style='width:246.0pt;padding:.75pt .75pt .75pt .75pt;
+  height:16.5pt'>
+  <p class=MsoNormal>FAT Name (FAT32)</p>
+  </td>
+  <td width=111 style='width:83.25pt;padding:.75pt .75pt .75pt .75pt;
+  height:16.5pt'>
+  <p class=MsoNormal>8 Bytes</p>
+  </td>
+ </tr>
+ <tr style='height:16.5pt'>
+  <td width=61 style='width:45.75pt;padding:.75pt .75pt .75pt .75pt;height:
+  16.5pt'>
+  <p class=MsoNormal>5Ah</p>
+  </td>
+  <td width=328 style='width:246.0pt;padding:.75pt .75pt .75pt .75pt;
+  height:16.5pt'>
+  <p class=MsoNormal>Executable Code</p>
+  </td>
+  <td width=111 style='width:83.25pt;padding:.75pt .75pt .75pt .75pt;
+  height:16.5pt'>
+  <p class=MsoNormal>420 Bytes</p>
+  </td>
+ </tr>
+ <tr style='height:16.5pt'>
+  <td width=61 style='width:45.75pt;padding:.75pt .75pt .75pt .75pt;height:
+  16.5pt'>
+  <p class=MsoNormal>1FEh</p>
+  </td>
+  <td width=328 style='width:246.0pt;padding:.75pt .75pt .75pt .75pt;
+  height:16.5pt'>
+  <p class=MsoNormal>Boot Record Signature (55h AAh)</p>
+  </td>
+  <td width=111 style='width:83.25pt;padding:.75pt .75pt .75pt .75pt;
+  height:16.5pt'>
+  <p class=MsoNormal>2 Bytes</p>
+  </td>
+ </tr>
+</table>
+
+<p><br>
+<strong><u>File System Information Sector</u></strong></p>
+
+<blockquote style='margin-top:5.0pt;margin-bottom:5.0pt'>
+
+<p>Usually this is the Second Sector of the partition, although since there is a
+reference in the Boot Sector to it, I'm assuming it can be moved around.&nbsp;
+I never got a complete picture of this one.&nbsp; Although I do know where the
+important fields are at.</p>
+
+</blockquote>
+
+<table class=MsoNormalTable border=1 cellpadding=0 width=521 style='width:390.75pt'
+ height=65>
+ <tr style='height:9.75pt'>
+  <td width=63 style='width:47.25pt;padding:.75pt .75pt .75pt .75pt;height:
+  9.75pt'>
+  <p class=MsoNormal>Offset</p>
+  </td>
+  <td width=331 style='width:248.25pt;padding:.75pt .75pt .75pt .75pt;
+  height:9.75pt'>
+  <p class=MsoNormal>Description</p>
+  </td>
+  <td width=109 style='width:81.75pt;padding:.75pt .75pt .75pt .75pt;
+  height:9.75pt'>
+  <p class=MsoNormal>Size</p>
+  </td>
+ </tr>
+ <tr style='height:10.5pt'>
+  <td width=63 style='width:47.25pt;padding:.75pt .75pt .75pt .75pt;height:
+  10.5pt'>
+  <p class=MsoNormal>00h</p>
+  </td>
+  <td width=331 style='width:248.25pt;padding:.75pt .75pt .75pt .75pt;
+  height:10.5pt'>
+  <p class=MsoNormal>First Signature (52h 52h 61h 41h)</p>
+  </td>
+  <td width=109 style='width:81.75pt;padding:.75pt .75pt .75pt .75pt;
+  height:10.5pt'>
+  <p class=MsoNormal>1 Double Word</p>
+  </td>
+ </tr>
+ <tr style='height:10.5pt'>
+  <td width=63 style='width:47.25pt;padding:.75pt .75pt .75pt .75pt;height:
+  10.5pt'>
+  <p class=MsoNormal>04h</p>
+  </td>
+  <td width=331 style='width:248.25pt;padding:.75pt .75pt .75pt .75pt;
+  height:10.5pt'>
+  <p class=MsoNormal>Unknown, Currently (Might just be Null)</p>
+  </td>
+  <td width=109 style='width:81.75pt;padding:.75pt .75pt .75pt .75pt;
+  height:10.5pt'>
+  <p class=MsoNormal>480 Bytes</p>
+  </td>
+ </tr>
+ <tr style='height:10.5pt'>
+  <td width=63 style='width:47.25pt;padding:.75pt .75pt .75pt .75pt;height:
+  10.5pt'>
+  <p class=MsoNormal>1E4h</p>
+  </td>
+  <td width=331 style='width:248.25pt;padding:.75pt .75pt .75pt .75pt;
+  height:10.5pt'>
+  <p class=MsoNormal>Signature of FSInfo Sector (72h 72h 41h 61h)</p>
+  </td>
+  <td width=109 style='width:81.75pt;padding:.75pt .75pt .75pt .75pt;
+  height:10.5pt'>
+  <p class=MsoNormal>1 Double Word</p>
+  </td>
+ </tr>
+ <tr style='height:10.5pt'>
+  <td width=63 style='width:47.25pt;padding:.75pt .75pt .75pt .75pt;height:
+  10.5pt'>
+  <p class=MsoNormal>1E8h</p>
+  </td>
+  <td width=331 style='width:248.25pt;padding:.75pt .75pt .75pt .75pt;
+  height:10.5pt'>
+  <p class=MsoNormal>Number of Free Clusters (Set to -1 if Unknown)</p>
+  </td>
+  <td width=109 style='width:81.75pt;padding:.75pt .75pt .75pt .75pt;
+  height:10.5pt'>
+  <p class=MsoNormal>1 Double Word</p>
+  </td>
+ </tr>
+ <tr style='height:10.5pt'>
+  <td width=63 style='width:47.25pt;padding:.75pt .75pt .75pt .75pt;height:
+  10.5pt'>
+  <p class=MsoNormal>1ECh</p>
+  </td>
+  <td width=331 style='width:248.25pt;padding:.75pt .75pt .75pt .75pt;
+  height:10.5pt'>
+  <p class=MsoNormal>Cluster Number of Cluster that was Most Recently
+  Allocated.</p>
+  </td>
+  <td width=109 style='width:81.75pt;padding:.75pt .75pt .75pt .75pt;
+  height:10.5pt'>
+  <p class=MsoNormal>1 Double Word</p>
+  </td>
+ </tr>
+ <tr style='height:10.5pt'>
+  <td width=63 style='width:47.25pt;padding:.75pt .75pt .75pt .75pt;height:
+  10.5pt'>
+  <p class=MsoNormal>1F0h</p>
+  </td>
+  <td width=331 style='width:248.25pt;padding:.75pt .75pt .75pt .75pt;
+  height:10.5pt'>
+  <p class=MsoNormal>Reserved</p>
+  </td>
+  <td width=109 style='width:81.75pt;padding:.75pt .75pt .75pt .75pt;
+  height:10.5pt'>
+  <p class=MsoNormal>12 Bytes</p>
+  </td>
+ </tr>
+ <tr style='height:10.5pt'>
+  <td width=63 style='width:47.25pt;padding:.75pt .75pt .75pt .75pt;height:
+  10.5pt'>
+  <p class=MsoNormal>1FCh</p>
+  </td>
+  <td width=331 style='width:248.25pt;padding:.75pt .75pt .75pt .75pt;
+  height:10.5pt'>
+  <p class=MsoNormal>Unknown or Null</p>
+  </td>
+  <td width=109 style='width:81.75pt;padding:.75pt .75pt .75pt .75pt;
+  height:10.5pt'>
+  <p class=MsoNormal>2 Bytes</p>
+  </td>
+ </tr>
+ <tr style='height:10.5pt'>
+  <td width=63 style='width:47.25pt;padding:.75pt .75pt .75pt .75pt;height:
+  10.5pt'>
+  <p class=MsoNormal>1FEh</p>
+  </td>
+  <td width=331 style='width:248.25pt;padding:.75pt .75pt .75pt .75pt;
+  height:10.5pt'>
+  <p class=MsoNormal>Boot Record Signature (55h AAh)</p>
+  </td>
+  <td width=109 style='width:81.75pt;padding:.75pt .75pt .75pt .75pt;
+  height:10.5pt'>
+  <p class=MsoNormal>2 Bytes</p>
+  </td>
+ </tr>
+</table>
+
+<p><br>
+<strong><u>FAT32 Drive Layout</u></strong></p>
+
+<table class=MsoNormalTable border=1 cellpadding=0 width=521 style='width:390.75pt'
+ height=64>
+ <tr style='height:17.25pt'>
+  <td width=374 style='width:280.5pt;padding:.75pt .75pt .75pt .75pt;
+  height:17.25pt'>
+  <p class=MsoNormal>Offset</p>
+  </td>
+  <td width=111 style='width:83.25pt;padding:.75pt .75pt .75pt .75pt;
+  height:17.25pt'>
+  <p class=MsoNormal>Description</p>
+  </td>
+ </tr>
+ <tr style='height:7.5pt'>
+  <td width=374 style='width:280.5pt;padding:.75pt .75pt .75pt .75pt;
+  height:7.5pt'>
+  <p class=MsoNormal>Start of Partition</p>
+  </td>
+  <td width=111 style='width:83.25pt;padding:.75pt .75pt .75pt .75pt;
+  height:7.5pt'>
+  <p class=MsoNormal>Boot Sector</p>
+  </td>
+ </tr>
+ <tr style='height:9.0pt'>
+  <td width=374 style='width:280.5pt;padding:.75pt .75pt .75pt .75pt;
+  height:9.0pt'>
+  <p class=MsoNormal>Start + # of Reserved Sectors</p>
+  </td>
+  <td width=111 style='width:83.25pt;padding:.75pt .75pt .75pt .75pt;
+  height:9.0pt'>
+  <p class=MsoNormal>Fat Tables</p>
+  </td>
+ </tr>
+ <tr style='height:9.0pt'>
+  <td width=374 style='width:280.5pt;padding:.75pt .75pt .75pt .75pt;
+  height:9.0pt'>
+  <p class=MsoNormal>Start + # of Reserved + (# of Sectors Per FAT * 2)
+  &lt;Assuming that FAT Mirroring is Enabled, I personally haven't seen a case where
+  it wasn't, but I guess there is always the possibility&gt;</p>
+  </td>
+  <td width=111 style='width:83.25pt;padding:.75pt .75pt .75pt .75pt;
+  height:9.0pt'>
+  <p class=MsoNormal>Data Area (Starts with Cluster #2)</p>
+  </td>
+ </tr>
+</table>
+
+<p>&nbsp;</p>
+
+<p><strong><u>Cluster Meaning</u></strong></p>
+
+<blockquote style='margin-top:5.0pt;margin-bottom:5.0pt'>
+
+<p>A Cluster is a Group of Sectors on the Hard Drive that have information in
+them. &nbsp; A 4K Cluster has 8 Sectors in it (512*8=4096).&nbsp; Each Cluster
+is given a spot in the FAT Table.&nbsp; When you look at an Entry in the FAT,
+the number there tells you whether or not that cluster has data in it, and if
+so, if it is the end of the data or there is another cluster after it.&nbsp;
+All Data on a Partition starts with Cluster #2. &nbsp;&nbsp; If the FAT Entry
+is 0, then there is no data in that cluster.&nbsp; If the FAT Entry is
+0FFFFFFFh, then it is the last entry in the chain.&nbsp; </p>
+
+<p>This is one of my biggest holes in my information.&nbsp; I am unable to find
+anyplace that shows what numbers mean what when it comes to the FAT
+table.&nbsp; I was able to tell the end of the chain just by looking at a FAT32
+Drive, but I don't know what stands for a BAD Cluster or what the maximum valid
+number for showing data is.&nbsp; </p>
+
+<p>For now, you can calculate the maximum valid cluster in a partition with
+this formula:</p>
+
+<p>( (# of Sectors in Partition) - (# of Sectors per Fat * 2) - (# of Reserved
+Sectors) ) /&nbsp; (# of Sectors per Cluster)</p>
+
+<p>If there is any remainder in the answer to that formula, it just means that
+there were a few extra clusters at the end of the partition (probably not
+enough to make another cluster), so you can just get rid of anything after the
+decimal point.</p>
+
+<p>&nbsp;&nbsp;&nbsp; Thanks to Andrew Clausen for pointing this formula out to
+me.</p>
+
+</blockquote>
+
+<p>&nbsp;</p>
+
+<p><strong><u>Directory Table</u></strong></p>
+
+<blockquote style='margin-top:5.0pt;margin-bottom:5.0pt'>
+
+<p>Another aspect when looking at a File System at Low Level is the Directory
+Table. &nbsp; The Directory Table is what stores all of the File and Directory
+Entries. &nbsp; Basically there is only one difference between the Directory
+Table of FAT16 and FAT32, so go <a
+href="http://home.teleport.com/~brainy/lfn.htm">here</a> to look at FAT16's
+Structure.&nbsp;&nbsp; The Difference is : the Reserved OS/2 Byte (Offset 20
+[14h]) in the Short Filename Structure is replaced with the High Word of the
+Cluster Number (since it's now 4 bytes instead of 2).</p>
+
+</blockquote>
+
+<p>&nbsp;</p>
+
+<p>Footnotes</p>
+
+<p>1 - LBA = Logical Block Addressing - Uses the Int 13h Extensions built into
+newer BIOS's to access data above the 8GB barrier, or to access strictly in LBA
+mode, instead of CHS (Cylinder, Head, Sector).</p>
+
+<p style='margin-left:.5in'>To support disk drives larger than 137 GB, modern
+BIOSs<br>
+&nbsp; have extensions for &quot;48-bit LBA&quot; (a/k/a &quot;LBA48&quot;)
+disk<br>
+&nbsp; access.&nbsp; The specifications are here:<br>
+&nbsp; <a
+href="http://www.t13.org/Documents/UploadedDocuments/docs2004/d1572r3-EDD3.pdf">http://www.t13.org/Documents/UploadedDocuments/docs2004/d1572r3-EDD3.pdf</a>
+or<br>
+&nbsp; <a
+href="http://www.t13.org/Documents/UploadedDocuments/docs2004/d1572r3-EDD3.doc">http://www.t13.org/Documents/UploadedDocuments/docs2004/d1572r3-EDD3.doc</a>&nbsp;</p>
+
+<p style='margin-left:.5in'>(Thanks to Dave Burton for this Information)</p>
+
+<p style='margin-left:.5in'>&nbsp;</p>
+
+<p align=center style='text-align:center'><a
+href="http://home.teleport.com/~brainy">Home</a> <a
+href="http://home.teleport.com/~brainy/rps.html">Reference Point Software</a>
+FAT32 Structure Information <a href="http://home.teleport.com/~brainy/fat16.htm">FAT16
+Structure Information</a> <a
+href="http://home.teleport.com/~brainy/diskaccess.htm">Disk Access Information</a>
+<br>
+<a href="http://home.teleport.com/~brainy/bio.html">About Me</a> <a
+href="http://home.teleport.com/~brainy/links.html">Links</a> <a
+href="http://home.teleport.com/~brainy/dobiash.html">Dobiash?</a></p>
+
+</div>
+
+</body>
+
+</html>

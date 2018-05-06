@@ -1,0 +1,319 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"
+   "http://www.w3.org/TR/REC-html40/strict.dtd">
+
+<!-- http://www.maverick-os.dk/FileSystemFormats/VFAT_LongFileNames.html -->
+
+<HTML LANG="en">
+
+<HEAD>
+<TITLE>Maverick - The Operating System</TITLE>
+<META NAME="author" CONTENT="Lasse Krogh Thygesen">
+<META NAME="copyright" CONTENT="(C) 1999  Lasse Krogh Thygesen">
+<META NAME="keywords" CONTENT="maverick,operating system,os,x86,intel,ata,ide,eide,atapi,pic,pit,dma,protected mode,pmode">
+<META NAME="description" CONTENT=""> 
+<LINK REL="stylesheet" TYPE="text/css" HREF="Maverick.css">
+</HEAD>
+
+<BODY>
+<DIV CLASS="MiniMenu">
+[<A HREF="FAT32_FileSystem.html" TITLE="FAT32 File System">Previous</A>]
+ - [<A HREF="../Mainmenu_NoFrames.html" TITLE="Go to main menu">Main menu</A>]
+ - [<A HREF="../FileFormats/FileFormatID.html" TITLE="File Format ID">Next</A>]<BR>
+</DIV>
+
+<H1 CLASS="PreTitle">Specifications</H1>
+<H1>VFAT Long File Names</H1>
+<H1 CLASS="SubTitle">Usage: Stores long filenames (LFN) for Windows</H1>
+
+<HR>
+
+<DIV ID="Introduction">
+<H2>Introduction</H2>
+This isn't a file system in itself, but a kind of sub file system, which can be placed over a FAT12, FAT16 or FAT32 file system. The VFAT system is a way of hiding long file names in the directory structure of the FAT file systems.<BR>
+<BR>
+The filenames are stored using unicode characters which are 16 bit long.<BR>
+<BR>
+<BR>
+</DIV>
+
+
+<DIV ID="CoexistenceWithFAT">
+<H2>Coexistence with FAT12, FAT16 & FAT32</H2>
+Depending on the length of the long filename, the system will create a number of invalid 8.3 entries in the Directory Table, these are the LFN (Long Filename) entries. These <ABBR TITLE="Long Filename">LFN</ABBR> entries are stored with the with the last LFN entry topmost, and the first LFN entry just above a valid Directory Entry. So when looked upon from the top and down, the Directory Table looks something like this:<BR>
+<BR>
+<DIV ID="DirectoryExample" CLASS="Centered">
+<TABLE WIDTH="90%" SUMMARY="Directory Example">
+	<CAPTION>
+		Directory Example
+	</CAPTION>
+	<COLGROUP>
+		<COL WIDTH="20%" ALIGN="Center" VALIGN="Top">
+		<COL WIDTH="40%" ALIGN="Center" VALIGN="Top">
+		<COL WIDTH="40%" ALIGN="Center" VALIGN="Top">
+	</COLGROUP>
+	<THEAD>
+		<TR>
+			<TH ALIGN="Center" VALIGN="Middle">Entry Nr.</TH>
+			<TH ALIGN="Center" VALIGN="Middle">Without LFN Entries</TH>
+			<TH ALIGN="Center" VALIGN="Middle">With LFN Entries</TH>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR><TD>...</TD><TD>...</TD><TD>...</TD></TR>
+		<TR><TD>n</TD><TD>Normal 1</TD><TD>Normal 1</TD></TR>
+		<TR><TD>n+1</TD><TD>Normal 2</TD><TD>LFN for Normal 2 - Part 3</TD></TR>
+		<TR><TD>n+2</TD><TD>Normal 3</TD><TD>LFN for Normal 2 - Part 2</TD></TR>
+		<TR><TD>n+3</TD><TD>Normal 4</TD><TD>LFN for Normal 2 - Part 1</TD></TR>
+		<TR><TD>n+4</TD><TD>Normal 5</TD><TD>Normal 2</TD></TR>
+		<TR><TD>n+5</TD><TD>Normal 6</TD><TD>Normal 3</TD></TR>
+		<TR><TD>...</TD><TD>...</TD><TD>...</TD></TR>
+	</TBODY>
+</TABLE>
+</DIV>
+<BR>
+The LFN entries have the Volume Name, Hidden, System and the Read-Only flags set. So most programs won't display them because of the Volume Name flag (Volume entries are rarely displayed), and they won't be overwridden because of the Read-Only flag.<BR>
+<BR>
+<BR>
+</DIV>
+
+
+<DIV ID="DirectoryEntries">
+<H2>Directory Entries</H2>
+The VFAT Directory Format, can coexist on a normal FATxx system. The LFN entries are hidden from normal programs, and available to those who know how to read them. But in addition to the LFN entries the VFAT Directory Format enhances the original structure of the Directory Table as found in FAT16. The Directory Table can still be read by older applications, but all the unused space from the FAT16 format, is now used to store some additional information. This is the format of the VFAT Directory entries:<BR>
+<BR>
+<DIV ID="DirectoryEntryStructure" CLASS="Centered">
+<TABLE WIDTH="90%" SUMMARY="Structure of the VFAT Directory Entries">
+	<CAPTION>
+		Structure of the VFAT Directory Entries
+	</CAPTION>
+	<COLGROUP>
+		<COL WIDTH="15%" ALIGN="Center" VALIGN="Top">
+		<COL WIDTH="15%" ALIGN="Center" VALIGN="Top">
+		<COL WIDTH="70%" ALIGN="Left" VALIGN="Top">
+	</COLGROUP>
+	<THEAD>
+		<TR>
+			<TH ALIGN="Center" VALIGN="Middle">Offset</TH>
+			<TH ALIGN="Center" VALIGN="Middle">Size</TH>
+			<TH ALIGN="Center" VALIGN="Middle">Description</TH>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR><TD>00h</TD><TD>8 bytes</TD><TD>Filename</TD></TR>
+		<TR><TD>08h</TD><TD>3 bytes</TD><TD>Filename extension</TD></TR>
+		<TR><TD>0Bh</TD><TD>1 bytes</TD><TD><A HREF="#FlagByte">Flag byte</A></TD></TR>
+		<TR><TD>0Ch</TD><TD>1 bytes</TD><TD>NT - Reserved for Windows NT - Should always be 0000h</TD></TR>
+		<TR><TD>0Dh</TD><TD>1 bytes</TD><TD>Creation Time - Millisecond</TD></TR>
+		<TR><TD>0Eh</TD><TD>2 bytes</TD><TD>Creation Time - Hour & Minute</TD></TR>
+		<TR><TD>10h</TD><TD>2 bytes</TD><TD>Created Date</TD></TR>
+		<TR><TD>12h</TD><TD>2 bytes</TD><TD>Last Accessed Data</TD></TR>
+		<TR><TD>14h</TD><TD>2 bytes</TD><TD>Starting cluster (High word) on FAT32 file systems, else 0000h</TD></TR>
+		<TR><TD>16h</TD><TD>2 bytes</TD><TD>Time</TD></TR>
+		<TR><TD>18h</TD><TD>2 bytes</TD><TD>Date</TD></TR>
+		<TR><TD>1Ah</TD><TD>2 bytes</TD><TD>Starting cluster (Low word)</TD></TR>
+		<TR><TD>1Ch</TD><TD>4 bytes</TD><TD>File size in bytes</TD></TR>
+	</TBODY>
+</TABLE>
+</DIV>
+<BR>
+</DIV>
+
+<DIV ID="FlagByte">
+<H3>Flag Byte</H3>
+The flag byte defines a set of flags which is set for directories, volume name, hidden files, system files, etc. These are the flags:<BR>
+<BR>
+<DIV ID="Flags" CLASS="Centered">
+<TABLE WIDTH="60%" SUMMARY="Flags in the flag byte">
+	<CAPTION>
+		Flags in the flag byte
+	</CAPTION>
+	<COLGROUP SPAN="8" WIDTH="3%" ALIGN="Center" VALIGN="Middle">
+	</COLGROUP>
+	<COLGROUP>
+		<COL WIDTH="4%" ALIGN="Center" VALIGN="Middle">
+	</COLGROUP>
+	<THEAD>
+		<TR>
+			<TH CLASS="BitTable">7</TH>
+			<TH CLASS="BitTable">6</TH>
+			<TH CLASS="BitTable">5</TH>
+			<TH CLASS="BitTable">4</TH>
+			<TH CLASS="BitTable">3</TH>
+			<TH CLASS="BitTable">2</TH>
+			<TH CLASS="BitTable">1</TH>
+			<TH CLASS="BitTable">0</TH>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR>
+		    <TD CLASS="BitTable" COLSPAN="2">Unused</TD>
+		    <TD CLASS="BitTable">A</TD>
+		    <TD CLASS="BitTable">D</TD>
+		    <TD CLASS="BitTable">V</TD>
+		    <TD CLASS="BitTable">S</TD>
+		    <TD CLASS="BitTable">H</TD>
+		    <TD CLASS="BitTable">R</TD>
+		    <TH CLASS="BitTable">0000h</TH>
+		</TR>
+	</TBODY>
+</TABLE>
+</DIV>
+<BR>
+</DIV>
+
+<DIV ID="Achieved">
+<H4>Achieved Flag</H4>
+The A flag is set by a backup program, so that the user/program knows which files that has been backed up. This flag is not used correctly by many user and perhaps also by many operating systems.<BR>
+<BR>
+</DIV>
+
+<DIV ID="System">
+<H4>System</H4>
+This flag shows that the file/directory is important for the system, and shouldn't be manipulated.<BR>
+<BR>
+</DIV>
+
+<DIV ID="Hidden">
+<H4>Hidden</H4>
+This flag tell the system and programs that the file should be hidden for the user. But in a lot of programs this can be overwritten by the user.<BR>
+<BR>
+</DIV>
+
+<DIV ID="ReadOnly">
+<H4>Read Only</H4>
+The flag is used to prevent programs from not automatically overwriting or deleting this file/directory.<BR>
+<BR>
+</DIV>
+
+<DIV ID="Directory">
+<H4>Directory</H4>
+This flag is set, when an entry in the directory table is not pointing to the beginning of a file, but to another directory table. A sub-directory. The sub-directory is placed in the cluster, where the Starting Cluster field points to. The format of this sub-directory table is identical to the root directory table.<BR>
+<BR>
+</DIV>
+
+<DIV ID="VolumeName">
+<H4>Volume Name</H4>
+When this flag is set, the directory entry is not pointing to a file, but to nothing. The only information used from this entry is the filename (8 bytes) plus the filename extension (3 bytes). These bytes form an 11 bytes long volume label (without any .) There may be only <B>one</B> valid entry on the entire disk with this flag set. And preferably this entry should be among the first 3 entries in the root directory table, if not, then MS-DOS can have trouble displaying the right volume label. This volume name should be the same as the one in the boot sector. The latter one is infact rarely used.<BR>
+<BR>
+<BR>
+</DIV>
+
+
+<DIV ID="LFNEntry">
+<H2>LFN Entry</H2>
+The LFN entries are, as described, placed above the real directory entry, for which they contain the long filename. The first 13 letters are in the first entry, letters 14-26 are in the second LFN entry, letters 27-39 are in the third LFN entry, and so on until the filename has ended. The maximum length of a filename has been limited to 255, even though this scheme has the potential to make them 1664 bytes long, Microsoft - who designed FAT32 - decided not to. The structure of each LFN entry is as follows:<BR>
+<BR>
+<DIV ID="LFNEntryStructure" CLASS="Centered">
+<TABLE WIDTH="90%" SUMMARY="Structure of a LFN Entry">
+	<CAPTION>
+		Structure of a LFN Entry
+	</CAPTION>
+	<COLGROUP>
+		<COL WIDTH="15%" ALIGN="Center" VALIGN="Top">
+		<COL WIDTH="15%" ALIGN="Center" VALIGN="Top">
+		<COL WIDTH="70%" ALIGN="Left" VALIGN="Top">
+	</COLGROUP>
+	<THEAD>
+		<TR>
+			<TH ALIGN="Center" VALIGN="Middle">Offset</TH>
+			<TH ALIGN="Center" VALIGN="Middle">Size</TH>
+			<TH ALIGN="Center" VALIGN="Middle">Description</TH>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR><TD>00h</TD><TD>1 bytes</TD><TD><A HREF="#OrdinalField">Ordinal field</A></TD></TR>
+		<TR><TD>01h</TD><TD>2 bytes</TD><TD>Unicode Character 1</TD></TR>
+		<TR><TD>03h</TD><TD>2 bytes</TD><TD>Unicode Character 2</TD></TR>
+		<TR><TD>05h</TD><TD>2 bytes</TD><TD>Unicode Character 3</TD></TR>
+		<TR><TD>07h</TD><TD>2 bytes</TD><TD>Unicode Character 4</TD></TR>
+		<TR><TD>09h</TD><TD>2 bytes</TD><TD>Unicode Character 5</TD></TR>
+		<TR><TD>0Bh</TD><TD>1 bytes</TD><TD><A HREF="#FlagByte">Flag byte</A></TD></TR>
+		<TR><TD>0Ch</TD><TD>1 bytes</TD><TD>Reserved - Always 00h</TD></TR>
+		<TR><TD>0Dh</TD><TD>1 bytes</TD><TD><A HREF="#Checksum">Checksum</A></TD></TR>
+		<TR><TD>0Eh</TD><TD>2 bytes</TD><TD>Unicode Character 6</TD></TR>
+		<TR><TD>10h</TD><TD>2 bytes</TD><TD>Unicode Character 7</TD></TR>
+		<TR><TD>12h</TD><TD>2 bytes</TD><TD>Unicode Character 8</TD></TR>
+		<TR><TD>14h</TD><TD>2 bytes</TD><TD>Unicode Character 9</TD></TR>
+		<TR><TD>16h</TD><TD>2 bytes</TD><TD>Unicode Character 10</TD></TR>
+		<TR><TD>18h</TD><TD>2 bytes</TD><TD>Unicode Character 11</TD></TR>
+		<TR><TD>1Ah</TD><TD>2 bytes</TD><TD>Always 0000h</TD></TR>
+		<TR><TD>1Ch</TD><TD>2 bytes</TD><TD>Unicode Character 12</TD></TR>
+		<TR><TD>1Eh</TD><TD>2 bytes</TD><TD>Unicode Character 13</TD></TR>
+	</TBODY>
+</TABLE>
+</DIV>
+<BR>
+Only the cluster word (offset 1Ah) and the flag byte (offset 0Bh), are required for compatibility reasons.<BR>
+<BR>
+</DIV>
+
+<DIV ID="OrdinalField">
+<H3>Ordinal Field</H3>
+The ordinal field is used to tell the system which number the LFN entry has, in the LFN string. The first LFN entry will have a value of 01h. The second LFN entry, if there is one, will have a value of 02h, and so on it continues. When a LFN entry contains the last character in the name the Last LFN bit is set (bit 6 in the Ordinal Field).<BR>
+<BR>
+<DIV ID="OrdinalFieldStructurePartTwo" CLASS="Centered">
+<TABLE WIDTH="90%" SUMMARY="LFN Numbering Field">
+	<CAPTION>
+		The Ordinal Field
+	</CAPTION>
+	<COLGROUP SPAN="8" WIDTH="3%" ALIGN="Center" VALIGN="Middle">
+	</COLGROUP>
+	<COLGROUP>
+		<COL WIDTH="4%" ALIGN="Center" VALIGN="Middle">
+	</COLGROUP>
+	<THEAD>
+		<TR>
+			<TH CLASS="BitTable">7</TH>
+			<TH CLASS="BitTable">6</TH>
+			<TH CLASS="BitTable">5</TH>
+			<TH CLASS="BitTable">4</TH>
+			<TH CLASS="BitTable">3</TH>
+			<TH CLASS="BitTable">2</TH>
+			<TH CLASS="BitTable">1</TH>
+			<TH CLASS="BitTable">0</TH>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR>
+		    <TD CLASS="BitTable">Deleted LFN</TD>
+		    <TD CLASS="BitTable">Last LFN</TD>
+		    <TD CLASS="BitTable" COLSPAN="6">LFN Number</TD>
+		    <TH CLASS="BitTable">0000h</TH>
+		</TR>
+	</TBODY>
+</TABLE>
+</DIV>
+<BR>
+</DIV>
+
+<DIV ID="Checksum">
+<H3>Calculating the Checksum</H3>
+The Checksum byte in each LFN entry is there to make sure that the LFN entry points to the right file. The checksum value is calculated on the basis of the 8.3 filename, which is present in the valid Directory Table entry. Spaces (ASCII: 20h) are also calculated. The algorithm for calculating the checksum is:<BR>
+<BR>
+<OL>
+<LI>The ASCII value of the first character is the base sum.</LI>
+<LI>Rotate the sum bitwise one bit to the right.</LI>
+<LI>Add the ASCII value of the next character to the sum.</LI>
+<LI>Repeat step 2 and 3 until all 11 characters has been added.</LI>
+</OL>
+<BR>
+</DIV>
+
+<DIV ID="UnicodeCharacters">
+<H3>Unicode Characters</H3>
+The Unicode characters in the specification is a 16 bit value, where the lower 8 bits represent the respective ASCII value and the upper 8 bits are clear. The means that the LFN names are just ASCII style names, with extra holes.<BR>
+<BR>
+<BR>
+</DIV>
+
+
+<DIV ID="Conclusion">
+<H2>Conclusion</H2>
+The VFAT Directory Format is a very clever way to add long filename support to the older FAT file systems, while still maintaining compatibility. It is however strange why Microsoft (who designed FAT32) didn't implemented native support for long filenames in FAT32 when they created it a few years back.<BR>
+<BR>
+</DIV>
+
+
+</BODY>
+
+</HTML>

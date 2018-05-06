@@ -2,7 +2,7 @@
 
 Hardware buses implemented in GEX are presented in this chapter. The description of each bus is accompanied by several examples of devices that can be interfaced with it. The reader is advised to consult the official specifications and particular devices' datasheets for additional technical details.
 
-\section{UART and USART}
+\section{UART and USART} \label{sec:theory-usart}
 
 The \textit{Universal Synchronous / Asynchronous Receiver Transmitter} has a long history and is still in widespread use today. It is the protocol used in RS-232, which was once a common way of connecting modems, printers, mice and other devices to personal computers. UART framing is also used in the industrial bus RS-485.
 
@@ -27,7 +27,7 @@ RS-232 uses the UART framing, but its logic levels are different: logical 1 is r
 	\item \textbf{MFRC522} - NFC MIFARE reader/writer IC (also supports other interfaces)
 \end{itemize}
 
-\section{SPI}
+\section{SPI} \label{sec:theory-spi}
 
 SPI (Serial Peripheral Interface) is a point-to-point or multi-drop master-slave interface based on shift registers. The SPI connection with multiple slave devices is depicted in figure \ref{fig:spi-multislave}. It uses at least 4 wires: SCK (Serial Clock), MOSI (Master Out Slave In), MISO (Master In Slave Out) and SS (Slave Select). SS is often marked CSB (Chip Select Bar) or NSS (Negated Slave Select) to indicate it's active low. Slave devices are addressed using their Slave Select input while the data connections are shared. A slave that's not addressed releases the MISO line to a high impedance state so it doesn't interfere in ongoing communication.
 
@@ -57,7 +57,7 @@ SPI devices often provide a number of control, configuration and status register
 	\item SPI-interfaced EEPROMs and Flash memories	
 \end{itemize}
 
-\section{I2C}
+\section{I2C} \label{sec:theory-i2c}
 
 I2C is a two-wire (SDA--\textit{Serial Data}, SCL--\textit{Serial Clock}), open-drain bus that supports multi-master operation. The protocol was developed by Philips Semiconductor (now NXP Semiconductors) and until 2006 implementors were required to pay licensing fees, leading to the development of compatible implementations with different names, such as Atmel's Two Wire Interface (TWI) or Dallas Semiconductor's "Serial 2-wire Interface" (e.g. used in the DS1307 RTC chip). I2C is the basis of the SMBus and PMBus protocols which add additional constraints and rules for a more robust operation.
 
@@ -81,7 +81,7 @@ The bus supports multi-master operation, which leads to the problem of collision
 	\item Cameras with an SCCB port can be accessed through I2C
 \end{itemize}
 
-\section{1-Wire}
+\section{1-Wire} \label{sec:theory-1wire}
 
 The 1-Wire bus, developed by Dallas Semiconductor, uses a single bi-directional data line which can also power the slave devices, reducing the number of required wires to just two (compare with 3 in I2C and 5 in SPI, all including GND). 
 
@@ -111,7 +111,7 @@ Since 1-Wire is a proprietary protocol, there is a much smaller choice of availa
 	\caption{\label{fig:1w-pulses}The 1-Wire DIO pulse timing (by \textit{Dallas Semiconductor})}
 \end{figure}
 
-\section{NeoPixel}
+\section{NeoPixel} \label{sec:theory-neo}
 
 NeoPixel is a marketing name of the \textbf{WS2811}, \textbf{WS2812} and compatible intelligent LED drivers that is commonly used in "addressable LED strips". Those chips include the control logic, PWM drivers and usually the LED diodes all in one miniature package.
 

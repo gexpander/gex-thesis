@@ -1,0 +1,816 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"
+   "http://www.w3.org/TR/REC-html40/strict.dtd">
+   
+<!-- http://www.maverick-os.dk/FileSystemFormats/FAT16_FileSystem.html -->
+
+<HTML LANG="en">
+
+<HEAD>
+<TITLE>Maverick - The Operating System</TITLE>
+<META NAME="author" CONTENT="Lasse Krogh Thygesen">
+<META NAME="copyright" CONTENT="(C) 1999  Lasse Krogh Thygesen">
+<META NAME="keywords" CONTENT="maverick,operating system,os,x86,intel,ata,ide,eide,atapi,pic,pit,dma,protected mode,pmode">
+<META NAME="description" CONTENT="">
+<LINK REL="stylesheet" TYPE="text/css" HREF="Maverick.css">
+</HEAD>
+
+<BODY>
+<DIV CLASS="MiniMenu">
+[<A HREF="FAT12_FileSystem.html" TITLE="FAT12 File System">Previous</A>]
+ - [<A HREF="../Mainmenu_NoFrames.html" TITLE="Go to main menu">Main menu</A>]
+ - [<A HREF="FAT32_FileSystem.html" TITLE="FAT32 File System">Next</A>]<BR>
+</DIV>
+
+<H1 CLASS="PreTitle">Specifications</H1>
+<H1>FAT16 File System</H1>
+<H1 CLASS="SubTitle">Used: On machines with small harddrives running MS-DOS, Windows 95/98</H1>
+
+<HR>
+
+<DIV ID="Introduction">
+<H2>Introduction</H2>
+This is the 16-bit version of the FAT file system. The 16-bit part describes the way units are allocated on the drive. The FAT16 file system uses a 16-bit number to identify each allocation unit (called cluster), and this gives it a total of 65.536 clusters. The size of each cluster is defined in the boot sector of the volume (volume = partition). The File System ID number usually associated with FAT16 volumes are 04h and 06h. The first is used on volumes with less than 65536 sectors (typical this is on drives less than 32 Mb in size), and the latter one is used on volumes with more than 65536 sectors. There is also another variant which is used with the LBA address mode, that variant has a File System ID of 0Eh. <SPAN CLASS="Note">I do not know if the LBA variant is different from the CHS type. So far I don't se why anything should be changed to support LBA addresses.</SPAN><BR>
+<BR>
+</DIV>
+
+<DIV ID="BasicStructure">
+<H3>Basic Structure</H3>
+The FAT16 file system structure contains the following regions:<BR>
+<BR>
+<DIV ID="FAT16Structure" CLASS="Centered">
+<TABLE WIDTH="40%" SUMMARY="FAT16 File System Structure">
+	<CAPTION>
+		FAT16 File System Structure
+	</CAPTION>
+	<COLGROUP>
+		<COL WIDTH="100%" ALIGN="Center" VALIGN="Top">
+	</COLGROUP>
+	<THEAD>
+		<TR>
+			<TH ALIGN="Center" VALIGN="Middle">Region</TH>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR><TD>Reserved Region (incl. Boot Sector)</TD></TR>
+		<TR><TD>File Allocation Table (FAT)</TD></TR>
+		<TR><TD>Root Directory</TD></TR>
+		<TR><TD>Data Region</TD></TR>
+	</TBODY>
+</TABLE>
+</DIV>
+<BR>
+The first sector (boot sector) contain information which is used to calculate the sizes and locations of the other regions. The boot sector also contain code to boot the operating system installed on the volume. The data region is split up into logical blocks called clusters. Each of these clusters has an accompanying entry in the FAT region. The cluster specific entry can either contain a value of the next cluster which contain data from the file, or a so called End-of-file value which means that there are no more clusters which contain data from the file. The root directory and its sub-directories contain filename, dates, attribute flags and starting cluster information about the filesystem objects.<BR>
+<BR>
+<BR>
+</DIV>
+
+
+<DIV ID="BootSector">
+<H2>Boot Sector</H2>
+The first sector in the reserved region is the boot sector. Though this sector is typical 512 bytes in can be longer depending on the media. The boot sector typical start with a 3 byte jump instruction to where the bootstrap code is stored, followed by an 8 byte long string set by the creating operating system. This is followed by the BIOS Parameter Block, and then by an Extended BIOS Parameter Block. Finally the boot sector contain boot code and a signature.<BR>
+<BR>
+<DIV ID="BootSectorStructure" CLASS="Centered">
+<TABLE WIDTH="90%" SUMMARY="Structure of the FAT16 Boot sector">
+	<CAPTION>
+		Structure of the FAT16 Boot sector
+	</CAPTION>
+	<COLGROUP>
+		<COL WIDTH="10%" ALIGN="Center" VALIGN="Middle">
+		<COL WIDTH="10%" ALIGN="Center" VALIGN="Top">
+		<COL WIDTH="10%" ALIGN="Center" VALIGN="Top">
+		<COL WIDTH="70%" ALIGN="Left" VALIGN="Top">
+	</COLGROUP>
+	<THEAD>
+		<TR>
+			<TH ALIGN="Center" VALIGN="Middle">Part</TH>
+			<TH ALIGN="Center" VALIGN="Middle">Offset</TH>
+			<TH ALIGN="Center" VALIGN="Middle">Size</TH>
+			<TH ALIGN="Center" VALIGN="Middle">Description</TH>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR><TD>Code</TD><TD>0000h</TD><TD>3 bytes</TD><TD>Code to jump to the bootstrap code.</TD></TR>
+		<TR><TD>OS Name</TD><TD>0003h</TD><TD>8 bytes</TD><TD>Oem ID - Name of the formatting OS</TD></TR>
+		<TR><TD ROWSPAN="12">BIOS Para- meter Block</TD><TD>000Bh</TD><TD>2 bytes</TD><TD><A HREF="#BytesPerSector">Bytes per Sector</A></TD></TR>
+		<TR><TD>000Dh</TD><TD>1 bytes</TD><TD><A HREF="#SectorsPerCluster">Sectors per Cluster</A> - Usual there is 512 bytes per sector.</TD></TR>
+		<TR><TD>000Eh</TD><TD>2 bytes</TD><TD><A HREF="#ReservedSectors">Reserved sectors</A> from the start of the volume.</TD></TR>
+		<TR><TD>0010h</TD><TD>1 bytes</TD><TD><A HREF="#NumberOfFATs">Number of FAT copies</A> - Usual 2 copies are used to prevent data loss.</TD></TR>
+		<TR><TD>0011h</TD><TD>2 bytes</TD><TD><A HREF="#RootEntriesCount">Number of possible root entries</A> - 512 entries are recommended.</TD></TR>
+		<TR><TD>0013h</TD><TD>2 bytes</TD><TD><A HREF="#SmallNumberOfSectors">Small number of sectors</A> - Used when volume size is less than 32 Mb.</TD></TR>
+		<TR><TD>0015h</TD><TD>1 bytes</TD><TD><A HREF="#MediaDescriptor">Media Descriptor</A></TD></TR>
+		<TR><TD>0016h</TD><TD>2 bytes</TD><TD><A HREF="#SectorsPerFAT">Sectors per FAT</A></TD></TR>
+		<TR><TD>0018h</TD><TD>2 bytes</TD><TD><A HREF="#SectorsPerTrack">Sectors per Track</A></TD></TR>
+		<TR><TD>001Ah</TD><TD>2 bytes</TD><TD><A HREF="#NumberOfHeads">Number of Heads</A></TD></TR>
+		<TR><TD>001Ch</TD><TD>4 bytes</TD><TD><A HREF="#HiddenSectors">Hidden Sectors</A></TD></TR>
+		<TR><TD>0020h</TD><TD>4 bytes</TD><TD><A HREF="#LargeNumberOfSectors">Large number of sectors</A> - Used when volume size is greater than 32 Mb.</TD></TR>
+		<TR><TD ROWSPAN="6">Ext. BIOS Para- meter Block</TD><TD>0024h</TD><TD>1 bytes</TD><TD><A HREF="#DriveNumber">Drive Number</A> - Used by some bootstrap code, fx. MS-DOS.</TD></TR>
+		<TR><TD>0025h</TD><TD>1 bytes</TD><TD><A HREF="#Reserved">Reserved</A> - Is used by Windows NT to decide if it shall check disk integrity.</TD></TR>
+		<TR><TD>0026h</TD><TD>1 bytes</TD><TD><A HREF="#ExtendedBootSignature">Extended Boot Signature</A> - Indicates that the next three fields are available.</TD></TR>
+		<TR><TD>0027h</TD><TD>4 bytes</TD><TD><A HREF="#VolumeSerialNumber">Volume Serial Number</A></TD></TR>
+		<TR><TD>002Bh</TD><TD>11 bytes</TD><TD><A HREF="#VolumeLabel">Volume Label</A> - Should be the same as in the root directory.</TD></TR>
+		<TR><TD>0036h</TD><TD>8 bytes</TD><TD><A HREF="#FileSystemType">File System Type</A> - The string should be 'FAT16   '</TD></TR>
+		<TR><TD>Code</TD><TD>003Eh</TD><TD>448 bytes</TD><TD><A HREF="#BootstrapCode">Bootstrap code</A> - May schrink in the future.</TD></TR>
+		<TR><TD>Sig.</TD><TD>01FEh</TD><TD>2</TD><TD><A HREF="#BootSectorSignature">Boot sector signature</A> - This is the AA55h signature.</TD></TR>
+	</TBODY>
+</TABLE>
+</DIV>
+<BR>
+<BR>
+</DIV>
+
+
+<DIV ID="BIOSParameterBlock">
+<H3>BIOS Parameter Block</H3>
+The BIOS Parameter Block contains basic information about the overall structure of the FAT file system. That is information such as sector and cluster size, location information of FAT copies, the root directory size etc..<BR>
+<BR>
+
+<DIV ID="BytesPerSector">
+<H4>Bytes Per Sector</H4>
+This value is the number of bytes in each physical sector. The allowed values are: 512, 1024, 2048 or 4096 bytes. A lot of code outthere are assuming 512 bytes per sectors, so any other values can give compatibility problems.<BR>
+<BR>
+</DIV>
+
+<DIV ID="SectorsPerCluster">
+<H4>Sectors Per Cluster</H4>
+This is the number of sectors per cluster. The allowed values are: 1, 2, 4, 8, 16, 32 or 128. But de-facto is that most combinations of 'BytesPerCluster' * 'SectorsPerCluster' which gives a total value over 32 Kb per cluster, are not supported on many system.<BR>
+<BR>
+</DIV>
+
+<DIV ID="ReservedSectors">
+<H4>Reserved Sectors</H4>
+Since the reserved region always contain the boot sector a zero value in this field is not allowed. The usual setting of this value is 1. The value is used to calculate the location for the first sector containing the FAT.<BR>
+<BR>
+</DIV>
+
+<DIV ID="NumberOfFATs">
+<H4>Number of FAT copies</H4>
+This is the number of FAT copies in the file system. The recommended value is 2 (and then have two FAT copies), but other values are validm though they may not be supported on some system. The usage of two copies are to prevent data loss if one or part of one FAT copy is corrupted.<BR>
+<BR>
+</DIV>
+
+<DIV ID="RootEntriesCount">
+<H4>Root Entries Count</H4>
+This value contain the number of entries in the root directory. Its recommended that the number of entries is an even multiple of the BytesPerSector values. The recommended value for FAT16 volumes is 512 entries (compatibility reasons).<BR>
+<BR>
+</DIV>
+
+<DIV ID="SmallNumberOfSectors">
+<H4>Small Number of Sectors</H4>
+This field states the total number of sectors in the volume. That includes the number of sectors occupied by the four regions which the FAT16 file system consist of. For FAT16 volumes that use less than 65536 sectors this field is used. The File System Id in the MBR is then 04h. For FAT16 volumes that use more the 65535 sectors the <A HREF="#LargeNumberOfSectors">Large Number of Sectors</A> field is used and this one should be set to 0h.<BR>
+<BR>
+</DIV>
+
+<DIV ID="MediaDescriptor">
+<H4>Media Descriptor</H4>
+These are the possible media descriptors values in the FAT boot sector. <SPAN CLASS="Note">This is the same value which must be in the low byte in the first entry of the FAT.</SPAN><BR>
+<BR>
+<DIV ID="MediaDescriptors" CLASS="Centered">
+<TABLE WIDTH="60%" SUMMARY="The possible media descriptors">
+	<CAPTION>
+		Media Descriptors
+	</CAPTION>
+	<COLGROUP>
+		<COL WIDTH="20%" ALIGN="Center" VALIGN="Top">
+		<COL WIDTH="20%" ALIGN="Center" VALIGN="Top">
+		<COL WIDTH="60%" ALIGN="Left" VALIGN="Top">
+	</COLGROUP>
+	<THEAD>
+		<TR>
+			<TH ALIGN="Center" VALIGN="Middle">Hex Value</TH>
+			<TH ALIGN="Center" VALIGN="Middle">Capacity</TH>
+			<TH ALIGN="Center" VALIGN="Middle">Physical Format</TH>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR><TD>F0</TD><TD>2.88 MB</TD><TD>3.5-inch, 2-sided, 36-sector</TD></TR>
+		<TR><TD>F0</TD><TD>1.44 MB</TD><TD>3.5-inch, 2-sided, 18-sector</TD></TR>
+		<TR><TD>F8</TD><TD>?</TD><TD>Fixed disk</TD></TR>
+		<TR><TD>F9</TD><TD>720 KB</TD><TD>3.5-inch, 2-sided, 9-sector</TD></TR>
+		<TR><TD>F9</TD><TD>1.2 MB</TD><TD>5.25-inch, 2-sided, 15-sector</TD></TR>
+		<TR><TD>FA</TD><TD>?</TD><TD>?</TD></TR>
+		<TR><TD>FB</TD><TD>?</TD><TD>?</TD></TR>
+		<TR><TD>FC</TD><TD>180 KB</TD><TD>5.25-inch, 1-sided, 9-sector</TD></TR>
+		<TR><TD>FD</TD><TD>360 KB</TD><TD>5.25-inch, 2-sided, 9-sector</TD></TR>
+		<TR><TD>FE</TD><TD>160 KB</TD><TD>5.25-inch, 1-sided, 8-sector</TD></TR>
+		<TR><TD>FF</TD><TD>320 KB</TD><TD>5.25-inch, 2-sided, 8-sector</TD></TR>
+	</TBODY>
+</TABLE>
+</DIV>
+<BR>
+<BR>
+</DIV>
+
+<DIV ID="SectorsPerFAT">
+<H4>Sectors Per FAT</H4>
+This is the number of sectors occupied by one copy of the FAT.<BR>
+<BR>
+</DIV>
+
+<DIV ID="SectorsPerTrack">
+<H4>Sectors Per Track</H4>
+This value is used when the volume is on a media which have a geometry, that is when the <ABBR TITLE="Logical Block Address">LBA</ABBR> number is broken down into a Cylinder-Head-Sector address. This field represents the multiple of the max. Head and Sector value used when the volume was formatted. The field itself is used to check if the LBA to <ABBR TITLE="Cylinder-Head-Sector">CHS</ABBR> translation has changed, since the formatting. And for calculating the correct Cylinder, Head and Sector values for the translation algorithm.<BR>
+<BR>
+</DIV>
+
+<DIV ID="NumberOfHeads">
+<H4>Number of Heads</H4>
+This value is used when the volume is on a media which have a geometry, that is when the <ABBR TITLE="Logical Block Address">LBA</ABBR> number is broken down into a Cylinder-Head-Sector address. This field represents the Head value used when the volume was formatted. The field itself is used to check if the LBA to <ABBR TITLE="Cylinder-Head-Sector">CHS</ABBR> translation has changed, since the formatting. And for calculating the correct Cylinder, Head and Sector values for the translation algorithm.<BR>
+<BR>
+</DIV>
+
+<DIV ID="HiddenSectors">
+<H4>Hidden Sectors</H4>
+When the volume is on a media that is partitioned, this value contains the number of sectors preceeding the first sector of the volume.<BR>
+<BR>
+</DIV>
+
+<DIV ID="LargeNumberOfSectors">
+<H4>Large Number of Sectors</H4>
+This field states the total number of sectors in the volume. That includes the number of sectors occupied by the four regions which the FAT16 file system consist of. For FAT16 volumes that use more than 65535 sectors this field is used. The File System Id in the MBR is then 06h. For FAT16 volumes that use less than 65536 sectors the <A HREF="#SmallNumberOfSectors">Small Number of Sectors</A> field is used and this one should be set to 0h.<BR>
+<BR>
+</DIV>
+
+<BR>
+</DIV>
+
+
+<DIV ID="ExtendedBIOSParameterBlock">
+<H3>Extended BIOS Parameter Block</H3>
+The Extended BIOS Parameter Block contains information that is only used in the FAT16 file system.<BR>
+<BR>
+
+<DIV ID="DriveNumber">
+<H4>Drive Number</H4>
+This is the int 13h drive number of the drive. The value 00h is used for the first floppy drive and the value 80h is used for the first harddrive. MS-DOS's bootstrap uses this value to find the correct drive.<BR>
+<BR>
+</DIV>
+
+<DIV ID="Reserved">
+<H4>Reserved</H4>
+Reserved byte. It was original used to store the cylinder on which the boot sector is located. But Windows NT uses this byte to store two flags. The lowest bit would indicates that a check disk should be run at boot time, and the second lowest flag indicates that a surface scan should be run.<BR>
+<BR>
+</DIV>
+
+<DIV ID="ExtendedBootSignature">
+<H4>Extended Boot Signature</H4>
+If this byte contain a value of 29h it indicates that the following three fields are available.<BR>
+<BR>
+</DIV>
+
+<DIV ID="VolumeSerialNumber">
+<H4>Volume Serial Number</H4>
+This value is a 32 bit random number, which, combined with the <A HREF="#VolumeLabel">volume label</A>, makes is possible to track removable media and check if the correct one is inserted.<BR>
+<BR>
+</DIV>
+
+<DIV ID="VolumeLabel">
+<H4>Volume Label</H4>
+This 11 byte long string should match the volume label entry in the root directory. If no such entry is available this field should contain the string 'NO NAME    ' (11 bytes long string). When updating the volume label, both, this field and the entry in the root directory should be updated.<BR>
+<BR>
+</DIV>
+
+<DIV ID="FileSystemType">
+<H4>File System Type</H4>
+This 8 byte long string should be used for informational display only. Thats because its sometime incorrectly set. The field should contain the string 'FAT16   ' (8 bytes long string).<BR>
+<BR>
+</DIV>
+
+<BR>
+</DIV>
+
+
+<DIV ID="BootstrapCode">
+<H3>Bootstrap Code</H3>
+The bootstrap code is different between operating system and versions which are intended to be loaded of this FAT16 volume. The responsability of the bootstrap code is to continue the boot sequence. If ex. MS-DOS is installed the bootstrap code will locate the file IO.SYS in the file system, load part of it into memory and then jump to a specific entrypoint in IO.SYS. What the bootstrap code does is vary between operating system.<BR>
+<BR>
+<BR>
+</DIV>
+
+
+<DIV ID="BootSectorSignature">
+<H3>Boot Sector Signature</H3>
+The word at offset 1FEh should contain the signature AA55h. This will indicate to the BIOS that the sector is executable. The signature is also used by other applications when validating that the correct sector has been loaded. <SPAN CLASS="Note">No matter what the Bytes Per Sector value is this signature should always be at offset 1FEh.</SPAN><BR>
+<BR>
+<BR>
+</DIV>
+
+
+<DIV ID="FileAllocationTable">
+<H2>File Allocation Table</H2>
+The <ABBR TITLE="File Allocation Table">FAT</ABBR> structure contain linked lists of files in the file system. Any file or directory entry in a (sub)directory list contain a cluster number for the first chunk of the file/directory. This cluster number also has an associated entry in the FAT. At this entry in the FAT a single word value either points to the next cluster/chunk or it contain an End-of-file value. These are the valid values:<BR>
+<BR>
+<DIV ID="ValidFATValue" CLASS="Centered">
+<TABLE WIDTH="60%" SUMMARY="Valid FAT16 values">
+	<CAPTION>
+		Valid FAT16 values
+	</CAPTION>
+	<COLGROUP>
+		<COL WIDTH="30%" ALIGN="Center" VALIGN="Top">
+		<COL WIDTH="70%" ALIGN="Left" VALIGN="Top">
+	</COLGROUP>
+	<THEAD>
+		<TR>
+			<TH ALIGN="Center" VALIGN="Middle">Value</TH>
+			<TH ALIGN="Center" VALIGN="Middle">Description</TH>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR><TD>0000h</TD><TD>Free cluster</TD></TR>
+		<TR><TD>0001h - 0002h</TD><TD>Not allowed</TD></TR>
+		<TR><TD>0003h - FFEFh</TD><TD>Number of the next cluster</TD></TR>
+		<TR><TD>FFF7h</TD><TD>One or more bad sectors in cluster</TD></TR>
+		<TR><TD>FFF8h - FFFFh</TD><TD>End-of-file</TD></TR>
+	</TBODY>
+</TABLE>
+</DIV>
+<BR>
+Each FAT copy start with a value of FFxxh for the first cluster, where xx is equal to the <A HREF="#MediaDescriptor">Media Descriptor</A> field in the BIOS Parameter Block. The FAT entry for the second cluster is set to the End-of-file value (FFFFh). The two highest bits of this value may be used for dirty volume flags in the following way.<BR>
+<BR>
+<DIV ID="FATValue" CLASS="Centered">
+<TABLE WIDTH="60%" SUMMARY="FAT Entry Value for 2nd cluster">
+	<CAPTION>
+		FAT Entry Value for 2nd cluster
+	</CAPTION>
+	<COLGROUP SPAN="32" WIDTH="6%" ALIGN="Center" VALIGN="Middle">
+	</COLGROUP>
+	<COLGROUP>
+		<COL WIDTH="4%" ALIGN="Center" VALIGN="Middle">
+	</COLGROUP>
+	<THEAD>
+		<TR>
+			<TH CLASS="BitTable">15</TH>
+			<TH CLASS="BitTable">14</TH>
+			<TH CLASS="BitTable">13</TH>
+			<TH CLASS="BitTable">12</TH>
+			<TH CLASS="BitTable">11</TH>
+			<TH CLASS="BitTable">10</TH>
+			<TH CLASS="BitTable">9</TH>
+			<TH CLASS="BitTable">8</TH>
+			<TH CLASS="BitTable">7</TH>
+			<TH CLASS="BitTable">6</TH>
+			<TH CLASS="BitTable">5</TH>
+			<TH CLASS="BitTable">4</TH>
+			<TH CLASS="BitTable">3</TH>
+			<TH CLASS="BitTable">2</TH>
+			<TH CLASS="BitTable">1</TH>
+			<TH CLASS="BitTable">0</TH>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR>
+			<TD CLASS="BitTable">C</TD>
+			<TD CLASS="BitTable">E</TD>
+			<TD CLASS="BitTable" COLSPAN="14">These bits must be set</TD>
+			<TH CLASS="BitTable">0000h</TH>
+		</TR>
+	</TBODY>
+	<TBODY>
+		<TR>
+			<TD CLASS="NoColor" COLSPAN="15" ALIGN="Left">
+				C = If clear then the volume may be dirty because it was not cleanly dismounted. If the bit is set then the volume is clean.<BR>
+			</TD>
+		</TR>
+		<TR>
+			<TD CLASS="NoColor" COLSPAN="15" ALIGN="Left">
+				E = If clear a read/write error was encountered during the last time the volume was mounted. If the bit is set then no read/write error was encountered.<BR>
+			</TD>
+		</TR>
+	</TBODY>
+</TABLE>
+</DIV>
+<BR>
+It should be noted that the last entry in the FAT should be calculated by taking the number of clusters in the data area, and not relying on the <A HREF="#SectorsPerFAT">Sectors Per FAT</A> field in the BIOS Parameter Block. This is because the number of entries in the FAT doesn't have to be an even multiple of the bytes per sector value.<BR>
+<BR>
+The maximum size of each FAT copy is 128 Kb (2 * 65536).<BR>
+<BR>
+<BR>
+</DIV>
+
+
+<DIV ID="DirectoryEntry">
+<H2>Directory Entry Structure</H2>
+Each of the entries in a directory list is 32 byte long. The only directory which is in a fixed location is the root directory. This is also the only directory which may contain an entry with the Volume Label attribute set. The size of the <A HREF="#RootEntriesCount">root directory</A> is defined in the BIOS Parameter Block.<BR>
+<BR>
+Sub-directories are created by allocating a cluster which then are cleared so it doesn't contain any directory entries. Two default entries are then created:  The '.' entry point to the directory itself, and the '..' entry points to the parent directory. If the contents of a sub-directory grows beyond what can be in the cluster a new cluster is allocated in the same way as for files.<BR>
+<BR>
+This is the format of the directory entries:<BR>
+<BR>
+<DIV ID="DirectoryEntryStructure" CLASS="Centered">
+<TABLE WIDTH="90%" SUMMARY="Structure of the Directory Entries">
+	<CAPTION>
+		Structure of the Directory Entries
+	</CAPTION>
+	<COLGROUP>
+		<COL WIDTH="15%" ALIGN="Center" VALIGN="Top">
+		<COL WIDTH="15%" ALIGN="Center" VALIGN="Top">
+		<COL WIDTH="70%" ALIGN="Left" VALIGN="Top">
+	</COLGROUP>
+	<THEAD>
+		<TR>
+			<TH ALIGN="Center" VALIGN="Middle">Offset</TH>
+			<TH ALIGN="Center" VALIGN="Middle">Size</TH>
+			<TH ALIGN="Center" VALIGN="Middle">Description</TH>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR><TD>00h</TD><TD>8 bytes</TD><TD><A HREF="#FilenameAndExtension">Filename</A></TD></TR>
+		<TR><TD>08h</TD><TD>3 bytes</TD><TD><A HREF="#FilenameAndExtension">Filename Extension</A></TD></TR>
+		<TR><TD>0Bh</TD><TD>1 bytes</TD><TD><A HREF="#AttributeByte">Attribute Byte</A></TD></TR>
+		<TR><TD>0Ch</TD><TD>1 bytes</TD><TD><A HREF="#ReservedForWindowsNT">Reserved</A> for Windows NT</TD></TR>
+		<TR><TD>0Dh</TD><TD>1 bytes</TD><TD><A HREF="#CreationTimeMillisecond">Creation</A> - Millisecond stamp (actual 100th of a second)</TD></TR>
+		<TR><TD>0Eh</TD><TD>2 bytes</TD><TD><A HREF="#CreationTimeDate">Creation Time</A></TD></TR>
+		<TR><TD>10h</TD><TD>2 bytes</TD><TD><A HREF="#CreationTimeDate">Creation Date</A></TD></TR>
+		<TR><TD>12h</TD><TD>2 bytes</TD><TD><A HREF="#LastAccessDate">Last Access Date</A></TD></TR>
+		<TR><TD>14h</TD><TD>2 bytes</TD><TD><A HREF="#ReservedForFAT32">Reserved for FAT32</A></TD></TR>
+		<TR><TD>16h</TD><TD>2 bytes</TD><TD><A HREF="#LastWriteTime">Last Write Time</A></TD></TR>
+		<TR><TD>18h</TD><TD>2 bytes</TD><TD><A HREF="#LastWriteDate">Last Write Date</A></TD></TR>
+		<TR><TD>1Ah</TD><TD>2 bytes</TD><TD><A HREF="#StatingCluster">Starting cluster</A></TD></TR>
+		<TR><TD>1Ch</TD><TD>4 bytes</TD><TD><A HREF="#FileSize">File size</A> in bytes</TD></TR>
+	</TBODY>
+</TABLE>
+</DIV>
+<BR>
+</DIV>
+
+<DIV ID="FilenameAndExtension">
+<H4>Filename & Extension</H4>
+The filename is 8 byte long. Shorter names must be trailing padded with space bytes (ASCII: 20h). The extension is 3 byte long and shorter names also have to be trailing padded. The characters allowed in the filename and extension are basicly the uppercase letters of the english alphabet, plus the digits 0 to 9.<BR>
+<BR>
+The first byte in the filename is treated special. The following rules apply:<BR>
+<OL>
+<LI>A value of 00h is interpertated as 'stop the search, there is no more entries in this directory'.</LI>
+<LI>A value of 05h is should be replaced with the ASCII character E5h. The character is used in Japan.</LI>
+<LI>Must not contain the value 20h.</LI>
+<LI>A value of E5h is interpertated as 'the entry is free'.</LI>
+<LI>Any of the values mentioned below are allowed.</LI>
+</OL>
+<BR>
+The following characters are not allowed in the filename or its extension:<BR>
+<OL>
+<LI>Any character below 20h, except the 05h character.</LI>
+<LI>Any character in the following list: 22h ("), 2Ah (*), 2Bh (+), 2Ch (,), 2Eh (.), 2Fh (/), 3Ah (:), 3Bh (;), 3Ch (<), 3Dh (=), 3Eh (>), 3Fh (?), 5Bh ([), 5Ch (\), 5Dh (]), 7Ch (|).</LI>
+</OL>
+<BR>
+For compatibility reasons it is recommended to limit the characters to:<BR>
+<OL>
+<LI>Any uppercase characters from A to Z.</LI>
+<LI>Any digit from 0 to 1.</LI>
+<LI>Any of the following characters: #, $, %, &, ', (, ), -, @</LI>
+</OL>
+<BR>
+</DIV>
+
+<DIV ID="AttributeByte">
+<H4>Attribute Byte</H4>
+The attribute byte defines a set of flags which can be set for directories, volume name, hidden files, system files, etc. These are the flags:<BR>
+<BR>
+<DIV ID="Flags" CLASS="Centered">
+<TABLE WIDTH="60%" SUMMARY="Flags in the Attribute byte">
+	<CAPTION>
+		Flags in the Attribute byte
+	</CAPTION>
+	<COLGROUP SPAN="8" WIDTH="3%" ALIGN="Center" VALIGN="Middle">
+	</COLGROUP>
+	<COLGROUP>
+		<COL WIDTH="4%" ALIGN="Center" VALIGN="Middle">
+	</COLGROUP>
+	<THEAD>
+		<TR>
+			<TH CLASS="BitTable">7</TH>
+			<TH CLASS="BitTable">6</TH>
+			<TH CLASS="BitTable">5</TH>
+			<TH CLASS="BitTable">4</TH>
+			<TH CLASS="BitTable">3</TH>
+			<TH CLASS="BitTable">2</TH>
+			<TH CLASS="BitTable">1</TH>
+			<TH CLASS="BitTable">0</TH>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR>
+		    <TD CLASS="BitTable" COLSPAN="2">Reserved</TD>
+		    <TD CLASS="BitTable">A</TD>
+		    <TD CLASS="BitTable">D</TD>
+		    <TD CLASS="BitTable">V</TD>
+		    <TD CLASS="BitTable">S</TD>
+		    <TD CLASS="BitTable">H</TD>
+		    <TD CLASS="BitTable">R</TD>
+		    <TH CLASS="BitTable">0000h</TH>
+		</TR>
+	</TBODY>
+</TABLE>
+</DIV>
+<BR>
+</DIV>
+
+<DIV ID="ReadOnly">
+<H5>Read Only</H5>
+This flag is used to prevent programs from not automatically overwriting or deleting this entry.<BR>
+<BR>
+</DIV>
+
+<DIV ID="Hidden">
+<H6>Hidden</H6>
+This flag indicates to the system that the file should be hidden when doing normal directory listings. But in a lot of programs this can be overwritten by the user.<BR>
+<BR>
+</DIV>
+
+<DIV ID="System">
+<H5>System</H5>
+This flag indicates that the file/directory is important for the system, and shouldn't be manipulated without any concern.<BR>
+<BR>
+</DIV>
+
+<DIV ID="VolumeName">
+<H5>Volume Name</H5>
+When this flag is set, the directory entry is not pointing to a file, but to nothing. Thus the the Starting cluster must point the cluster 0. The only information used from this entry is the filename (8 bytes) plus the filename extension (3 bytes). These bytes form an 11 byte long volume label (without any .) There may be only <B>one</B> valid entry in the entire volume with this flag set. This entry must be in the root directory and preferably among the first entries, if not, then MS-DOS can have trouble displaying the right volume label if there are long file names present. This volume name should be the same as the one in the boot sector.<BR>
+<BR>
+
+<DIV ID="Directory">
+<H5>Directory</H5>
+This flag is set, when an entry in the directory table is not pointing to the beginning of a file, but to another directory table. A sub-directory. The sub-directory is placed in the cluster, which the Starting Cluster field points to. The format of this sub-directory table is identical to the root directory table.<BR>
+<BR>
+</DIV>
+
+<DIV ID="Achieve">
+<H5>Achieve Flag</H5>
+This flag is used by backup utilities. The flag is set when ever a file is created, renamed or changed. Backup utilities can then use this flag to determine which files that has been modified since the last backup.<BR>
+<BR>
+<BR>
+</DIV>
+
+<DIV ID="ReservedForWindowsNT">
+<H4>Reserved for Windows NT</H4>
+This byte is used by Windows NT. It set the value to 0 when the file is created and then never look at it again. For what purpose it uses it is unknown.<BR>
+<BR>
+</DIV>
+
+<DIV ID="CreationTimeMillisecond">
+<H4>Creation Time - Millisecond</H4>
+Due to size limitations this field (1 byte) only contains the millisecond stamp in counts of 10 milliseconds. Therefore valid values are between 0 and 199 inclusive.<BR>
+<BR>
+</DIV>
+
+<DIV ID="CreationTimeDate">
+<H4>Creation Time & Date</H4>
+The 16 bit time field contain the time of day when this entry was created. The 16 bit date field contain the date when the entry was created. These two values never change. Both the <A HREF="#TimeFormat">time</A> field and the <A HREF="#DateFormat">date</A> field are in a special format.<BR>
+<BR>
+</DIV>
+
+<DIV ID="LastAccessDate">
+<H4>Last Access Date</H4>
+This 16 bit field contain the date when the entry was last read or written to. In case of writes this field of cause contain the same value as the <A HREF="#LastWriteDate">Last Write Date</A> field. The <A HREF="#DateFormat">date</A> field is the same special format as the other dates.<BR>
+<BR>
+</DIV>
+
+<DIV ID="ReservedForFAT32">
+<H4>Reserved for FAT32</H4>
+This word is reserved for the FAT32 File System. When used in that file system it will contain the high word of the starting cluster. In the FAT16 File System this word should be set to 0.<BR>
+<BR>
+</DIV>
+
+<DIV ID="LastWriteTime">
+<H4>Last Write Time</H4>
+This 16 bit field is set to the time when the last write occured. When the entry is create this field and the <A HREF="#CreationTimeDate">Creation Time</A> field should contain the same values. In case the entry is a directory entry this field should change when the contents of the sub-directory changes.<BR>
+<BR>
+The field is in the special format described below:<BR>
+<DIV ID="TimeFormat" CLASS="Centered">
+<TABLE WIDTH="90%" SUMMARY="Time Format">
+	<CAPTION>
+		Time Format
+	</CAPTION>
+	<COLGROUP SPAN="32" WIDTH="6%" ALIGN="Center" VALIGN="Middle">
+	</COLGROUP>
+	<COLGROUP>
+		<COL WIDTH="4%" ALIGN="Center" VALIGN="Middle">
+	</COLGROUP>
+	<THEAD>
+		<TR>
+			<TH CLASS="BitTable">15</TH>
+			<TH CLASS="BitTable">14</TH>
+			<TH CLASS="BitTable">13</TH>
+			<TH CLASS="BitTable">12</TH>
+			<TH CLASS="BitTable">11</TH>
+			<TH CLASS="BitTable">10</TH>
+			<TH CLASS="BitTable">9</TH>
+			<TH CLASS="BitTable">8</TH>
+			<TH CLASS="BitTable">7</TH>
+			<TH CLASS="BitTable">6</TH>
+			<TH CLASS="BitTable">5</TH>
+			<TH CLASS="BitTable">4</TH>
+			<TH CLASS="BitTable">3</TH>
+			<TH CLASS="BitTable">2</TH>
+			<TH CLASS="BitTable">1</TH>
+			<TH CLASS="BitTable">0</TH>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR>
+		    <TD CLASS="BitTable" COLSPAN="5">Hours (0-23)</TD>
+		    <TD CLASS="BitTable" COLSPAN="6">Minutes (0-59)</TD>
+		    <TD CLASS="BitTable" COLSPAN="5">Seconds (0-29)</TD>
+		    <TH CLASS="BitTable">0000h</TH>
+		</TR>
+	</TBODY>
+	<TBODY>
+		<TR>
+		    <TD ALIGN="Left" CLASS="NoColor" COLSPAN="16"><SPAN CLASS="Note">Seconds are counted with 2 seconds interval, so a value of 29 in this field gives 58 seconds.</SPAN></TD>
+		</TR>
+	</TBODY>
+</TABLE>
+</DIV>
+<BR>
+</DIV>
+
+<DIV ID="LastWriteDate">
+<H4>Last Write Date</H4>
+This 16 bit field is set to the date when the last write occured. When the entry is create this field and the <A HREF="#CreationTimeDate">Creation Date</A> field should contain the same values. In case the entry is a directory entry this field should change when the contents of the sub-directory changes.<BR>
+<BR>
+The field is in the special format described below:<BR>
+<DIV ID="DateFormat" CLASS="Centered">
+<TABLE WIDTH="90%" SUMMARY="Date Format">
+	<CAPTION>
+		Date Format
+	</CAPTION>
+	<COLGROUP SPAN="32" WIDTH="6%" ALIGN="Center" VALIGN="Middle">
+	</COLGROUP>
+	<COLGROUP>
+		<COL WIDTH="4%" ALIGN="Center" VALIGN="Middle">
+	</COLGROUP>
+	<THEAD>
+		<TR>
+			<TH CLASS="BitTable">15</TH>
+			<TH CLASS="BitTable">14</TH>
+			<TH CLASS="BitTable">13</TH>
+			<TH CLASS="BitTable">12</TH>
+			<TH CLASS="BitTable">11</TH>
+			<TH CLASS="BitTable">10</TH>
+			<TH CLASS="BitTable">9</TH>
+			<TH CLASS="BitTable">8</TH>
+			<TH CLASS="BitTable">7</TH>
+			<TH CLASS="BitTable">6</TH>
+			<TH CLASS="BitTable">5</TH>
+			<TH CLASS="BitTable">4</TH>
+			<TH CLASS="BitTable">3</TH>
+			<TH CLASS="BitTable">2</TH>
+			<TH CLASS="BitTable">1</TH>
+			<TH CLASS="BitTable">0</TH>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR>
+		    <TD CLASS="BitTable" COLSPAN="7">Years from 1980 (0-127 -> 1980-2107)</TD>
+		    <TD CLASS="BitTable" COLSPAN="4">Month of year (1-12)</TD>
+		    <TD CLASS="BitTable" COLSPAN="5">Day of month (1-31)</TD>
+		    <TH CLASS="BitTable">0000h</TH>
+		</TR>
+	</TBODY>
+	<TBODY>
+		<TR>
+		    <TD ALIGN="Left" CLASS="NoColor" COLSPAN="16"></TD>
+		</TR>
+	</TBODY>
+</TABLE>
+</DIV>
+<BR>
+</DIV>
+
+<DIV ID="FirstCluster">
+<H4>First Cluster</H4>
+This 16-bit field points to the starting cluster number of entrys data. If the entry is a directory this entry point to the cluster which contain the beginning of the sub-directory. If the entry is a file then this entry point to the cluster holding the first chunk of data from the file.<BR>
+<BR>
+</DIV>
+
+<DIV ID="FileSize">
+<H4>File Size</H4>
+This 32-bit field count the total file size in bytes. For this reason the file system driver must not allow more than 4 Gb to be allocated to a file. For other entries than files then file size field should be set to 0.<BR>
+<BR>
+</DIV>
+
+<BR>
+</DIV>
+
+
+<DIV ID="CalculationAlgorithms">
+<H2>Calculation Algorithms</H2>
+How to calculate the starting location of each region. The VolumeStart variable contain a <ABBR TITLE="Logical Block Addressing">LBA address</ABBR> of the first sector in the volume. On drives which are not partitioned the VolumeStart value is 0. On drives which are partitioned the VolumeStart variable contain the sector number at which the partition start.<BR>
+<BR>
+<DIV ID="RegionCalculations" CLASS="Centered">
+<TABLE WIDTH="90%" SUMMARY="How to calculate regions and their sizes">
+	<CAPTION>
+		How to calculate regions and their size (in sectors)
+	</CAPTION>
+	<COLGROUP>
+		<COL WIDTH="30%" ALIGN="Right" VALIGN="Top">
+		<COL WIDTH="70%" ALIGN="Left" VALIGN="Top">
+	</COLGROUP>
+	<THEAD>
+		<TR>
+			<TH ALIGN="Center" VALIGN="Middle">What to calculate</TH>
+			<TH ALIGN="Center" VALIGN="Middle">How to calculate it</TH>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR><TD>ReservedRegion start =</TD><TD>VolumeStart</TD></TR>
+		<TR><TD>FATRegion start =</TD><TD><SPAN CLASS="PreviousCalculated">ReservedRegion</SPAN> + <A HREF="#ReservedSectors">ReservedSectors</A></TD></TR>
+		<TR><TD>RootDirectoryRegion start =</TD><TD><SPAN CLASS="PreviousCalculated">FATRegion</SPAN> + (<A HREF="#NumberOfFATs">NumberOfFATs</A> * <A HREF="#SectorsPerFAT">SectorsPerFAT</A>)</TD></TR>
+		<TR><TD>DataRegion start =</TD><TD><SPAN CLASS="PreviousCalculated">RootDirectoryRegion</SPAN> + ((<A HREF="#RootEntriesCount">RootEntiesCount</A> * 32) / <A HREF="#BytesPerSector">BytesPerSector</A>)</TD></TR>
+		<TR><TD>ReservedRegion size =</TD><TD><A HREF="#ReservedSectors">ReservedSectors</A></TD></TR>
+		<TR><TD>FATRegion size =</TD><TD><A HREF="#NumberOfFATs">NumberOfFATs</A> * <A HREF="#SectorsPerFAT">SectorsPerFAT</A></TD></TR>
+		<TR><TD>RootDirectoryRegion size =</TD><TD>(<A HREF="#RootEntriesCount">RootEntiesCount</A> * 32) / <A HREF="#BytesPerSector">BytesPerSector</A> (Remember to round up, if there is a remainder)</TD></TR>
+		<TR><TD>DataRegion size =</TD><TD><A HREF="#LargeNumberOfSectors">TotalNumberOfSectors</A> - (<SPAN CLASS="PreviousCalculated">ReservedRegion_Size</SPAN> + <SPAN CLASS="PreviousCalculated">FATRegion_Size</SPAN> + <SPAN CLASS="PreviousCalculated">RootDirectoryRegion_Size</SPAN>)</TD></TR>
+	</TBODY>
+	<TBODY>
+		<TR>
+			<TD ALIGN="Center" CLASS="NoColor" COLSPAN="2">
+				 Previous calculated values which are used again, are marked with <SPAN CLASS="PreviousCalculated">this color</SPAN>.
+			</TD>
+		</TR>
+	</TBODY>
+</TABLE>
+</DIV>
+<BR>
+<BR>
+<DIV ID="FATRelatedValues" CLASS="Centered">
+<TABLE WIDTH="90%" SUMMARY="How to calculate FAT related values">
+	<CAPTION>
+		How to calculate FAT related values
+	</CAPTION>
+	<COLGROUP>
+		<COL WIDTH="30%" ALIGN="Right" VALIGN="Top">
+		<COL WIDTH="70%" ALIGN="Left" VALIGN="Top">
+	</COLGROUP>
+	<THEAD>
+		<TR>
+			<TH ALIGN="Center" VALIGN="Middle">What to calculate</TH>
+			<TH ALIGN="Center" VALIGN="Middle">How to calculate it</TH>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR><TD>Location of n'th FAT copy</TD><TD><SPAN CLASS="PreviousCalculated">ReservedRegion</SPAN> + (N * <A HREF="#ReservedSectors">SectorsPerFAT</A>)</TD></TR>
+		<TR><TD>Number of FAT entries</TD><TD><SPAN CLASS="PreviousCalculated">DataRegion_Size</SPAN> / <A HREF="#SectorsPerCluster">SectorsPerCluster</A> (Remember to round down if there is a remainder)</TD></TR>
+		<TR><TD>Which FAT sector contain the Nth cluster entry I need ?</TD><TD><SPAN CLASS="PreviousCalculated">Location of FAT copy</SPAN> + (( N * 2) / <A HREF="#BytesPerSector">BytesPerSector</A>)</TD></TR>
+	</TBODY>
+	<TBODY>
+		<TR>
+			<TD ALIGN="Center" CLASS="NoColor" COLSPAN="2">
+				 Previous calculated values which are used again, are marked with <SPAN CLASS="PreviousCalculated">this color</SPAN>.
+			</TD>
+		</TR>
+	</TBODY>
+</TABLE>
+</DIV>
+<BR>
+<BR>
+<DIV ID="OtherValues" CLASS="Centered">
+<TABLE WIDTH="90%" SUMMARY="How to calculate other values">
+	<CAPTION>
+		How to calculate other values
+	</CAPTION>
+	<COLGROUP>
+		<COL WIDTH="30%" ALIGN="Right" VALIGN="Top">
+		<COL WIDTH="70%" ALIGN="Left" VALIGN="Top">
+	</COLGROUP>
+	<THEAD>
+		<TR>
+			<TH ALIGN="Center" VALIGN="Middle">What to calculate</TH>
+			<TH ALIGN="Center" VALIGN="Middle">How to calculate it</TH>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR><TD>First sector of cluster N =</TD><TD><SPAN CLASS="PreviousCalculated">DataRegion</SPAN> + ((N - 2) * <A HREF="#SectorsPerCluster">SectorsPerCluster</A>)</TD></TR>
+	</TBODY>
+	<TBODY>
+		<TR>
+			<TD ALIGN="Center" CLASS="NoColor" COLSPAN="2">
+				 Previous calculated values which are used again, are marked with <SPAN CLASS="PreviousCalculated">this color</SPAN>.
+			</TD>
+		</TR>
+	</TBODY>
+</TABLE>
+</DIV>
+<BR>
+<BR>
+</DIV>
+
+
+<DIV ID="SpecialNotes">
+<H2>Special Notes</H2>
+When creating a FAT16 volume special care should be taken to ensure best compatibility. Following these rules ensure the best compatibility:<BR>
+<UL>
+<LI>A FAT16 partition may not have less than 4085 clusters or more than 65524 clusters.</LI>
+</UL>
+<BR>
+<BR>
+</DIV>
+
+
+<DIV ID="Conclusion">
+<H2>Conclusion</H2>
+The FAT family of file systems are relative simple file systems. The complexity can be enhanced by adding support for long file names, using the <A HREF="VFAT_LongFileNames.html">VFAT Long File Names</A>. Also have a look at the <A HREF="FAT32_FileSystem.html">32 bit version</A> of the FAT file system.<BR>
+</DIV>
+
+
+</BODY>
+
+</HTML>

@@ -1,0 +1,517 @@
+<html>
+
+<!-- http://home.teleport.com/~brainy/fat16.htm -->
+
+<head>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+<title>FAT16 Structure Information</title>
+</head>
+
+<body>
+
+<p align="center"><strong><u><big>FAT16 Structure Information - Written by Jack Dobiash</big></u></strong></p>
+
+<p align="center"><em><small>Updated : June 17th, 1999</small></em></p>
+
+<p>Looking for FAT32 Info?&nbsp; Go <a href="http://home.teleport.com/~brainy/fat32.htm">here</a>.<br>
+Looking for Informaton on how to Read and Write to your Hard Drive?&nbsp; Go <a
+href="http://home.teleport.com/~brainy/diskaccess.htm">here</a>.</p>
+
+<p>I've written this page for anyone who wishes to write software that can do low-level
+reading and writing of a hard drive, and needs to know what the underlying structure of a
+FAT16 Drive is, in order to interpret the information properly.&nbsp; Basically I've
+searched all over the web, and have compiled this information in one spot. &nbsp;&nbsp;
+Hopefully it can be of use to someone.&nbsp; I don't guarantee that all of this
+information is correct or complete, but so far is seems to have been working for me.
+&nbsp;</p>
+
+<p>A lot of the number references I've made in this document are in Hexadecimal.&nbsp; Any
+that are have an 'h' after them.&nbsp; Also, just in case my terminology may be different
+from yours; a 'WORD' is 2 Bytes and a 'DOUBLE WORD' is 4 Bytes.</p>
+
+<p>&nbsp;</p>
+
+<p><u><strong>Master Boot Record</strong></u></p>
+
+<blockquote>
+  <p>The Master Boot Record is the same for pretty much all Operating Systems.&nbsp; It is
+  located on the first Sector of the Hard Drive, at Cylinder 0, Head 0, Sector 1.&nbsp; It
+  is the first piece of code that your computer runs after it has checked all of your
+  hardware (POST) and turned control of loading software over the hard drive.&nbsp; It also
+  contains the partition table, which defines the different sections of your hard
+  drive.&nbsp; Basically if anything happens to this little 512 byte section, your hard
+  drive is brain dead.&nbsp; Kinda scary, eh? :)</p>
+</blockquote>
+<div align="left">
+
+<table border="1" width="455" height="79">
+  <tr>
+    <td width="44" height="25">Offset</td>
+    <td width="269" height="25">Description</td>
+    <td width="52" height="25">Size</td>
+  </tr>
+  <tr>
+    <td width="44" height="25">000h</td>
+    <td width="269" height="25">Executable Code (Boots Computer)</td>
+    <td width="52" height="25">446 Bytes</td>
+  </tr>
+  <tr>
+    <td width="44" height="22">1BEh</td>
+    <td width="269" height="1">1st Partition Entry (See Next Table)</td>
+    <td width="52" height="22">16 Bytes</td>
+  </tr>
+  <tr>
+    <td width="44" height="17">1CEh</td>
+    <td width="269" height="17">2nd Partition Entry</td>
+    <td width="52" height="17">16 Bytes</td>
+  </tr>
+  <tr>
+    <td width="44" height="12">1DEh</td>
+    <td width="269" height="12">3rd Partition Entry</td>
+    <td width="52" height="12">16 Bytes</td>
+  </tr>
+  <tr>
+    <td width="44" height="20">1EEh</td>
+    <td width="269" height="20">4th Partition Entry</td>
+    <td width="52" height="20">16 Bytes</td>
+  </tr>
+  <tr>
+    <td width="44" height="16">1FEh</td>
+    <td width="269" height="16">Executable Marker (55h AAh)</td>
+    <td width="52" height="16">2 Bytes</td>
+  </tr>
+</table>
+</div>
+
+<p><br>
+<strong>Partition Entry (Part of MBR)</strong></p>
+<div align="left">
+
+<table border="1" width="523" height="236">
+  <tr>
+    <td width="47" height="7">Offset</td>
+    <td width="328" height="7">Description</td>
+    <td width="130" height="7">Size</td>
+  </tr>
+  <tr>
+    <td width="47" height="8">00h</td>
+    <td width="328" height="8">Current State of Partition (00h=Inactive, 80h=Active)</td>
+    <td width="130" height="8">1 Byte</td>
+  </tr>
+  <tr>
+    <td width="47" height="18">01h</td>
+    <td width="328" height="18">Beginning of Partition - Head</td>
+    <td width="130" height="18">1 Byte</td>
+  </tr>
+  <tr>
+    <td width="47" height="19">02h </td>
+    <td width="328" height="19">Beginning of Partition - Cylinder/Sector (See Below)</td>
+    <td width="130" height="19">1 Word</td>
+  </tr>
+  <tr>
+    <td width="47" height="15">04h</td>
+    <td width="328" height="15">Type of Partition (See List Below)</td>
+    <td width="130" height="15">1 Byte</td>
+  </tr>
+  <tr>
+    <td width="47" height="13">05h</td>
+    <td width="328" height="13">End of Partition - Head</td>
+    <td width="130" height="13">1 Byte</td>
+  </tr>
+  <tr>
+    <td width="47" height="15">06h</td>
+    <td width="328" height="15">End of Partition - Cylinder/Sector</td>
+    <td width="130" height="15">1 Word</td>
+  </tr>
+  <tr>
+    <td width="47" height="22">08h</td>
+    <td width="328" height="22">Number of Sectors Between the MBR and the First Sector in the
+    Partition</td>
+    <td width="130" height="22">1 Double Word</td>
+  </tr>
+  <tr>
+    <td width="47" height="22">0Ch</td>
+    <td width="328" height="22">Number of Sectors in the Partition</td>
+    <td width="130" height="22">1 Double Word</td>
+  </tr>
+</table>
+</div>
+
+<p><br>
+<strong>Cylinder/Sector Encoding</strong></p>
+
+<blockquote>
+  <p>I guess back in the days of 10MB hard drives and 8086's, code was at a premium. &nbsp;
+  So they did everything they could to preserve space.&nbsp; Unfortunately now we have to
+  live with it, but luckily they created new ways of translating the system so the 1024
+  Cylinder Limit (2^10) isn't too big of a problem, for newer computers, at least. &nbsp;
+  Older ones usually need some sort of Disk Overlay program to make them see the whole hard
+  drive.&nbsp;&nbsp; </p>
+  <p>Anyway, to get the Sector out of this, you need to apply an AND mask ($3F) to it.
+  &nbsp; To get the Cylinder, you take the high byte and OR it with the low byte that has
+  been AND masked with ($C0) and then Shifted Left Two.&nbsp; It's not very easy to explain,
+  so I'll just show you how I did it with two routines I made (In Pascal) for Encoding and
+  Decoding the Cylinder/Sector.&nbsp; Hopefully even if you don't know Pascal you'll be able
+  to read it.</p>
+  <p>Function CylSecEncode(Cylinder, Sector : Word) : Word;<br>
+  Begin<br>
+  &nbsp;&nbsp;&nbsp; CylSecEncode := (Lo(Cylinder) shl 8) or (Hi(Cylinder) shl 6) or Sector;<br>
+  End;<br>
+  <br>
+  Procedure CylSecDecode(Var Cylinder, Sector : Word; CylSec : Word);<br>
+  Begin<br>
+  &nbsp;&nbsp;&nbsp; Cylinder := Hi(CylSec) or ((Lo(CylSec) and $C0) shl 2);<br>
+  &nbsp;&nbsp;&nbsp; Sector := (CylSec and $3F);<br>
+  End;<br>
+  </p>
+</blockquote>
+<div align="left">
+
+<table border="1" width="418" height="48">
+  <tr>
+    <td width="10" height="23">15</td>
+    <td width="13" height="23">14</td>
+    <td width="18" height="23">13</td>
+    <td width="7" height="23">12</td>
+    <td width="12" height="23">11</td>
+    <td width="20" height="23">10</td>
+    <td width="19" height="23">9</td>
+    <td width="20" height="23">8</td>
+    <td width="36" height="23">7</td>
+    <td width="29" height="23">6</td>
+    <td width="20" height="23">5</td>
+    <td width="22" height="23">4</td>
+    <td width="21" height="23">3</td>
+    <td width="22" height="23">2</td>
+    <td width="25" height="23">1</td>
+    <td width="23" height="23">0</td>
+  </tr>
+  <tr>
+    <td width="184" height="13" colspan="8">Cylinder Bits 7 to 0</td>
+    <td width="67" height="13" colspan="2">Cylinder Bits 9+8</td>
+    <td width="149" height="13" colspan="6">Sector Bits 5 to 0</td>
+  </tr>
+</table>
+</div>
+
+<p><br>
+<strong>Partition Type Listing</strong></p>
+
+<blockquote>
+  <p>There are more than just these shown, but I've only included that ones relevant to MS
+  Operating Systems.</p>
+</blockquote>
+<div align="left">
+
+<table border="1" width="418" height="57">
+  <tr>
+    <td width="52" height="23">Value</td>
+    <td width="354" height="23">Description</td>
+  </tr>
+  <tr>
+    <td width="52" height="10">00h</td>
+    <td width="354" height="10">Unknown or Nothing</td>
+  </tr>
+  <tr>
+    <td width="52" height="13">01h</td>
+    <td width="354" height="13">12-bit FAT</td>
+  </tr>
+  <tr>
+    <td width="52" height="0">04h</td>
+    <td width="354" height="0">16-bit FAT (Partition Smaller than 32MB)</td>
+  </tr>
+  <tr>
+    <td width="52" height="8">05h</td>
+    <td width="354" height="8">Extended MS-DOS Partition</td>
+  </tr>
+  <tr>
+    <td width="52" height="7">06h</td>
+    <td width="354" height="7">16-bit FAT (Partition Larger than 32MB)</td>
+  </tr>
+  <tr>
+    <td width="52" height="6">0Bh</td>
+    <td width="354" height="6">32-bit FAT (Partition Up to 2048GB)</td>
+  </tr>
+  <tr>
+    <td width="52" height="10">0Ch</td>
+    <td width="354" height="10">Same as 0BH, but uses LBA<sub>1</sub> 13h Extensions</td>
+  </tr>
+  <tr>
+    <td width="52" height="12">0Eh</td>
+    <td width="354" height="12">Same as 06H, but uses LBA<sub>1</sub> 13h Extensions</td>
+  </tr>
+  <tr>
+    <td width="52" height="1">0Fh</td>
+    <td width="354" height="1">Same as 05H, but uses LBA<sub>1</sub> 13h Extensions</td>
+  </tr>
+</table>
+</div>
+
+<p><br>
+<u><strong>Reading Multiple Partitions</strong></u></p>
+
+<blockquote>
+  <p>Since FAT16 is limited to 2GB per partition, drives that use it tend to have multiple
+  partitions.&nbsp; The first partition is the Primary Partition, and everything else is
+  stored in the Extended Partition.&nbsp; It's a little tricky when it comes to reading
+  those extra partitions though (not a lot, just a little).&nbsp; The first record in the
+  partition table shows where the Primary partition is (how big it is, where it starts, and
+  where it ends).&nbsp; The second entry in the partition table shows where the Entire
+  Extended Partition is (which may include more than just one partition).&nbsp; To read any
+  more partitions, you go to the where it says the Extended Partition starts, and read the
+  first sector.&nbsp; It acts just like the MBR.&nbsp; It'll have blank where the code is
+  supposed to be, and in the partition table it will have for it's first entry the next
+  Partition in the Drive, and if there are anymore, there will be another Extended
+  partition, just like before.&nbsp; However, all references to Sector Numbers are made
+  using the that new MBR point as the reference, making it a virtual drive.&nbsp; Just
+  incase this doesn't make much sense (and by the way I explain things I can understand if
+  it doesn't), let me show you how a drive with three partitions is setup.</p>
+  <p>MBR of Whole Drive</p>
+  <p>&nbsp;&nbsp;&nbsp; Entry #1 - Points to Partition #1<br>
+  &nbsp;&nbsp;&nbsp; Entry #2 - Points to the Entire Extended Partition</p>
+  <p>You would read the first sector of that Extended Partition, and see another MBR
+  Structure.</p>
+  <p>MBR of Extended Partition</p>
+  <p>&nbsp;&nbsp;&nbsp; Entry #1 - Points to Partition #2<br>
+  &nbsp;&nbsp;&nbsp; Entry #2 - Points to Rest of Extended Partition after Partition #2</p>
+  <p>Now, all references to Sector Numbers (most specifically the entry at Offset 08h) in
+  those Entries wouldn't be referenced from the start of the drive, but from the start of
+  the Extended Partition.&nbsp; However, the CHS (Cylinder, Head, Sector) numbers would
+  still be right.</p>
+  <p>Once again, you would read the first sector of that Extended Partition, and see the
+  next MBR.</p>
+  <p>MBR of Rest of Extended Partition</p>
+  <p>&nbsp;&nbsp;&nbsp; Entry #1 - Points to Partition #3<br>
+  &nbsp;&nbsp;&nbsp; No Entry #2, since this was the Last Partition</p>
+  <p>If there were another partition, the pattern would continue just like before, until the
+  last one was reached.</p>
+</blockquote>
+
+<p>&nbsp;</p>
+
+<p><br>
+<u><strong>FAT16 Boot Record</strong></u></p>
+
+<blockquote>
+  <p>This information is located in the first sector of every partition.</p>
+</blockquote>
+<div align="left">
+
+<table border="1" width="518" height="192">
+  <tr>
+    <td width="60" height="19">Offset</td>
+    <td width="329" height="19">Description</td>
+    <td width="110" height="19">Size</td>
+  </tr>
+  <tr>
+    <td width="60" height="10">00h</td>
+    <td width="329" height="10">Jump Code + NOP</td>
+    <td width="110" height="10">3 Bytes</td>
+  </tr>
+  <tr>
+    <td width="60" height="25">03h</td>
+    <td width="329" height="25">OEM Name</td>
+    <td width="110" height="25">8 Bytes</td>
+  </tr>
+  <tr>
+    <td width="60" height="6">0Bh</td>
+    <td width="329" height="6">Bytes Per Sector</td>
+    <td width="110" height="6">1 Word</td>
+  </tr>
+  <tr>
+    <td width="60" height="7">0Dh</td>
+    <td width="329" height="7">Sectors Per Cluster</td>
+    <td width="110" height="7">1 Byte</td>
+  </tr>
+  <tr>
+    <td width="60" height="12">0Eh</td>
+    <td width="329" height="12">Reserved Sectors</td>
+    <td width="110" height="12">1 Word</td>
+  </tr>
+  <tr>
+    <td width="60" height="7">10h</td>
+    <td width="328" height="7">Number of Copies of FAT</td>
+    <td width="111" height="7">1 Byte</td>
+  </tr>
+  <tr>
+    <td width="60" height="4">11h</td>
+    <td width="328" height="4">Maximum Root Directory Entries</td>
+    <td width="111" height="4">1 Word</td>
+  </tr>
+  <tr>
+    <td width="60" height="5">13h</td>
+    <td width="328" height="5">Number of Sectors in Partition Smaller than 32MB</td>
+    <td width="111" height="5">1 Word</td>
+  </tr>
+  <tr>
+    <td width="60" height="8">15h</td>
+    <td width="328" height="8">Media Descriptor (F8h for Hard Disks)</td>
+    <td width="111" height="8">1 Byte</td>
+  </tr>
+  <tr>
+    <td width="60" height="4">16h</td>
+    <td width="328" height="4">Sectors Per FAT</td>
+    <td width="111" height="4">1 Word</td>
+  </tr>
+  <tr>
+    <td width="61" height="14">18h</td>
+    <td width="328" height="14">Sectors Per Track</td>
+    <td width="111" height="14">1 Word</td>
+  </tr>
+  <tr>
+    <td width="61" height="23">1Ah</td>
+    <td width="328" height="23">Number of Heads</td>
+    <td width="111" height="23">1 Word</td>
+  </tr>
+  <tr>
+    <td width="61" height="22">1Ch</td>
+    <td width="328" height="22">Number of Hidden Sectors in Partition</td>
+    <td width="111" height="22">1 Double Word</td>
+  </tr>
+  <tr>
+    <td width="61" height="22">20h</td>
+    <td width="328" height="22">Number of Sectors in Partition</td>
+    <td width="111" height="22">1 Double Word</td>
+  </tr>
+  <tr>
+    <td width="61" height="22">24h</td>
+    <td width="328" height="22">Logical Drive Number of Partition</td>
+    <td width="111" height="22">1 Word</td>
+  </tr>
+  <tr>
+    <td width="61" height="22">26h</td>
+    <td width="328" height="22">Extended Signature (29h)</td>
+    <td width="111" height="22">1 Byte</td>
+  </tr>
+  <tr>
+    <td width="61" height="22">27h</td>
+    <td width="328" height="22">Serial Number of Partition</td>
+    <td width="111" height="22">1 Double Word</td>
+  </tr>
+  <tr>
+    <td width="61" height="22">2Bh</td>
+    <td width="328" height="22">Volume Name of Partition</td>
+    <td width="111" height="22">11 Bytes</td>
+  </tr>
+  <tr>
+    <td width="61" height="22">36h</td>
+    <td width="328" height="22">FAT Name (FAT16)</td>
+    <td width="111" height="22">8 Bytes</td>
+  </tr>
+  <tr>
+    <td width="61" height="22">3Eh</td>
+    <td width="328" height="22">Executable Code</td>
+    <td width="111" height="22">448 Bytes</td>
+  </tr>
+  <tr>
+    <td width="61" height="22">1FEh</td>
+    <td width="328" height="22">Executable Marker (55h AAh)</td>
+    <td width="111" height="22">2 Bytes</td>
+  </tr>
+</table>
+</div>
+
+<p><br>
+<br>
+<u><strong>FAT16 Drive Layout</strong></u></p>
+<div align="left">
+
+<table border="1" width="521" height="64">
+  <tr>
+    <td width="374" height="23">Offset</td>
+    <td width="111" height="23">Description</td>
+  </tr>
+  <tr>
+    <td width="374" height="10">Start of Partition</td>
+    <td width="111" height="10">Boot Sector</td>
+  </tr>
+  <tr>
+    <td width="374" height="14">Start + # of Reserved Sectors</td>
+    <td width="111" height="14">Fat Tables</td>
+  </tr>
+  <tr>
+    <td width="374" height="-1">Start + # of Reserved + (# of Sectors Per FAT * 2)</td>
+    <td width="111" height="-1">Root Directory Entry</td>
+  </tr>
+  <tr>
+    <td width="374" height="3">Start + # of Reserved + (# of Sectors Per FAT * 2) + ((Maximum
+    Root Directory Entries * 32) / Bytes per Sector) </td>
+    <td width="111" height="3">Data Area (Starts with Cluster #2)</td>
+  </tr>
+</table>
+</div>
+
+<p>&nbsp;</p>
+
+<p><u><strong>Cluster Meaning (FAT Table Entries)</strong></u></p>
+
+<blockquote>
+  <p>A Cluster is a Group of Sectors on the Hard Drive that have information in them. &nbsp;
+  A 16K Cluster has 32 Sectors in it (512*32=16384).&nbsp; Each Cluster is given a spot in
+  the FAT Table.&nbsp; When you look at an Entry in the FAT, the number there tells you
+  whether or not that cluster has data in it, and if so, if it is the end of the data or
+  there is another cluster after it.&nbsp; All Data on a Partition starts with Cluster #2
+  (Right after Root Directory). &nbsp;&nbsp; If the FAT Entry is 0, then there is no data in
+  that cluster.&nbsp; If the FAT Entry is FFFFh, then it is the last entry in the
+  chain.&nbsp; </p>
+</blockquote>
+<div align="left">
+
+<table border="1" width="430" height="78">
+  <tr>
+    <td width="247" height="19">FAT Code Range</td>
+    <td width="171" height="19">Meaning</td>
+  </tr>
+  <tr>
+    <td width="247" height="11">0000h</td>
+    <td width="171" height="11">Available Cluster</td>
+  </tr>
+  <tr>
+    <td width="247" height="10">0002h-FFEFh</td>
+    <td width="171" height="10">Used, Next Cluster in File</td>
+  </tr>
+  <tr>
+    <td width="247" height="7">FFF0h-FFF6h</td>
+    <td width="171" height="7">Reserved Cluster</td>
+  </tr>
+  <tr>
+    <td width="247" height="4">FFF7h</td>
+    <td width="171" height="4">BAD Cluster</td>
+  </tr>
+  <tr>
+    <td width="247" height="9">FFF8h-FFFF</td>
+    <td width="171" height="9">Used, Last Cluster in File</td>
+  </tr>
+</table>
+</div>
+
+<p><u><strong>Directory Table</strong></u></p>
+
+<blockquote>
+  <p>Another aspect when looking at a File System at Low Level is the Directory Table.
+  &nbsp; The Directory Table is what stores all of the File and Directory Entries.
+  &nbsp;Someone else has already written a good resource for this information on the net, so
+  go <a href="http://home.teleport.com/~brainy/lfn.htm">here</a> to look at it.&nbsp; The
+  link doesn't work anymore, but luckily I saved the page a while back, so i'll just post it
+  on my site.</p>
+</blockquote>
+
+<p>&nbsp;</p>
+
+<p>Footnotes</p>
+
+<p>1 - LBA = Logical Block Addressing - Uses the Int 13h Extensions built into newer
+BIOS's to access data above the 8GB
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+barrier, or to access strickly in LBA mode, instead of CHS (Cylinder, Head, Sector).</p>
+
+<p align="center"><a href="http://home.teleport.com/~brainy">Home</a> <a
+href="http://home.teleport.com/~brainy/rps.html">Reference Point Software</a> <a
+href="http://home.teleport.com/~brainy/fat32.htm">FAT32 Structure Information</a> FAT16
+Structure Information <a href="http://home.teleport.com/~brainy/diskaccess.htm">Disk Access
+Information</a> <br>
+<a href="http://home.teleport.com/~brainy/bio.html">About Me</a> <a
+href="http://home.teleport.com/~brainy/links.html">Links</a> <a
+href="http://home.teleport.com/~brainy/dobiash.html">Dobiash?</a></p>
+</body>
+</html>

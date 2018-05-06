@@ -4,7 +4,7 @@ GEX can be controlled through a hardware UART, the USB or over a wireless link. 
 
 The communication is organized in transactions. A transaction consists of one or more messages going in either direction. Messages can be stand-alone, or chained with a response or a follow-up message using the transaction ID. Both peers, GEX and the client application running on the PC, are equal in the communication: either side can independently initiate a transaction at any time.
 
-GEX uses a framing library \textit{TinyFrame}, developed likewise by the author, but kept as a separate project for easier re-use in different applications. The library implements frame building and parsing, checksum calculation and a system of message listeners. An interested reader may find more technical details and the API in its documentation.
+GEX uses a framing library \textit{TinyFrame}, developed likewise by the author but kept as a separate project for easier re-use in different applications. The library implements frame building and parsing, checksum calculation and a system of message listeners.
 
 \section{Frame Structure}
 
@@ -90,11 +90,19 @@ The following table lists all frame types used by GEX. It is divided into four l
 
 \section{Bulk Read and Write Transactions}
 
-The bulk read and write transactions are generic, multi-message exchanges which are used to transfer the INI configuration files. They could possibly be used by some future unit requiring to transfer a large amount of data (e.g. to read image data from a camera).
+The bulk read and write transactions are generic, multi-message exchanges which are used to transfer the INI configuration files. They could additionally be used by some future unit requiring to transfer a large amount of data (e.g. to read image data from a camera).
 
-The reason for splitting a long file into multiple messages, rather than sending it all in one, lies in the hardware limitations of the platform, specifically its small amount of RAM (the STM32F072 has only 16\,kB). A message cannot be processed until its payload checksum is received and verified; however, the configuration file can have several kilobytes, owning to the numerous explanatory comments, which would require a prohibitively large buffer. Further, the GEX module may need some time to process a part of the message before it can receive more data, which is easily achieved by this multi-part transport where each chunk must be confirmed before proceeding to the next.
+The reason for splitting a long file into multiple messages, rather than sending it all in one, lies in the hardware limitations of the platform, specifically its small amount of RAM (the STM32F072 has only 16\,kB). A message cannot be processed until its payload checksum is received and verified; however, the configuration file can have several kilobytes, owning to the numerous explanatory comments, which would require a prohibitively large data buffer. The chunked transaction could, additionally, be extended to support message re-transmission on timeout without sending the entire file again.
 
-A read or write transaction can be aborted by a frame 0x08 (Bulk Abort) at any time, though aborting a write transaction may leave the configuration in a corrupt state. As hinted in the introduction of this chapter, a transaction is defined by sharing a common frame ID. Thus, all frames in a bulk transaction must have the same ID, otherwise the ID listeners won't be called and the transaction will fail.
+A read or write transaction can be aborted by a frame 0x08 (Bulk Abort) at any time, though aborting a write transaction may leave the configuration in a corrupted state. As hinted in the introduction of this chapter, a transaction is defined by sharing a common frame ID. Thus, all frames in a bulk transaction must have the same ID, otherwise the ID listeners won't be called for the subsequent messages, and the transaction will time out.
+
+Figure \ref{fig:bulk-rw} shows a diagram of the bulk read and write data flow.
+
+\begin{figure}
+	\centering
+	\includegraphics[scale=1.5]{img/bulk-read-write.pdf}
+	\caption{\label{fig:bulk-rw}A diagram of the bulk read and write transaction.}
+\end{figure}
 
 \subsection{Bulk Read}
 

@@ -799,10 +799,16 @@
 % Redefine the enumerate labels. The first two levels are boxed,
 % the other two are not.
 %\def\labelenumi{{\normalfont\itembox[ctubluedarkbg][white]{\bfseries\theenumi.}}}
+
+% CUSTOM XXX removed the enumi boxes
+\iffalse
+
 \def\labelenumi{{\normalfont\itembox{\theenumi.}}}
 \def\labelenumii{{\normalfont\itembox(0.1em)(0.1em){\theenumii.}}}
 \def\labelenumiii{{\normalfont(\theenumiii)}}
 \def\labelenumiv{{\normalfont(\theenumiv)}}
+
+\fi
 
 \leftmargini22.2pt
 \labelsep6pt
