@@ -1,0 +1,55 @@
+\section{DO: Digital Output}
+
+The digital output unit provides a write access to one or more pins of a GPIO port. This unit additionally supports pulse generation on any of its pins. This is implemented in software with the timing derived from the system timebase, as the hardware timer outputs, otherwise used for PWM or pulse generation, are available only on several dedicated pins. The timing code is optimized to reduce jitter. \todo{Measure jitter and add it here}
+
+\subsection{DO Configuration}
+
+\begin{inicode}
+[DO:out@1]
+# Port name
+port=A
+# Pins (comma separated, supports ranges)
+pins=0
+# Initially high pins
+initial=
+# Open-drain pins
+open-drain=
+\end{inicode}
+
+
+\subsection{DO Commands}
+
+\begin{tabularx}{\textwidth}{p{2.2em} l X p{.38\textwidth}}
+	\toprule
+	\textbf{Code} & \textbf{Name} & \textbf{Function} & \textbf{Payload}  \\	
+	\midrule	
+	
+	0x00 & WRITE & Write to all pins 
+	& \makecell[tl]{
+		\fld{u16} new value
+	} \\
+	
+	0x01 & SET & Set selected pins to 1 
+	& \makecell[tl]{
+		\fld{u16} pins to set
+	} \\
+	
+	0x02 & CLEAR & Set selected pins to 0 
+	& \makecell[tl]{
+		\fld{u16} pins to clear
+	} \\
+
+	0x03 & TOGGLE & Toggle selected pins 
+	& \makecell[tl]{
+		\fld{u16} pins to toggle
+	} \\
+
+	0x04 & PULSE & Generate a pulse on the selected pins. The $\mu$s scale may be used only for 0--999\,$\mu$s.
+	& \makecell[tl]{
+		\fld{u16} pins to pulse \\
+		\fld{u8} active level (0, 1) \\
+		\fld{u8} scale: 0-ms, 1-$\mu$s \\
+		\fld{u16} duration
+	} \\
+	\bottomrule
+\end{tabularx}

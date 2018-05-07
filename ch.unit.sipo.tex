@@ -1,0 +1,5 @@
+\section{Shift Registers Driver Unit}
+
+The shift registers driver unit is designed for the loading of data into \textit{serial-in, parallel-out} (SIPO) shift registers, such as 74HC4094 or 74HC595. Those are commonly used to control segmented LED displays, LED matrices etc.
+
+This unit handles both the \textit{Shift} and \textit{Store} signals and is capable of loading multiple shift registers simultaneously, reducing visible glitches in the display. It's also possible to set the data lines to arbitrary level(s) before sending the Store pulse, which can be latched and used for some additional feature of the LED display, such as brightness control.

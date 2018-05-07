@@ -1,0 +1,7 @@
+\section{Digital Input Unit}
+
+The digital input unit is the input counterpart of the digital output unit. 
+
+In addition to reading the immediate digital levels of the selected pins, this unit can generate asynchronous events on a pin change. The state of the entire input port, together with a microsecond timestamp (as is the case for all asynchronous events), is reported to the host either on a rising, falling, or any pin change. 
+
+The pin change event can be configured independently for each pin. In order to receive a pin change event, it must be armed first; The pin can be armed for a single event, or it may be re-armed automatically with a hold-off time. It's further possible to automatically arm selected pin triggers on start-up.
