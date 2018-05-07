@@ -1,5 +1,78 @@
-
-
 \section{I2C Unit}
 
-The I2C unit provides access to one of the microcontroller's I2C peripherals. It can be configured to use either of the three speeds (Standard, Fast and Fast+) and supports both 10-bit and 8-bit addressing.
+The I2C unit provides access to one of the microcontroller's I2C peripherals. It can be configured to use either of the three speeds (Standard, Fast and Fast+) and supports both 10-bit and 7-bit addressing. 10-bit addresses can be used in commands by setting their highest bit (0x8000), as a flag to the unit. 
+
+\subsection{I2C Configuration}
+
+\begin{inicode}
+[I2C:d@4]
+# Peripheral number (I2Cx)
+device=1
+# Pin mappings (SCL,SDA)
+#  I2C1: (0) B6,B7    (1) B8,B9
+#  I2C2: (0) B10,B11  (1) B13,B14
+remap=0
+
+# Speed: 1-Standard, 2-Fast, 3-Fast+
+speed=1
+# Analog noise filter enable (Y,N)
+analog-filter=Y
+# Digital noise filter bandwidth (0-15)
+digital-filter=0
+\end{inicode}
+
+\subsection{I2C Events}
+
+This unit generates no events.
+
+\subsection{I2C Commands}
+
+\begin{tabularx}{\textwidth}{p{\fldwcode}lXp{\fldwpld}}
+	\toprule
+	\textbf{Code} & \textbf{Name} & \textbf{Function} & \textbf{Payload}  \\	
+	\midrule	
+	
+	0x00 & WRITE & Raw write transaction
+	& \makecell[tl]{
+		\fldreq
+		\fld{u16} slave address \\
+		\fld{u8[]} bytes to write \\	
+	} \\
+
+	0x01 & READ & Raw read transaction
+	& \makecell[tl]{
+		\fldreq
+		\fld{u16} slave address \\
+		\fld{u16} number of read bytes \\
+		\fldresp
+		\fld{u8[]} received bytes \\	
+	} \\
+	
+	0x02 & WRITE\_REG & Write to a slave register. Sends the register number and the data in the same I2C transaction. Multiple registers can be written to slaves supporting auto-increment.
+	& \makecell[tl]{
+		\fldreq
+		\fld{u16} slave address \\
+		\fld{u8} register number \\
+		\fld{u8[]} bytes to write \\	
+	} \\
+	
+	0x03 & READ\_REG & Read from a slave register. Writes the register number and issues a read transaction of the given length. Multiple registers can be read from slaves supporting auto-increment.
+	& \makecell[tl]{
+		\fld{u16} slave address \\
+		\fld{u8} register number \\
+		\fld{u16} number of read bytes \\
+		\fldresp
+		\fld{u8[]} received bytes \\	
+	} \\
+
+	\bottomrule
+\end{tabularx}
+
+
+
+
+
+
+
+
+

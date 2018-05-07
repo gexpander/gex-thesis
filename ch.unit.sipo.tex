@@ -1,5 +1,58 @@
-\section{Shift Registers Driver Unit}
+\section{SIPO: Shift Registers Driver}
 
 The shift registers driver unit is designed for the loading of data into \textit{serial-in, parallel-out} (SIPO) shift registers, such as 74HC4094 or 74HC595. Those are commonly used to control segmented LED displays, LED matrices etc.
 
 This unit handles both the \textit{Shift} and \textit{Store} signals and is capable of loading multiple shift registers simultaneously, reducing visible glitches in the display. It's also possible to set the data lines to arbitrary level(s) before sending the Store pulse, which can be latched and used for some additional feature of the LED display, such as brightness control.
+
+
+\subsection{SIPO Configuration}
+
+\begin{inicode}
+[SIPO:display@9]
+# Shift pin & its active edge (1-rising,0-falling)
+shift-pin=A1
+shift-pol=1
+# Store pin & its active edge
+store-pin=A0
+store-pol=1
+# Clear pin & its active level
+clear-pin=A2
+clear-pol=0
+# Data port and pins
+data-port=A
+data-pins=3
+\end{inicode}
+
+\subsection{SIPO Events}
+
+This unit generates no events.
+
+\subsection{SIPO Commands}
+
+\begin{tabularx}{\textwidth}{p{\fldwcode}lXp{\fldwpld}}
+	\toprule
+	\textbf{Code} & \textbf{Name} & \textbf{Function} & \textbf{Payload}  \\	
+	\midrule	
+	
+	0x00 & WRITE & Load the shift registers and leave the data outputs in the "trailing data" state before sending the Store pulse.
+	& \makecell[tl]{
+		\fldreq
+		\fld{u16} trailing data \\
+		\tabitem For each output: \\
+		~~\fldo{u8[]} data to load
+	} \\
+	
+	0x01 & DIRECT\_DATA & Directly write to the data pins (same like the DO unit's WRITE command)
+	& \makecell[tl]{
+		\fldreq
+		\fld{u16} values to write
+	} \\
+
+	0x02 & DIRECT\_CLEAR & Pulse the Clear pin, erasing the registers' data & \\
+	0x03 & DIRECT\_SHIFT & Pulse the Shift pin & \\
+	0x04 & DIRECT\_STORE & Pulse the Store pin & \\
+	\bottomrule
+\end{tabularx}
+
+
+

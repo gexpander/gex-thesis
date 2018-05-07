@@ -26,8 +26,14 @@
 
 \newminted{ini}{frame=leftline,autogobble=true}
 \newcommand{\tabitem}{~~\llap{\textbullet}~~}
-
+\newcommand{\tabitemo}{~~\llap{\textopenbullet}~~}
 \newcommand\fld[1]{\tabitem \verb|#1|:}
+\newcommand\fldo[1]{\tabitemo \verb|#1|:}
+\newcommand{\fldwcode}{2.2em}
+\newcommand{\fldwpld}{.32\textwidth}
+
+\newcommand{\fldreq}{\textit{Request}\\}
+\newcommand{\fldresp}{\textit{Response}\\}
 
 
 \newcommand{\uF}{\micro\farad}
@@ -38,7 +44,6 @@
 %nobreak dash
 %\usepackage{lmodern}
 %\usepackage{cfr-lm}
-
 
 \usepackage[style=numeric,backend=biber,sorting=none]{biblatex}
 

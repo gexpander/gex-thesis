@@ -1,6 +1,71 @@
+\section{NPX: NeoPixel}
+
+The NeoPixel unit implements the protocol needed to control a digital LED strip with WS2812, WS2811, or compatible LED driver chips. The protocol timing is implemented in software, therefore it is available on any GPIO pin of the module.
+
+The color data can be loaded in five different format: as packed bytes, or as the little-endian or big-endian encoding of colors in the 32-bit format 0x00RRGGBB or 0x00BBGGRR. This data format is convenient when the colors are already represented by an array of 32-bit integers.
+
+\subsection{NPX Configuration}
+
+\begin{inicode}
+[NPX:neo@3]
+# Data pin
+pin=A0
+# Number of pixels
+pixels=32
+\end{inicode}
+
+\subsection{NPX Events}
+
+This unit generates no events.
+
+\subsection{NPX Commands}
+
+\begin{tabularx}{\textwidth}{p{\fldwcode}lXp{\fldwpld}}
+	\toprule
+	\textbf{Code} & \textbf{Name} & \textbf{Function} & \textbf{Payload}  \\	
+	\midrule	
+	
+	0x00 & CLEAR & Switch all LEDs off (sets them to black) & \\
+	0x01 & LOAD & Load a sequence of R,G,B bytes
+	& \makecell[tl]{
+		\fldreq
+		\tabitem For each LED: \\
+		~~\fldo{u8} red \\
+		~~\fldo{u8} green \\
+		~~\fldo{u8} blue \\
+	} \\
+
+	0x08 & LOAD\_U32\_ZRGB & Load 32-bit big-endian 0xRRGGBB (0,R,G,B)
+	& \makecell[tl]{
+		\fldreq
+		\fld{u32[]} color data BE
+	} \\
+
+	0x09 & LOAD\_U32\_ZBGR & Load 32-bit big-endian 0xBBGGRR (0,B,G,R)
+	& \makecell[tl]{
+		\fldreq
+		\fld{u32[]} color data BE
+	} \\
+
+	0x0A & LOAD\_U32\_RGBZ & Load 32-bit little-endian 0xBBGGRR (R,G,B,0)
+	& \makecell[tl]{
+		\fldreq
+		\fld{u32[]} color data LE
+	} \\
+
+	0x0B & LOAD\_U32\_BGRZ & Load 32-bit little-endian 0xRRGGBB (B,G,R,0)
+	& \makecell[tl]{
+		\fldreq
+		\fld{u32[]} color data LE
+	} \\
+
+	0x10 & GET\_LEN & Get number of LEDs in the strip
+	& \makecell[tl]{
+		\fldresp
+		\fld{u16} number of LEDs
+	} \\
+	\bottomrule
+\end{tabularx}
 
 
-\section{NeoPixel Unit}
-
-The NeoPixel unit implements the protocol needed to control a digital LED strip with WS2812, WS2811, or compatible LED driver chips. The protocol timing is implemented in software, therefore it is available on any GPIO pin of the module. The unit accepts sequences of RGB color values from the host and loads them into the LED strip.
 

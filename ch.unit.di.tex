@@ -1,7 +1,78 @@
-\section{Digital Input Unit}
+\section{DI: Digital Input}
 
 The digital input unit is the input counterpart of the digital output unit. 
 
 In addition to reading the immediate digital levels of the selected pins, this unit can generate asynchronous events on a pin change. The state of the entire input port, together with a microsecond timestamp (as is the case for all asynchronous events), is reported to the host either on a rising, falling, or any pin change. 
 
 The pin change event can be configured independently for each pin. In order to receive a pin change event, it must be armed first; The pin can be armed for a single event, or it may be re-armed automatically with a hold-off time. It's further possible to automatically arm selected pin triggers on start-up.
+
+
+\subsection{DI Configuration}
+
+\begin{inicode}
+	[DI:in@2]	
+	# Port name
+	port=A
+	# Pins (comma separated, supports ranges)
+	pins=0
+	# Pins with pull-up
+	pull-up=
+	# Pins with pull-down
+	pull-down=
+	
+	# Trigger pins activated by rising/falling edge
+	trig-rise=
+	trig-fall=
+	# Trigger pins auto-armed by default
+	auto-trigger=
+	# Triggers hold-off time (ms)
+	hold-off=100
+\end{inicode}
+
+\subsection{DI Events}
+
+\begin{tabularx}{\textwidth}{p{\fldwcode}lXp{\fldwpld}}
+	\toprule
+	\textbf{Code} & \textbf{Name} & \textbf{Meaning} & \textbf{Payload}  \\	
+	\midrule	
+	
+	0x00 & PIN\_CHANGE & A pin change event. The payload includes a snapshot of all configured pins captured immediately after the change was registered.
+	& \makecell[tl]{
+		\fld{u16} changed pins \\
+		\fld{u16} port snapshot
+	} \\	
+	\bottomrule
+\end{tabularx}
+
+\subsection{DI Commands}
+
+\begin{tabularx}{\textwidth}{p{\fldwcode}lXp{\fldwpld}}
+	\toprule
+	\textbf{Code} & \textbf{Name} & \textbf{Function} & \textbf{Payload}  \\	
+	\midrule	
+	
+	0x00 & READ & Read the pins
+	& \makecell[tl]{
+		\fldresp
+		\fld{u16} pin states
+	} \\
+
+	0x01 & ARM\_SINGLE & Arm for a single event
+	& \makecell[tl]{
+		\fldreq
+		\fld{u16} pins to arm
+	} \\
+
+	0x02 & ARM\_AUTO & Arm with automatic re-arming after each event
+	& \makecell[tl]{
+		\fldreq
+		\fld{u16} pins to arm
+	} \\
+
+	0x03 & DISARM & Dis-arm selected pins
+	& \makecell[tl]{
+		\fldreq
+		\fld{u16} pins to dis-arm
+	} \\
+	\bottomrule
+\end{tabularx}

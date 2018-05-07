@@ -16,36 +16,44 @@ initial=
 open-drain=
 \end{inicode}
 
+\subsection{DO Events}
+
+This unit generates no events.
 
 \subsection{DO Commands}
 
-\begin{tabularx}{\textwidth}{p{2.2em} l X p{.38\textwidth}}
+\begin{tabularx}{\textwidth}{p{\fldwcode}lXp{\fldwpld}}
 	\toprule
 	\textbf{Code} & \textbf{Name} & \textbf{Function} & \textbf{Payload}  \\	
 	\midrule	
 	
 	0x00 & WRITE & Write to all pins 
 	& \makecell[tl]{
+		\fldreq
 		\fld{u16} new value
 	} \\
 	
 	0x01 & SET & Set selected pins to 1 
 	& \makecell[tl]{
+		\fldreq
 		\fld{u16} pins to set
 	} \\
 	
 	0x02 & CLEAR & Set selected pins to 0 
 	& \makecell[tl]{
+		\fldreq
 		\fld{u16} pins to clear
 	} \\
 
 	0x03 & TOGGLE & Toggle selected pins 
 	& \makecell[tl]{
+		\fldreq
 		\fld{u16} pins to toggle
 	} \\
 
 	0x04 & PULSE & Generate a pulse on the selected pins. The $\mu$s scale may be used only for 0--999\,$\mu$s.
 	& \makecell[tl]{
+		\fldreq
 		\fld{u16} pins to pulse \\
 		\fld{u8} active level (0, 1) \\
 		\fld{u8} scale: 0-ms, 1-$\mu$s \\
