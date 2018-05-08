@@ -1,4 +1,187 @@
 
 \section{Frequency Capture Unit}
 
-The frequency capture unit implements both the frequency measurement methods explained in section \ref{sec:theory-fcap}: direct and reciprocal. It can be operated in an on-demand or continuous measurement mode. The unit can be switched to two other modes: pulse counter, and the measurement of a single pulse.
+The frequency capture unit implements both the frequency measurement methods explained in section \ref{sec:theory-fcap}: direct and reciprocal.
+
+The unit has several operational modes: idle, reciprocal continuous, reciprocal burst, direct continuous, direct burst, free counting, and single pulse. Burst mode is an on-demand measurement with possible averaging. Continuous mode doesn't support averaging, but the latest measurement can be read at any time without a delay.
+
+\subsection{Value Conversion Formulas}
+
+Several of the features implemented in this unit would require floating point arithmetic to provide the measured value in the desired units (Hz, seconds). That is not available in Cortex-M0, only as a software implementation. The calculation is left to the client in order to save Flash space that would be otherwise used by the the arithmetic functions. This arrangement also avoids rounding errors and a possible loss of precision.
+
+\subsubsection{Reciprocal (Indirect) Measurement}
+
+Period (in seconds) is computed as:
+
+\[
+	T = \dfrac{\mathrm{period\_sum}}{f_\mathrm{core,MHz} \cdot 10^6 \cdot \mathrm{n\_periods}}
+\]
+
+\noindent
+The frequency is obtained by simply inverting it: \[f=T^{-1}\]
+
+The average duty cycle is computed as the ratio of the sum of active-level pulses and the sum of all periods:
+
+\[\mathrm{average\_duty} = \dfrac{\mathrm{ontime\_sum}}{\mathrm{period\_sum}}\]
+
+\subsubsection{Direct Measurement}
+
+The frequency can be derived from the pulse count and measurement time using its definition ($t_\mathrm{ms}$ is measurement time in milliseconds):
+
+\[f = \dfrac{1000\cdot\mathrm{count}\cdot\mathrm{prescaller}}
+{t_\mathrm{ms}}\]
+
+
+
+\subsection{Frequency Capture Configuration}
+
+\begin{inicode}
+[FCAP:j@10]
+# Signal input pin - one of:
+#  Full support:  A0, A5, A15
+#  Indirect only: A1, B3
+pin=A0
+
+# Active level or edge (0-low,falling; 1-high,rising)
+active-level=1
+# Input filtering (0-15)
+input-filter=0
+# Pulse counter pre-divider (1,2,4,8)
+direct-presc=1
+# Pulse counting interval (ms)
+direct-time=1000
+
+# Mode on startup: N-none, I-indirect, D-direct, F-free count
+initial-mode=N
+\end{inicode}
+
+\subsection{Frequency Capture Commands}
+
+Some commands include optional parameter setting. Using 0 in the field keeps the previous value. Those fields are marked with *.
+
+\begin{tabularx}{\textwidth}{p{\fldwcode}Xp{\fldwpld}}
+	\toprule
+	\textbf{Code} & \textbf{Function} & \textbf{Payload}  \\	
+	\midrule	
+	
+	0 & \flname{STOP} Stop all measurements, go idle & \\
+	
+	
+	1 & \flname{INDIRECT\_CONT\_START}
+	Start a repeated reciprocal measurement
+	& \\
+
+	2 & \flname{INDIRECT\_BUTST\_START}
+	Start a burst of reciprocal measurements
+	& \makecell[tl]{
+		\fldreq
+		\fld{u16} number of periods \\
+		\fldresp
+		\fld{u16} core speed (MHz) \\
+		\fld{u16} number of periods \\
+		\fld{u64} sum of all periods (ticks) \\
+		\fld{u16} sum of on-times (ticks)
+	} \\
+
+	3 & \flname{DIRECT\_CONT\_START}
+	Start a repeated direct measurement
+	& \makecell[tl]{
+		\fldreq
+		\fld{u16} *measurement time \\
+		\fld{u8} *prescaller (1, 2, 4, 8) \\
+	} \\
+	
+	4 & \flname{DIRECT\_BURST\_START}
+	Start a single direct measurement. Longer capture time may help increase accuracy for stable signals.
+	& \makecell[tl]{
+		\fldreq
+		\fld{u16} *measurement time (ms) \\
+		\fld{u8} *prescaller (1, 2, 4, 8) \\		
+		\fldresp
+		\fld{u8} prescaller \\
+		\fld{u16} measurement time (ms) \\
+		\fld{u32} pulse count
+	} \\
+
+	5 & \flname{FREECOUNT\_START}
+	Clear and start the pulse counter
+	& \makecell[tl]{
+		\fldreq
+		\fld{u8} *prescaller (1,2,4,8) \\
+	} \\	
+	
+	6 & \flname{MEASURE\_SINGLE\_PULSE}
+	Measure a single pulse of the active level. Waits for a rising edge.
+	& \makecell[tl]{
+		\fldresp
+		\fld{u16} core speed (MHz) \\
+		\fld{u32} pulse length (ticks) \\
+	} \\
+	
+	7 & \flname{FREECOUNT\_CLEAR}
+	Read and clear the pulse counter. 
+	& \makecell[tl]{
+		\fldresp
+		\fld{u32} previous counter value \\
+	} \\
+
+	10 & \flname{INDIRECT\_CONT\_READ}
+	Read the latest value from the continuous reciprocal measurement, if running.
+	& \makecell[tl]{
+		\fldresp
+		\fld{u16} core speed (MHz) \\
+		\fld{u32} period length (ticks) \\
+		\fld{u32} on-time (ticks) \\
+	} \\
+	
+	11 & \flname{DIRECT\_CONT\_READ}
+	Read the latest value from the continuous direct measurement, if running.
+	& \makecell[tl]{
+		\fldresp
+		\fld{u8} prescaller \\
+		\fld{u16} measurement time (ms) \\
+		\fld{u32} pulse count
+	} \\
+
+	12 & \flname{FREECOUNT\_READ}
+	Read the pulse counter value
+	& \makecell[tl]{
+		\fldresp
+		\fld{u32} pulse count
+	} \\
+
+	20 & \flname{SET\_POLARITY}
+	Set pulse polarity (active level)
+	& \makecell[tl]{
+		\fldresp
+		\fld{u8} polarity (0,1)
+	} \\
+	
+	21 & \flname{SET\_PRESCALLER}
+	Set prescaller for the direct mode
+	& \makecell[tl]{
+		\fldresp
+		\fld{u8} prescaller (1,2,4,8) \\
+	} \\
+	
+	22 & \flname{SET\_INPUT\_FILTER}
+	Set input filtering (a hardware feature designed to ignore glitches)
+	& \makecell[tl]{
+		\fldresp
+		\fld{u8} filtering factor (0-15, 0=off) \\
+	} \\
+	
+	23 & \flname{SET\_DIR\_MSEC}
+	Set direct measurement time
+	& \makecell[tl]{
+		\fldresp
+		\fld{u16} measurement time (ms) \\
+	} \\
+	
+	30 & \flname{RESTORE\_DEFAULTS}
+	Restore all run-time adjustable parameters to their configured default values
+	& \\
+\bottomrule
+\end{tabularx}
+\todo[inline]{split table to improve page layout}
+

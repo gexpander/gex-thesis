@@ -1,4 +1,4 @@
-\section{DI: Digital Input}
+\section{Digital Input}
 
 The digital input unit is the input counterpart of the digital output unit. 
 
@@ -7,7 +7,7 @@ In addition to reading the immediate digital levels of the selected pins, this u
 The pin change event can be configured independently for each pin. In order to receive a pin change event, it must be armed first; The pin can be armed for a single event, or it may be re-armed automatically with a hold-off time. It's further possible to automatically arm selected pin triggers on start-up.
 
 
-\subsection{DI Configuration}
+\subsection{Digital Input Configuration}
 
 \begin{inicode}
 	[DI:in@2]	
@@ -29,14 +29,15 @@ The pin change event can be configured independently for each pin. In order to r
 	hold-off=100
 \end{inicode}
 
-\subsection{DI Events}
+\subsection{Digital Input Events}
 
-\begin{tabularx}{\textwidth}{p{\fldwcode}lXp{\fldwpld}}
+\begin{tabularx}{\textwidth}{p{\fldwcode}Xp{\fldwpld}}
 	\toprule
-	\textbf{Code} & \textbf{Name} & \textbf{Meaning} & \textbf{Payload}  \\	
+	\textbf{Code} & \textbf{Meaning} & \textbf{Payload}  \\	
 	\midrule	
 	
-	0x00 & PIN\_CHANGE & A pin change event. The payload includes a snapshot of all configured pins captured immediately after the change was registered.
+	0 & \flname{PIN\_CHANGE}
+	A pin change event. The payload includes a snapshot of all configured pins captured immediately after the change was registered.
 	& \makecell[tl]{
 		\fld{u16} changed pins \\
 		\fld{u16} port snapshot
@@ -44,32 +45,32 @@ The pin change event can be configured independently for each pin. In order to r
 	\bottomrule
 \end{tabularx}
 
-\subsection{DI Commands}
+\subsection{Digital Input Commands}
 
-\begin{tabularx}{\textwidth}{p{\fldwcode}lXp{\fldwpld}}
+\begin{tabularx}{\textwidth}{p{\fldwcode}Xp{\fldwpld}}
 	\toprule
-	\textbf{Code} & \textbf{Name} & \textbf{Function} & \textbf{Payload}  \\	
+	\textbf{Code} & \textbf{Function} & \textbf{Payload}  \\	
 	\midrule	
 	
-	0x00 & READ & Read the pins
+	0 & \flname{READ} Read the pins
 	& \makecell[tl]{
 		\fldresp
 		\fld{u16} pin states
 	} \\
 
-	0x01 & ARM\_SINGLE & Arm for a single event
+	1 & \flname{ARM\_SINGLE} Arm for a single event
 	& \makecell[tl]{
 		\fldreq
 		\fld{u16} pins to arm
 	} \\
 
-	0x02 & ARM\_AUTO & Arm with automatic re-arming after each event
+	2 & \flname{ARM\_AUTO} Arm with automatic re-arming after each event
 	& \makecell[tl]{
 		\fldreq
 		\fld{u16} pins to arm
 	} \\
 
-	0x03 & DISARM & Dis-arm selected pins
+	3 & \flname{DISARM} Dis-arm selected pins
 	& \makecell[tl]{
 		\fldreq
 		\fld{u16} pins to dis-arm

@@ -1,10 +1,10 @@
-\section{NPX: NeoPixel}
+\section{NeoPixel Unit}
 
 The NeoPixel unit implements the protocol needed to control a digital LED strip with WS2812, WS2811, or compatible LED driver chips. The protocol timing is implemented in software, therefore it is available on any GPIO pin of the module.
 
 The color data can be loaded in five different format: as packed bytes, or as the little-endian or big-endian encoding of colors in the 32-bit format 0x00RRGGBB or 0x00BBGGRR. This data format is convenient when the colors are already represented by an array of 32-bit integers.
 
-\subsection{NPX Configuration}
+\subsection{NeoPixel Configuration}
 
 \begin{inicode}
 [NPX:neo@3]
@@ -14,19 +14,18 @@ pin=A0
 pixels=32
 \end{inicode}
 
-\subsection{NPX Events}
+\subsection{NeoPixel Commands}
 
-This unit generates no events.
-
-\subsection{NPX Commands}
-
-\begin{tabularx}{\textwidth}{p{\fldwcode}lXp{\fldwpld}}
+\begin{tabularx}{\textwidth}{p{\fldwcode}Xp{\fldwpld}}
 	\toprule
-	\textbf{Code} & \textbf{Name} & \textbf{Function} & \textbf{Payload}  \\	
+	\textbf{Code} & \textbf{Function} & \textbf{Payload}  \\	
 	\midrule	
 	
-	0x00 & CLEAR & Switch all LEDs off (sets them to black) & \\
-	0x01 & LOAD & Load a sequence of R,G,B bytes
+	0 & \flname{CLEAR}
+	Switch all LEDs off (sets them to black) & \\
+	
+	1 & \flname{LOAD}	
+	Load a sequence of R,G,B bytes
 	& \makecell[tl]{
 		\fldreq
 		\tabitem For each LED: \\
@@ -35,31 +34,36 @@ This unit generates no events.
 		~~\fldo{u8} blue \\
 	} \\
 
-	0x08 & LOAD\_U32\_ZRGB & Load 32-bit big-endian 0xRRGGBB (0,R,G,B)
+	4 & \flname{LOAD\_U32\_ZRGB}
+	Load 32-bit big-endian 0xRRGGBB (0,R,G,B)
 	& \makecell[tl]{
 		\fldreq
 		\fld{u32[]} color data BE
 	} \\
 
-	0x09 & LOAD\_U32\_ZBGR & Load 32-bit big-endian 0xBBGGRR (0,B,G,R)
+	5 & \flname{LOAD\_U32\_ZBGR}
+	Load 32-bit big-endian 0xBBGGRR (0,B,G,R)
 	& \makecell[tl]{
 		\fldreq
 		\fld{u32[]} color data BE
 	} \\
 
-	0x0A & LOAD\_U32\_RGBZ & Load 32-bit little-endian 0xBBGGRR (R,G,B,0)
+	6 & \flname{LOAD\_U32\_RGBZ}
+	Load 32-bit little-endian 0xBBGGRR (R,G,B,0)
 	& \makecell[tl]{
 		\fldreq
 		\fld{u32[]} color data LE
 	} \\
 
-	0x0B & LOAD\_U32\_BGRZ & Load 32-bit little-endian 0xRRGGBB (B,G,R,0)
+	7 & \flname{LOAD\_U32\_BGRZ}
+	Load 32-bit little-endian 0xRRGGBB (B,G,R,0)
 	& \makecell[tl]{
 		\fldreq
 		\fld{u32[]} color data LE
 	} \\
 
-	0x10 & GET\_LEN & Get number of LEDs in the strip
+	10 & \flname{GET\_LEN}
+	Get number of LEDs in the strip
 	& \makecell[tl]{
 		\fldresp
 		\fld{u16} number of LEDs

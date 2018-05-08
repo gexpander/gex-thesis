@@ -1,8 +1,8 @@
-\section{DO: Digital Output}
+\section{Digital Output}
 
 The digital output unit provides a write access to one or more pins of a GPIO port. This unit additionally supports pulse generation on any of its pins. This is implemented in software with the timing derived from the system timebase, as the hardware timer outputs, otherwise used for PWM or pulse generation, are available only on several dedicated pins. The timing code is optimized to reduce jitter. \todo{Measure jitter and add it here}
 
-\subsection{DO Configuration}
+\subsection{Digital Output Configuration}
 
 \begin{inicode}
 [DO:out@1]
@@ -16,42 +16,43 @@ initial=
 open-drain=
 \end{inicode}
 
-\subsection{DO Events}
+\subsection{Digital Output Events}
 
 This unit generates no events.
 
-\subsection{DO Commands}
+\subsection{Digital Output Commands}
 
-\begin{tabularx}{\textwidth}{p{\fldwcode}lXp{\fldwpld}}
+\begin{tabularx}{\textwidth}{p{\fldwcode}Xp{\fldwpld}}
 	\toprule
-	\textbf{Code} & \textbf{Name} & \textbf{Function} & \textbf{Payload}  \\	
+	\textbf{Code} & \textbf{Function} & \textbf{Payload}  \\	
 	\midrule	
 	
-	0x00 & WRITE & Write to all pins 
+	0 & \flname{WRITE} Write to all pins 
 	& \makecell[tl]{
 		\fldreq
 		\fld{u16} new value
 	} \\
 	
-	0x01 & SET & Set selected pins to 1 
+	1 & \flname{SET} Set selected pins to 1 
 	& \makecell[tl]{
 		\fldreq
 		\fld{u16} pins to set
 	} \\
 	
-	0x02 & CLEAR & Set selected pins to 0 
+	2 & \flname{CLEAR} Set selected pins to 0 
 	& \makecell[tl]{
 		\fldreq
 		\fld{u16} pins to clear
 	} \\
 
-	0x03 & TOGGLE & Toggle selected pins 
+	3 & \flname{TOGGLE} Toggle selected pins 
 	& \makecell[tl]{
 		\fldreq
 		\fld{u16} pins to toggle
 	} \\
 
-	0x04 & PULSE & Generate a pulse on the selected pins. The $\mu$s scale may be used only for 0--999\,$\mu$s.
+	4 & \flname{PULSE}
+	Generate a pulse on the selected pins. The $\mu$s scale may be used only for 0--999\,$\mu$s.
 	& \makecell[tl]{
 		\fldreq
 		\fld{u16} pins to pulse \\

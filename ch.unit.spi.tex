@@ -38,18 +38,15 @@ port=A
 pins=0
 \end{inicode}
 
-\subsection{SPI Events}
-
-This unit generates no events.
-
 \subsection{SPI Commands}
 
-\begin{tabularx}{\textwidth}{p{\fldwcode}lXp{\fldwpld}}
+\begin{tabularx}{\textwidth}{p{\fldwcode}Xp{\fldwpld}}
 	\toprule
-	\textbf{Code} & \textbf{Name} & \textbf{Function} & \textbf{Payload}  \\	
+	\textbf{Code} & \textbf{Function} & \textbf{Payload}  \\	
 	\midrule	
 	
-	0x00 & QUERY & Exchange bytes with a slave device
+	0 & \flname{QUERY}
+	Exchange bytes with a slave device
 	& \makecell[tl]{
 		\fldreq
 		\fld{u8} slave number 0--16 \\
@@ -60,7 +57,8 @@ This unit generates no events.
 		\fld{u8[]} received bytes \\		
 	} \\
 	
-	0x01 & MULTICAST & Send a message to multiple slaves at once. The address is a bit map (e.g. 0x8002 = slaves 1 and 15).
+	1 & \flname{MULTICAST}
+	Send a message to multiple slaves at once. The address is a bit map (e.g. 0x8002 = slaves 1 and 15).
 	& \makecell[tl]{
 		\fldreq
 		\fld{u16} addressed slaves \\
