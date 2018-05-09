@@ -14,8 +14,11 @@
 \usepackage{cprotect}
 \usepackage{framed}
 \usepackage{subcaption}
+
 \usepackage{tabularx}
 \usepackage{tabulary}
+\usepackage{longtable}
+\usepackage{tabu}
 
 \usepackage{flafter} % ensures embeds won't go before their references
 \usepackage{enumitem} % better list spacing
@@ -25,16 +28,87 @@
 \usepackage{makecell}
 
 \newminted{ini}{frame=leftline,autogobble=true}
+
+% Deprecated crap
 \newcommand{\tabitem}{~~\llap{\textbullet}~~}
 \newcommand{\tabitemo}{~~\llap{\textopenbullet}~~}
-\newcommand\fld[1]{\tabitem \verb|#1|:}
-\newcommand\fldo[1]{\tabitemo \verb|#1|:}
+\newcommand\fld[1]{\tabitem \texttt{#1}:}
+\newcommand\fldo[1]{\tabitemo \texttt{#1}:}
 \newcommand{\fldwcode}{2.2em}
 \newcommand{\fldwpld}{.35\textwidth}
+
+\newcommand{\fldreq}{\textit{Request}\newline}
+\newcommand{\fldresp}{\textit{Response}\newline}
 \newcommand\flname[1]{\textbf{#1}\newline}
 
-\newcommand{\fldreq}{\textit{Request}\\}
-\newcommand{\fldresp}{\textit{Response}\\}
+\newcommand{\cfield}[1]{\item \texttt{#1:}}
+\newcommand{\cname}[1]{\textbf{#1}\newline}
+
+% https://tex.stackexchange.com/questions/157389/how-to-center-column-values-in-a-table
+% P will be a centered column that can have width
+\newcolumntype{P}[1]{>{\centering\arraybackslash}p{#1}}
+
+% This is a table of commands of events
+\newenvironment{cmdlist}
+{
+	\tabulinesep=3pt
+	\begin{longtabu} to \textwidth {P{\fldwcode} X[3] X[3,l]}	
+			
+		\toprule
+		\textbf{Code} & \textbf{Function} & \textbf{Payload} \\
+		\midrule
+		\endhead
+		
+		\bottomrule	
+		\endfoot
+}
+{
+	\end{longtabu}
+}
+
+% a list of generic payload fields
+\newenvironment{cmdpldlist}
+{
+	%topsep=0pt,partopsep=0pt,
+	\begin{itemize}[
+		leftmargin=.5cm,
+		nosep,
+		after = \vspace{-.7\baselineskip} % remove the weird newline after the list
+	]
+}
+{
+	\end{itemize}
+}
+
+% a list of request fields, with a caption
+\newenvironment{cmdreq}
+{
+	\textit{Request:}
+	\begin{cmdpldlist}	
+}
+{
+	\end{cmdpldlist}	
+}
+
+% a list of request fields, with a caption
+\newenvironment{cmdresp}
+{
+	\textit{Response:}
+	\begin{cmdpldlist}	
+}
+{
+	\end{cmdpldlist}
+}
+
+% a list of payload fields, with a caption
+\newenvironment{cmdpld}
+{
+	\textit{Payload:}
+	\begin{cmdpldlist}	
+}
+{
+	\end{cmdpldlist}
+}
 
 
 \newcommand{\uF}{\micro\farad}

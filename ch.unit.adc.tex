@@ -4,3 +4,202 @@ The analog/digital converter unit is one of the most complicated units implement
 
 It's possible to activate any number of the 16 analog inputs of the ADC peripheral simultaneously. The maximum continuous sampling frequency, which reaches 70\,ksps with one channel, lowers with an increasing number of enabled channels as the amount of data to transfer to the host increases.
 
+
+
+\subsection{ADC Configuration}
+
+\begin{inicode}
+[ADC:adc@8]
+# Enabled channels, comma separated
+#  0  1  2  3  4  5  6  7    8  9   10 11 12 13 14 15   16    17
+# A0 A1 A2 A3 A4 A5 A6 A7   B0 B1   C0 C1 C2 C3 C4 C5   Tsens Vref
+channels=16
+
+# Sampling time (0-7)
+sample_time=2
+# Sampling frequency (Hz)
+frequency=1000
+
+# Sample buffer size
+# - shared by all enabled channels
+# - defines the maximum pre-trigger size (divide by # of channels)
+# - captured data is sent in half-buffer chunks
+# - buffer overrun aborts the data capture
+buffer_size=256
+
+# Enable continuous sampling with averaging
+# Caution: This can cause DAC output glitches
+averaging=Y
+# Exponential averaging coefficient (permil, range 0-1000 ~ 0.000-1.000)
+# - used formula: y[t]=(1-k)*y[t-1]+k*u[t]
+# - not available when a capture is running
+avg_factor=500
+\end{inicode}
+
+\subsection{ADC Events}
+
+\begin{cmdlist}
+	50 & \cname{TRIGGERED}
+	The first event generated when a triggering condition occurs. The payload includes pre-trigger and the transaction continues with a sequence of CAPTURE events sharing the same frame ID. The serial number is incremented with each stream chunk and can be used to detect lost data frames.
+	&
+	\begin{cmdpld}
+		\cfield{u32} pre-trigger length
+		\cfield{u8} triggering edge (1-falling, 2-rising, 3-forced)
+		\cfield{u8} stream serial number
+		\cfield{u16[]} pre-trigger data
+	\end{cmdpld}
+	\\
+
+	51 & \cname{CAPTURE\_DATA}
+	A chunk of sampled data in a stream, block, or a triggered capture. More data will follow.
+	&
+	\begin{cmdpld}
+		\cfield{u8} stream serial number
+		\cfield{u16[]} sample data
+	\end{cmdpld}
+	\\
+
+	52 & \cname{CAPTURE\_END}
+	Indicates the end of a multi-part capture. The payload may be empty if there is no more data to send (e.g. a stream had to be unexpectedly closed).
+	&
+	\begin{cmdpld}
+		\cfield{u8} stream serial number
+		\cfield{u16[]} sample data
+	\end{cmdpld}
+\end{cmdlist}
+
+\subsection{ADC Commands}
+
+\begin{cmdlist}
+	0 & \cname{READ\_RAW}
+	Get the last raw sample from enabled channels.
+	&
+	\begin{cmdresp}
+		\cfield{u16[]} raw values 0-4095
+	\end{cmdresp}
+	\\
+
+	1 & \cname{READ\_SMOOTHED}
+	Get the averaged values from enabled channels. Not available for high sample rates and when disabled.
+	&
+	\begin{cmdresp}
+		\cfield{float32[]} smoothed values 0-4095
+	\end{cmdresp}
+	\\
+
+	2 & \cname{READ\_CAL\_CONSTANTS}
+	Read factory calibration constants from the MCU's ROM
+	&
+	\begin{cmdresp}
+		\cfield{u16} VREFINT\_CAL (raw word)
+		\cfield{u16} VREFINT\_CAL\_VADCREF (mV)
+		\cfield{u16} TSENSE\_CAL1 (raw word)
+		\cfield{u16} TSENSE\_CAL2 (raw word)
+		\cfield{u16} TSENSE\_CAL1\_TEMP (°C)
+		\cfield{u16} TSENSE\_CAL2\_TEMP (°C)
+		\cfield{u16} TSENSE\_CAL\_VADCREF (mV)
+	\end{cmdresp}
+ 	\\
+
+	10 &
+	\cname{GET\_ENABLED\_CHANNELS}
+	Get numbers of all enabled channels (0-based)
+	&
+	\begin{cmdresp}
+		\cfield{u8[]} enabled channel numbers
+	\end{cmdresp}
+	\\
+
+	11 &
+	\cname{GET\_SAMPLE\_RATE}
+	Get the current sample rate (in Hz)
+	&
+	\begin{cmdresp}
+		\cfield{u32} requested sample rate
+		\cfield{float32} real sample rate
+	\end{cmdresp}
+	\\
+
+	20 &
+	\cname{SETUP\_TRIGGER}
+	Configure the triggering level and other trigger parameters. This command does \textit{not} arm the trigger!
+	&
+	\begin{cmdreq}
+		\cfield{u8} source channel number
+		\cfield{u16} triggering level
+		\cfield{u8} active edge (1-falling, 2-rising, 3-any)
+		\cfield{u32} pre-trigger sample count
+		\cfield{u32} post-trigger sample count
+		\cfield{u16} hold-off time (ms)
+		\cfield{u8} auto re-arm (0,1)
+	\end{cmdreq}
+	\\
+
+	21 & \cname{ARM}
+	Arm the trigger for capture.
+	&
+	\begin{cmdreq}
+		\cfield{u8} auto re-arm (0, 1, 255-no change)
+	\end{cmdreq}
+	\\
+
+	22 & \cname{DISARM}
+	Dis-arm the trigger.
+	& \\
+
+	23 & \cname{ABORT}
+	Abort any ongoing capture and dis-arm the trigger.
+	& \\
+
+	24 & \cname{FORCE\_TRIGGER}
+	Manually trip the trigger, as if the threshold level was reached.
+	& \\
+
+	25 & \cname{BLOCK\_CAPTURE}
+	Capture a fixed-length sequence of samples.
+	&
+	\begin{cmdreq}
+		\cfield{u32} number of samples
+    \end{cmdreq}
+    \\
+
+	26 & \cname{STREAM\_START}
+	Start a real-time stream of samples
+	& \\
+
+	27 & \cname{STREAM\_STOP}
+	Stop an ongoing stream
+	& \\
+
+	28 & \cname{SET\_SMOOTHING\_FACTOR}
+	Set the smoothing factor ($\times10^3$). %TODO add the formula
+	&
+	\begin{cmdreq}
+		\cfield{u16} smoothing factor 0-1000
+	\end{cmdreq}
+    \\
+
+	29 & \cname{SET\_SAMPLE\_RATE}
+	Set the sampling frequency.
+	&
+	\begin{cmdreq}
+		\cfield{u32} frequency in Hz
+	\end{cmdreq}
+    \\
+
+	30 & \cname{ENABLE\_CHANNELS}
+	Select channels to sample. The channels must be configured in the unit settings.
+	&
+	\begin{cmdreq}
+		\cfield{u32} bit map of channels to enable
+	\end{cmdreq}
+    \\
+
+	31 & \cname{SET\_SAMPLE\_TIME}
+	Set the sample time of the ADC's sample\&hold circuit.
+	&
+	\begin{cmdreq}
+		\cfield{u8} sample time 0--7
+	\end{cmdreq}
+
+\end{cmdlist}
