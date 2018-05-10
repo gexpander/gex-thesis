@@ -55,6 +55,7 @@
 \input{pre.ctuthesis_config}
 \input{pre.spacing_config}
 
+
 %% LINK COLORS
 \hypersetup{
 	colorlinks,
@@ -62,6 +63,16 @@
 	citecolor={blue!50!black},
 	urlcolor={blue!80!black}
 }
+
+
+%% ACRONYM CONFIG
+\usepackage[xindy,nomain,acronym,nopostdot,toc=false]{glossaries}
+%\glssetwidest{ABCD}
+\renewcommand*{\glsclearpage}{}
+\makeglossaries
+\glsaddall
+%\renewcommand*{\glstextformat}[1]{\textcolor{black}{#1}}
+
 
 \input{pre.utils}
 

@@ -163,6 +163,11 @@
 		\listoftables
 }
 
+\ctutemplateset{twocolumn.glossaries}{
+	\selectctulanguage{main}
+	\printglossary
+}
+
 % Abstract template includes the Acknowledgements, Declaration and two Abstracts
 % the abstracts are accompanied by the keywords and possibly other information
 \ctutemplateset{maketitle.twocolumn.default}{
@@ -196,6 +201,7 @@
 		%CHANGED removed the LoT
 	\newpage
 		\ctuifswitch { front-list-of-tables } { \ctutemplate{twocolumn.listoftables} } { }
+		\ctutemplate{twocolumn.glossaries}
 }
 
 % The maketitle command (moreorless): roman page numbering

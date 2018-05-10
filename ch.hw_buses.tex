@@ -4,27 +4,27 @@ Hardware buses implemented in GEX are presented in this chapter. The description
 
 \section{UART and USART} \label{sec:theory-usart}
 
-The \textit{Universal Synchronous / Asynchronous Receiver Transmitter} has a long history and is still in widespread use today. It is the protocol used in RS-232, which was once a common way of connecting modems, printers, mice and other devices to personal computers. UART framing is also used in the industrial bus RS-485.
+The \gls{USART} has a long history and is still in widespread use today. It is the protocol used in RS-232, which was once a common way of connecting modems, printers, mice and other devices to personal computers. \gls{UART} framing is also used in the industrial bus RS-485.
 
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=.8\textwidth] {img/usart.png}
-	\caption[UART frame structure]{\label{fig:uart-frame}UART frame, as shown by the STM32F072 Reference Manual. Break frames are used by some UART based protocols, like LIN (Local Interconnect Network).}
+	\caption[UART frame structure]{\label{fig:uart-frame}\gls{UART} frame, as shown by the STM32F072 Reference Manual. Break frames are used by some \gls{UART} based protocols, like \gls{LIN}.}
 \end{figure}
 
-UART and USART are two variants of the same interface. USART includes a separate clock signal, while the UART timing relies on a well-known clock speed and the bit clock is synchronized by start bits. USART was historically used in modems to achieve higher bandwidth, but is now mostly obsolete.
+\gls{UART} and \gls{USART} are two variants of the same interface. \gls{USART} includes a separate clock signal, while the \gls{UART} timing relies on a well-known clock speed and the bit clock is synchronized by start bits. \gls{USART} was historically used in modems to achieve higher bandwidth, but is now mostly obsolete.
 
-USART, as implemented by microcontrollers such as the STM32 family, is a two-wire full duplex interface that uses 3.3\,V or 5\,V logic levels. The data lines are in the high logical level when idle. A frame, pictured in figure \ref{fig:uart-frame} starts by a start-bit (low level for the period of one bit) followed by \textit{n} data bits (typically eight), an optional parity bit and a period of high level called a stop bit or stop bits, usually between one and two bits long.
+\gls{USART}, as implemented by microcontrollers such as the STM32 family, is a two-wire full duplex interface that uses 3.3\,V or 5\,V logic levels. The data lines are in the high logical level when idle. A frame, pictured in figure \ref{fig:uart-frame} starts by a start-bit (low level for the period of one bit) followed by \textit{n} data bits (typically eight), an optional parity bit and a period of high level called a stop bit or stop bits, usually between one and two bits long.
  
-RS-232 uses the UART framing, but its logic levels are different: logical 1 is represented by negative voltages $-3$ to $-25$\,V and logical 0 uses the same range, but positive. To convert between RS232 levels and TTL (5\,V) levels, a level-shifting circuit such as the MAX232 can be used. In RS232, the two data lines (Rx and Tx) are accompanied by RTS (Ready To Send), CTS (Clear To Send) and DTR (Data Terminal Ready) which facilitate handshaking and hardware flow control. In practice, those additional signals are often unused or their function differs; for instance, Arduino boards (using a USB-serial converter) use the DTR line as a reset signal to automatically enter their bootloader for firmware flashing.
+RS232 uses the \gls{UART} framing, but its logic levels are different: logical 1 is represented by negative voltages $-3$ to $-25$\,V and logical 0 uses the same range, but positive. To convert between RS232 levels and \gls{TTL} (5\,V) levels, a level-shifting circuit such as the MAX232 can be used. In RS232, the two data lines (Rx and Tx) are accompanied by \gls{RTS}, \gls{CTS}, and \gls{DTR}, which facilitate handshaking and hardware flow control. In practice, those additional signals are often unused or their function differs; for instance, Arduino boards (using a USB-serial converter) use the \gls{DTR} line as a reset signal to automatically enter their bootloader for firmware flashing.
 
 \subsection{Examples of Devices Using UART}
 
 \begin{itemize}
-	\item \textbf{MH-Z19B} - NDIR CO2 concentration sensor 
-	\item \textbf{NEO-M8} - uBlox GPS module
+	\item \textbf{MH-Z19B} - \gls{NDIR} CO$_2$ concentration sensor 
+	\item \textbf{NEO-M8} - uBlox \gls{GPS} module
 	\item \textbf{ESP8266} with AT firmware - a WiFi module
-	\item \textbf{MFRC522} - NFC MIFARE reader/writer IC (also supports other interfaces)
+	\item \textbf{MFRC522} - \gls{NFC} MIFARE reader/writer \gls{IC} (also supports other interfaces)
 \end{itemize}
 
 \section{SPI} \label{sec:theory-spi}
