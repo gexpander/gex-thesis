@@ -41,17 +41,26 @@
 \newcommand{\fldresp}{\textit{Response}\newline}
 \newcommand\flname[1]{\textbf{#1}\newline}
 
-\newcommand{\cfield}[1]{\item \texttt{#1:}}
+\usepackage{mytabto} % customized tabto that does not break to a new line
+
+\newcommand{\cfield}[1]{\item \texttt{#1}\tabto{.8cm}}
 \newcommand{\cname}[1]{\textbf{#1}\newline}
+
+\usepackage{ragged2e}
 
 % https://tex.stackexchange.com/questions/157389/how-to-center-column-values-in-a-table
 % P will be a centered column that can have width
 \newcolumntype{P}[1]{>{\centering\arraybackslash}p{#1}}
 
+% this is put before a response that follows a request
+% this is needed because the request has a negative gap after itself
+\newcommand*{\cjoin}{\null\vspace*{-2pt}}
+
 % This is a table of commands of events
 \newenvironment{cmdlist}
 {
-	\tabulinesep=3pt
+%	\tabulinesep=3pt
+	\tabulinesep=7pt
 	\begin{longtabu} to \textwidth {P{\fldwcode} X[3] X[3,l]}	
 			
 		\toprule
@@ -71,43 +80,54 @@
 {
 	%topsep=0pt,partopsep=0pt,
 	\begin{itemize}[
-		leftmargin=.5cm,
+		leftmargin=.7cm,
 		nosep,
-		after = \vspace{-.7\baselineskip} % remove the weird newline after the list
+		%after = \vspace{-\baselineskip}		
 	]
 }
 {
 	\end{itemize}
 }
 
+
+% a list of request fields, with a caption
+\newenvironment{cmditemlistenv}[1]
+{
+	\begin{minipage}[t]{\linewidth}
+%	\begin{flushleft} % fix weird spacing in wrapped lines
+	\textit{#1} \begin{cmdpldlist}	
+}
+{
+	\end{cmdpldlist}
+%	\end{flushleft}
+	\end{minipage}
+}
+
 % a list of request fields, with a caption
 \newenvironment{cmdreq}
 {
-	\textit{Request:}
-	\begin{cmdpldlist}	
+	\begin{cmditemlistenv}{Request:}	
 }
 {
-	\end{cmdpldlist}	
+	\end{cmditemlistenv}	
 }
 
 % a list of request fields, with a caption
 \newenvironment{cmdresp}
 {
-	\textit{Response:}
-	\begin{cmdpldlist}	
+	\begin{cmditemlistenv}{Response:}	
 }
 {
-	\end{cmdpldlist}
+	\end{cmditemlistenv}
 }
 
 % a list of payload fields, with a caption
 \newenvironment{cmdpld}
 {
-	\textit{Payload:}
-	\begin{cmdpldlist}	
+	\begin{cmditemlistenv}{Payload:}		
 }
 {
-	\end{cmdpldlist}
+	\end{cmditemlistenv}
 }
 
 

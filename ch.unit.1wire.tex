@@ -1,6 +1,6 @@
 \section{1-Wire Unit}
 
-The 1-Wire unit implements the Dallas Semiconductor's 1-Wire protocol, most commonly used to interface smart thermometers (DS18x20). The protocol is explained in section \ref{sec:theory-1wire}. 
+The 1-Wire unit implements the Dallas Semiconductor's 1-Wire protocol, most commonly used to interface smart thermometers (DS18x20). The protocol is explained in section \ref{sec:theory-1wire}.
 
 This unit implements the ROM Search algorithm that is used to find the unique IDs of all 1-Wire devices connected to the bus. The algorithm can find up to 32 devices in one run; More devices can be found by issuing the SEARCH\_CONTINUE command.
 
@@ -22,73 +22,69 @@ This unit generates no events.
 
 \subsection{1-Wire Commands}
 
-\begin{tabularx}{\textwidth}{p{\fldwcode}Xp{\fldwpld}}
-	\toprule
-	\textbf{Code} & \textbf{Function} & \textbf{Payload}  \\	
-	\midrule	
-	
-	0 & \flname{CHECK\_PRESENCE}
+\begin{cmdlist}
+
+	0 & \cname{CHECK\_PRESENCE}
 	Test if there are any devices attached to the bus.
-	& \makecell[tl]{
-		\fldresp
-		\fld{u8} presence detected (0, 1)
-	} \\
-	
-	1 & \flname{SEARCH\_ADDR}
+	& \begin{cmdresp}
+		\cfield{u8} presence detected (0, 1)
+	 \end{cmdresp} \\
+
+	1 & \cname{SEARCH\_ADDR}
 	Start the search algorithm.
-	& \makecell[tl]{
-		\fldresp
-		\fld{u8} should continue (0, 1) \\
-		\fld{u64[]} device addresses
-	} \\
+	& \begin{cmdresp}
+		\cfield{u8} should continue (0, 1)
+		\cfield{u64[]} device addresses
+	 \end{cmdresp} \\
 
-	2 & \flname{SEARCH\_ALARM}
+	2 & \cname{SEARCH\_ALARM}
 	Start the search algorithm, finding only devices in an alarm state.
-	& \makecell[tl]{
-		\fldresp
-		\fld{u8} should continue (0, 1) \\
-		\fld{u64[]} device addresses
-	} \\
+	& \begin{cmdresp}
+		\cfield{u8} should continue (0, 1)
+		\cfield{u64[]} device addresses
+	 \end{cmdresp} \\
 
-	3 & \flname{SEARCH\_CONTINUE}
+	3 & \cname{SEARCH\_CONTINUE}
 	Continue a previously started search
-	& \makecell[tl]{
-		\fldresp
-		\fld{u8} should continue (0, 1) \\
-		\fld{u64[]} device addresses
-	} \\
+	& \begin{cmdresp}
+		\cfield{u8} should continue (0, 1)
+		\cfield{u64[]} device addresses
+	 \end{cmdresp} \\
 
-	4 & \flname{READ\_ADDR}
+	4 & \cname{READ\_ADDR}
 	Read a device address (single device only)
-	& \makecell[tl]{
-		\fldresp
-		\fld{u64} device address
-	} \\
-	
-	10 & \flname{WRITE} 
-	Write bytes to a device.
-	& \makecell[tl]{
-		\fldreq
-		\fld{u64} device address \\
-		\fld{u8[]} bytes to write
-	} \\
-	
-	11 & \flname{READ}
-	Write a request and read response.
-	& \makecell[tl]{
-		\fldreq
-		\fld{u64} device address \\
-		\fld{u16} read length \\
-		\fld{u8} verify checksum (0, 1) \\
-		\fld{u8[]} request bytes
-	} \\
+	& \begin{cmdresp}
+		\cfield{u64} device address
+	 \end{cmdresp} \\
 
-	20 & \flname{POLL\_FOR\_1} 
-	Wait for a READY status, used by DS18x20. 
-	Not available in parasitic mode. 
+	10 & \cname{WRITE}
+	Write bytes to a device.
+	& \begin{cmdreq}
+		\cfield{u64} device address
+		\cfield{u8[]} bytes to write
+	\end{cmdreq} \\
+
+	11 & \cname{READ}
+	Write a request and read response.
+	& 
+	\begin{cmdreq}
+		\cfield{u64} device address
+		\cfield{u16} read length
+		\cfield{u8} verify checksum (0, 1)
+		\cfield{u8[]} request bytes
+	\end{cmdreq}
+	\cjoin
+	\begin{cmdresp}
+		\cfield{u8[]} read bytes
+	\end{cmdresp} 
+	\\
+
+	20 & \cname{POLL\_FOR\_1}
+	Wait for a READY status, used by DS18x20.
+	Not available in parasitic mode.
 	Responds with SUCCESS after all devices are ready.
-	&  \\
-	\bottomrule
-\end{tabularx}
+	& \\
+
+\end{cmdlist}
 
 
