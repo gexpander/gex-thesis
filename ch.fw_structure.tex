@@ -67,8 +67,6 @@ As the settings persist after a firmware update, it's important to maintain back
 
 The INI files, which can be edited through the communication API or using a text editor with the virtual mass storage, are parsed and generated on demand and are never stored in the Flash or RAM, other than in short temporary buffers. The INI parser processes the byte stream on-the-fly as it is received, and a similar method is used to build a INI file from the configured units and system settings.
 
-\todo[inline]{add a sample large INI file as an attachment}
-
 \section{Functional Blocks} \label{sec:units-function}
 
 GEX's user-facing functions, also called functional blocks or \textit{units}, are implemented in \textit{unit drivers}. Those are independent modules in the firmware that the user can enable and configure using the GEX configuration files. In principle, there can be multiple instances of each unit type. However, we are limited by hardware constraints: there may be only one ADC peripheral, two SPI ports and so on. The mutually exclusive assignment of resources to units is handled by the \textit{resource registry} (\ref{sec:res-allocation}).
@@ -147,7 +145,7 @@ This is identical to the USB connection from the PC application's side, except a
 
 The wireless connection uses an on-board communication module and a separate device, a wireless gateway, that connects to the PC. The wireless gateway is interfaced differently from the GEX board itself, but it also shows as a virtual serial port on the host PC. This is required to allow communicating with the gateway itself through the CDC/ACM interface in addition to addressing the end devices.
 
-This interface will be explained in more detail in chapter XX \todo{Link to tinyframe description}.
+This interface will be explained in more detail in chapter \ref{sec:wireless}.
 
 \section{Message Passing} \label{sec:message_passing}
 

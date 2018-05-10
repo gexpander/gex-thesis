@@ -1,6 +1,92 @@
-\section{Touch Sensing Unit}
+\section{Touch Sense Unit}
 
 The touch sensing unit provides an access to the touch sensing controller. Its function is explained in section \ref{sec:theory-touch}. The unit configures the TSC and reads the output values of each enabled touch pad.
+
+
+\subsection{Touch Sense Configuration}
+
+\begin{inicode}
+[TOUCH:touch@11]
+# Pulse generator clock prescaller (1,2,4,...,128)
+pg-clock-prediv=32
+# Sense pad charging time (1-16)
+charge-time=2
+# Charge transfer time (1-16)
+drain-time=2
+# Measurement timeout (1-7)
+sense-timeout=7
+
+# Spread spectrum max deviation (0-128,0=off)
+ss-deviation=0
+# Spreading clock prescaller (1,2)
+ss-clock-prediv=1
+
+# Optimize for interlaced pads (individual sampling with others floating)
+interlaced-pads=N
+
+# Button mode debounce (ms) and release hysteresis (lsb)
+btn-debounce=20
+btn-hysteresis=10
+
+# Each used group must have 1 sampling capacitor and 1-3 channels.
+# Channels are numbered 1,2,3,4
+
+# Group1 - 1:A0, 2:A1, 3:A2, 4:A3
+g1_cap=
+g1_ch=
+# Group2 - 1:A4, 2:A5, 3:A6, 4:A7
+g2_cap=
+g2_ch=
+# ...
+\end{inicode}
+
+
+\subsection{Touch Sense Events}
+
+\begin{cmdlist}
+    0 & \cname{BUTTON\_CHANGE}
+    The binary state of some of the capacitive pads with button mode enabled changed.
+    & \begin{cmdpld}
+        \cfield{u32} binary state of all channels
+        \cfield{u32} changed / trigger-generating channels
+    \end{cmdpld} \\
+\end{cmdlist}
+
+%\newpage
+\subsection{Touch Sense Commands}
+
+\begin{cmdlist}
+    0 & \cname{READ}
+    Read the raw touch pad values (lower indicates higher capacitance). Values are ordered by group and channel.
+    & \begin{cmdreq}
+        \cfield{u16[]} raw values
+    \end{cmdreq} \\
+
+    1 & \cname{SET\_BIN\_THR}
+    Set the button mode thresholds for all channels. Value 0 disables the button mode for a channel.
+    & \begin{cmdreq}
+        \cfield{u16[]} thresholds
+    \end{cmdreq} \\
+
+    2 & \cname{DISABLE\_ALL\_REPORTS}
+    Set thresholds to 0, disabling the button mode for all pads.
+    & \\
+
+    3 & \cname{SET\_DEBOUNCE\_TIME}
+    Set the button mode debounce time (used for all pads with button mode enabled).
+    & \begin{cmdreq}
+        \cfield{u16} debounce time (ms)
+    \end{cmdreq} \\
+
+    4 & \cname{SET\_HYSTERESIS}
+    Set the button mode hysteresis.
+    & \begin{cmdreq}
+        \cfield{u16} hystheresis
+    \end{cmdreq} \\
+
+\end{cmdlist}
+
+
 
 
 

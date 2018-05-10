@@ -2,66 +2,73 @@
 
 The idea of making it easier to interact with low level hardware from a PC is not new. Several solutions to this problem have been developed, each with its own advantages and drawbacks. Some examples will be presented in this chapter.
 
-\section{Bus Pirate}
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.6\textwidth] {img/buspirate.jpg}
-	\caption{\label{fig:buspirate}Bus Pirate v.4 (picture by \textit{Seeed Studio})}
-\end{figure}
-
-\todo[inline]{link to pic source page}
-
-%http://dangerousprototypes.com/blog/about/
-
-Bus Pirate, developed by \todo{link}Ian Lesnet at Dangerous Prototypes and manufactured by Seeed Studio\todo{link}, is a USB-attached device providing access to hardware interfaces like SPI, I$^2$C, USART and 1-Wire, as well as frequency measurement and direct pin access.
-
-The board aims to make it easy for users to familiarize themselves with new chips and modules; it also provides a range of programming interfaces for flashing microcontroller firmwares and memories. It communicates with the PC using a FTDI USB-serial bridge.
-
-Bus Pirate is open source and in scope it's similar to GEX. It can be scripted and controlled from languages like Python or Perl, connects to USB and provides a good selection of hardware interfaces.
-
-The board is based on a PIC16 microcontroller running at 32\,MHz. Its analog/digital converter (ADC) only has a resolution of 10 bits (1024 levels). There is no digital/analog converter (DAC) available on the chip, making applications that require a varied output voltage more difficult. Another limitation of the board is its low number of GPIO pins which may be insufficient for certain applications. The Bus Pirate, at the time of writing, can be purchased for a price similar to some Raspberry Pi models.
-
 \section{Raspberry Pi}
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.6\textwidth] {img/rpi2.jpg}
-	\caption{\label{fig:rpi2}Raspberry Pi 2 (picture by \textit{Raspberry Pi Foundation})}
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=.95\textwidth] {img/pi3-photo.jpg}
+		\caption{Raspberry Pi 3 Model B}
+	\end{subfigure}%
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=.95\textwidth] {img/pi0.jpg}
+		\caption{Raspberry Pi Zero W}
+	\end{subfigure}
+	\caption{\label{fig:rpi}Raspberry Pi minicomputers}
 \end{figure}
 
-The Raspberry Pi's GPIO header, which can be directly controlled by user applications, was one of the primary inspirations behind GEX. It can be controlled using C and Python (among others) and offers general purpose I\O, SPI, I2C, UART and PWM, with other protocols being easy to emulate thanks to the high speed of the system processor.
+The Raspberry Pi's GPIO header, a row of pins which can be directly controlled by user applications running on the minicomputer, was one of the inspirations behind GEX. It can be controlled using C and Python (among others) and offers general purpose I/O, SPI, I2C, UART and PWM, with other protocols easy to emulate thanks to the high speed of the system processor.
 
-The Raspberry Pi is commonly used in schools as a low-cost PC alternative that encourage students' interest in electronics, programming and science. The board is often built into more permanent projects that make use of its powerful processor, such as wildlife camera traps or home automation projects.
+The Raspberry Pi is used in schools as a low-cost PC alternative that encourage students' interest in STEM (Science, Technology, Engineering and Mathematics). The board is often built into more permanent projects that make use of its powerful processor, such as wildlife camera traps, fish feeders etc.
 
-The Raspberry Pi could be used for the same quick evaluations or experiments we want to perform with GEX, however they would either have to be performed directly on the mini-computer itself with attached monitor and keyboard, or use some form of remote access (e.g. SSH). When we have a more powerful computer available, a USB device like GEX would be more convenient.
+The Raspberry Pi could be used for the same quick evaluations or experiments we want to perform with GEX, however they would either have to be performed directly on the mini-computer, with an attached monitor and a keyboard, or use some form of remote access (e.g. SSH, screen sharing).
+
+\section{Bus Pirate}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.5\textwidth] {img/buspirate.jpg}
+	\caption{\label{fig:buspirate}Bus Pirate v.4 (picture by \textit{Seeed Studio})}
+\end{figure}
+
+%http://dangerousprototypes.com/blog/about/
+
+% Dangerous Prototypes and manufactured by Seeed Studio\todo{link}
+Bus Pirate, a project by Ian Lesnet, is a USB-attached device providing access to hardware interfaces like SPI, I$^2$C, USART and 1-Wire, as well as frequency measurement and direct pin access. The board aims to make it easy for users to familiarize themselves with new chips and modules; it also provides a range of programming interfaces for flashing microcontroller firmwares and memories. It communicates with the PC using a FTDI USB-serial bridge.
+
+Bus Pirate is open source and is, in its scope, similar to GEX. It can be scripted and controlled from the PC, connects to USB and provides a wide selection of hardware interfaces.
+
+The board is based on a PIC16 microcontroller running at 32\,MHz. Its analog/digital converter (ADC) only has a resolution of 10 bits (1024 levels). There is no digital/analog converter (DAC) available on the chip, making applications that require a varied output voltage more difficult. Another limitation of the board is its low number of GPIO pins, which may be insufficient for certain applications. The Bus Pirate is available for purchase at around 30\,USD, a price comparable to some Raspberry Pi models.
 
 \section{Professional DAQ Modules}
 
 Various professional tools that would fulfill our needs exist on the market, but their high price makes them inaccessible for users with a limited budget, such as hobbyists or students who would like to keep such a device for personal use. An example is the National Instruments (NI) "I²C/SPI Interface Device" which also includes several GPIO lines, the NI USB DAQ module, or some of the Total Phase I²C/SPI gadgets (figure \ref{fig:profidaq}). The performance GEX can provide may not always match that of those professional tools, but in many cases it'll be a sufficient substitute at a fraction of the cost.
 
-\begin{figure}
+\begin{figure}[h]
 	\centering
 	\begin{subfigure}{.5\textwidth}
 		\centering
-		\includegraphics[width=.8\linewidth]{img/ni-i2c-device.jpg}
+		\includegraphics[width=.95\linewidth]{img/ni-i2c-device.jpg}
 		\caption{NI I²C/SPI Interface Device}
 	\end{subfigure}%
 	\begin{subfigure}{.5\textwidth}
 		\centering
-		\includegraphics[width=.8\linewidth]{img/nidaq.jpg}
+		\includegraphics[width=.95\linewidth]{img/nidaq.jpg}
 		\caption{NI USB DAQ module}
 	\end{subfigure}
 	\begin{subfigure}{.5\textwidth}
 		\centering
-		\includegraphics[width=.8\linewidth]{img/total-phase-spi-i2c.jpg}
+		\includegraphics[width=.95\linewidth]{img/total-phase-spi-i2c.jpg}
 		\caption{Total Phase SPI/I²C Host "Aardwark"}
 	\end{subfigure}
-	\caption[Professional tools that GEX can replace]{\label{fig:profidaq}An example of professional tools that GEX could replace in less demanding scenarios (pictures taken from marketing materials)}
+	\caption[Professional tools that GEX can replace]{\label{fig:profidaq}An example of professional tools that GEX could replace in less demanding scenarios \textit{(pictures from National Instruments and Total Phase marketing materials)}}
 \end{figure}
 
 %http://www.ni.com/en-gb/shop/select/i2c-spi-interface-device}
 
+\iffalse
 \section{The Firmata Protocol}
 
 \todo[inline]{links}
@@ -69,4 +76,5 @@ Various professional tools that would fulfill our needs exist on the market, but
 Firmata is a communication protocol based on MIDI (\textit{Musical Instrument Digital Interface}) for passing data to and from embedded microcontrollers. MIDI is mainly used for attaching electronic musical instruments, such as synthesizers, keyboards, mixers etc., to each other or to a PC. Firmata was designed for Arduino as a high level abstraction for its connection to the PC, typically using a FTDI chip or equivalent.
 
 Implementing Firmata in the GEX firmware would make it possible to use existing Firmata libraries on the PC side. However, the protocol is limited by the encompassing MIDI format and isn't very flexible. 
+\fi
 

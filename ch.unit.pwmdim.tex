@@ -4,3 +4,50 @@ The PWM unit uses a timer/counter to generate a PWM signal. There are four outpu
 
 This unit is intended for applications like light dimming, heater regulation, or the control of H-bridges.
 
+\subsection{PWM Configuration}
+
+\begin{inicode}
+[PWMDIM:pwm@12]
+# Default pulse frequency (Hz)
+frequency=1000
+# Pin mapping - 0=disabled
+# Channel1 - 1:PA6, 2:PB4, 3:PC6
+ch1_pin=1
+# Channel2 - 1:PA7, 2:PB5, 3:PC7
+ch2_pin=0
+# Channel3 - 1:PB0, 2:PC8
+ch3_pin=0
+# Channel4 - 1:PB1, 2:PC9
+ch4_pin=0
+\end{inicode}
+
+\subsection{PWM Commands}
+
+\begin{cmdlist}
+    0 & \cname{SET\_FREQUENCY}
+    Set the PWM frequency
+    & \begin{cmdreq}
+        \cfield{u32} frequency in Hz
+    \end{cmdreq} \\
+
+    1 & \cname{SET\_DUTY}
+    Set the duty cycle of one or more channels
+    & \begin{cmdreq}
+        \item Repeat 1--4 times:
+        \begin{pldlist}
+            \cfield{u8} channel number 0--3
+            \cfield{u16} duty cycle 0--1000
+        \end{pldlist}
+    \end{cmdreq} \\
+
+    2 & \cname{STOP}
+    Stop the hardware timer. Outputs enter low level.
+    & \\
+
+    3 & \cname{START}
+    Start the hardware timer.
+    & \\
+\end{cmdlist}
+
+
+

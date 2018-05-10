@@ -1,6 +1,8 @@
 \chapter{Requirement Analysis}
 
-We'll now investigate some situations where GEX could be used, to establish its requirements and desired features. 
+We'll now investigate some situations where GEX could be used, to establish its requirements and desired features.
+
+\section{Desired Features}
 
 \subsection{Interfacing Intelligent Modules}\label{sec:uses-digital-ifaces}
 
@@ -32,17 +34,15 @@ We've covered some more advanced features, but skipped the simplest feature: a d
 
 Some sensors have a variable frequency or a pulse-width modulated (PWM) output. To capture those signals and convert them to a more useful digital value, we can use the external input functions of a timer/counter in the microcontroller. Those timers have many possible configurations and can also be used for pulse counting or a pulse train generation.
 
-\section{Connection to the Host Computer}
+\section{Host Computer Connection}
 
-\subsection{Messaging}
+\subsection{Communication Interface}
 
 USB shall be the primary way of connecting the module to a host PC. Thanks to USB's flexibility, it can present itself as any kind of device or even multiple devices at once.
 
-The most straightforward method of interfacing the board is by passing binary messages in a fashion similar to USART (and plain UART can be available as well). We'll need a duplex connection to enable command confirmations, query-type commands and asynchronous event reporting.
+The most straightforward method of interfacing the board is by passing binary messages in a fashion similar to USART (and plain UART can be available as well). We'll need a duplex connection to enable command confirmations, query-type commands and asynchronous event reporting. This is possible either using a "Virtual COM port" driver (the CDC/ACM USB class), or through a raw access to the corresponding USB endpoints. Using a raw access avoids potential problems with the operating system's driver interfering or not recognizing the device correctly; on the other hand, having GEX appear as a serial port makes it easier to integrate into existing platforms that have a good serial port support (such as National Instruments LabWindows CVI or MATLAB).
 
-This is possible either using a "Virtual COM port" driver (the CDC/ACM USB class), or through a raw access to the corresponding USB endpoints. Using a raw access avoids potential problems with the operating system's driver interfering or not recognizing the device correctly; on the other hand, having GEX appear as a serial port makes it easier to integrate into existing platforms that have a good serial port support (such as National Instruments LabWindows CVI or MATLAB).
-
-A wireless attachment is also planned; after establishing a connection, the two-way link should work in a similar manner to UART or USB. \todo[inline]{link to where this is better explained}
+A wireless attachment is also planned; after establishing a connection, the two-way radio link should work transparently, in a similar manner to the UART or USB connection.
 
 \subsection{Configuration Files}
 
@@ -50,9 +50,9 @@ The module must be easily reconfigurable. Given the settings are almost always g
 
 We can load those settings into GEX using the serial interface, which also makes it possible to reconfigure it remotely when the wireless connection is used. With USB, we can additionally make the board appear as a mass storage device and expose the configuration as text files. This approach, inspired by ARM mbed's mechanism for flashing firmware images to development kits, avoids the need to create a configuration GUI, instead using the PC OS's built-in applications like File Explorer and Notepad. We can expose additional information, such as a README file with instructions or a pin-out reference, as separate files on the virtual disk.
 
-\section{Planned Feature List}
+\section{An Overview of Planned Features}
 
-Let's list the features we wish to initially support in the GEX firmware:
+Let's now summarize the features we wish to support in the GEX firmware, based on the preceding discussion:
 
 \begin{itemize}
 	\item \textbf{Hardware interfacing functions}
@@ -66,8 +66,9 @@ Let's list the features we wish to initially support in the GEX firmware:
 			\item Dallas 1-Wire
 			\item NeoPixel (addressable LED strips)	
 		\end{itemize}
+	\pagebreak[0]
 	\item \textbf{Communication with the host computer}
-		\begin{itemize}	
+		\begin{itemize}
 			\item USB connection as virtual serial port or direct endpoint access
 			\item Connection using plain UART
 			\item Wireless attachment
@@ -82,7 +83,7 @@ Let's list the features we wish to initially support in the GEX firmware:
 
 \section{Microcontroller Selection}
 
-The STM32F072 microcontroller was chosen for the built prototypes and the initial firmware, owning to it's low cost, advanced peripherals and the availability of development boards. GEX can be later ported to other MCUs, like the STM32L072, STM32F103 or STM32F303. 
+As discussed in section \ref{sec:expected-outcome}, this project will be based on microcontrollers from the STM32 family. The STM32F072 model was selected for the initial hardware and firmware design due to it's low cost, advanced peripherals and the availability of development boards. The firmware can be ported to other MCUs later (e.g. to STM32L072, STM32F103 or STM32F303).
 
 The STM32F072 is a Cortex M0 device with 128\,KiB of flash memory, 16\,KiB of RAM and running at 48\,MHz. It is equipped with a USB Full Speed peripheral block, a 12-bit ADC and DAC, a number of general purpose timers/counters, SPI, I$^2$C, and USART peripherals, among others. It supports crystal-less USB, using the USB SOF packet for synchronization of the internal 48\,MHz RC oscillator; naturally, a real crystal resonator will provide better timing accuracy.
 
@@ -90,20 +91,15 @@ To effectively utilize the time available for this work, only the STM32F072 firm
 
 \section{Form Factor Considerations}
 
-It was mentioned in \ref{sec:expected-outcome} that, while the GEX firmware can be used with existing evaluation boards from ST Microelectronics (figure \ref{fig:discovery}), we wish to design and realize a few custom hardware prototypes that will be smaller, more convenient to use and hopefully also cheaper. Three possible form factors are drawn in figure \ref{fig:ff-sketches}.
+While the GEX firmware can be used with existing evaluation boards from ST Microelectronics (see figure \ref{fig:discovery} for an example of one such board), we wish to design and realize a few custom hardware prototypes that will be smaller and more convenient to use. 
 
-Several factors play a role when deciding what the GEX PCB should look like:
-
-The device must be comfortable and easy to use, which affects the choice of the USB connector, also with respect to cable availability: USB type A is not suitable for desktop computers where it would have to be plugged in the rear of the computer or in the front panel, but it may be usable with laptops; USB Mini-B and Micro-B connectors are both a popular choice in existing kits (e.g. Discovery and Nucleo boards), but Micro-B has a higher rated number of insertions and the cables are ubiquitous thanks to their use in mobile phones, therefore this appears to be the better connector choice. \todo{link to the insertion count spec}
-
-The PCB size should be kept minimal to save manufacturing costs. When a standard connector shape and a pin assignment are used we gain the ability to install existing add-on boards designed for other platforms, like the Arduino or Raspberry Pi. Lastly, when the entire board shape is copied from an existing commercial product for which we can buy official or after-market cases, we get an easy access to cases without having to design them ourselves. This is the case of the Raspberry Pi Zero form factor.
+Three possible form factors are drawn in figure \ref{fig:ff-sketches}. The use of a common connector layout and pin assignments, here Arduino and Raspberry Pi, makes it possible to reuse add-on boards from those platforms. When we copy the physical form factor of another product, in this example the Raspberry Pi Zero, we can further take advantage of existing enclosures designed for it.
 
 \begin{figure}
 	\centering
-	\includegraphics[width=0.9\textwidth] {img/disco072.jpg}
-	\caption[A Discovery board with STM32F072]{\label{fig:discovery}A Discovery board with STM32F072 that can be used to run the GEX firmware}
+	\includegraphics[width=0.7\textwidth] {img/disco072.jpg}
+	\caption[A Discovery board with STM32F072]{\label{fig:discovery}A Discovery development board with the STM32F072 microcontroller}
 \end{figure}
-
 
 \begin{figure}
 	\centering

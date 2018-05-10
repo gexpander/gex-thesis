@@ -1,4 +1,7 @@
-\newcommand{\cfield}[1]{\item {\color{RubineRed} \texttt{#1}\,}} % \tabto{1cm}
+
+% a coloured inttype label with \item in the payload table
+\newcommand{\cfieldx}[1]{{\color{RubineRed} \texttt{#1}}}
+\newcommand{\cfield}[1]{\item \cfieldx{#1}\,} % \tabto{1cm}
 
 \newcommand{\cname}[1]{\textbf{#1}\newline}
 

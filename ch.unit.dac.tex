@@ -3,3 +3,103 @@
 The digital/analog unit works with the two-channel DAC peripheral of the microcontroller. It can be used in two modes: DC output, and waveform generation.
 
 The waveform mode implements direct digital synthesis (explained in section \ref{sec:theory-dac-dds}) of a sine, rectangle, sawtooth or triangle wave. The generated frequency can be set with a sub-hertz precision up to the lower tens of kHz. The two outputs can use a different waveform shape, be synchronized, and their phase offset, as well as frequency, is dynamically adjustable.
+
+
+\subsection{DAC Configuration}
+
+\begin{inicode}
+[DAC:dac@13]
+# Enabled channels (1:A4, 2:A5)
+ch1_enable=Y
+ch2_enable=Y
+# Enable output buffer
+ch1_buff=Y
+ch2_buff=Y
+# Superimposed noise type (NONE,WHITE,TRIANGLE) and nbr. of bits (1-12)
+ch1_noise=NONE
+ch1_noise-level=3
+ch2_noise=NONE
+ch2_noise-level=3
+\end{inicode}
+
+\subsection{DAC Commands}
+
+Channels are specified in all commands as bit map:
+
+\begin{itemize}[nosep]
+	\item 0x01 - channel 1
+	\item 0x02 - channel 2
+	\item 0x03 - both channels affected at once
+\end{itemize}
+
+\begin{cmdlist}
+	0 & \cname{WAVE\_DC}
+	Set a DC level, disable DDS for the channel
+	& \begin{cmdreq}
+		\cfield{u8} channels
+		\cfield{u16} level (0--4095)
+	\end{cmdreq} \\
+
+	1 & \cname{WAVE\_SINE}
+	Start a DDS sine waveform
+	& \begin{cmdreq}
+		\cfield{u8} channels
+	\end{cmdreq} \\
+
+	2 & \cname{WAVE\_TRIANGLE}
+	Start a symmetrical triangle waveform
+	& \begin{cmdreq}
+		\cfield{u8} channels
+	\end{cmdreq} \\
+
+	3 & \cname{WAVE\_SAWTOOTH\_UP}
+	Start a rising sawtooth waveform
+	& \begin{cmdreq}
+		\cfield{u8} channels
+	\end{cmdreq} \\
+
+	4 & \cname{WAVE\_SAWTOOTH\_DOWN}
+	Start a dalling sawtooth waveform
+	& \begin{cmdreq}
+		\cfield{u8} channels
+	\end{cmdreq} \\
+
+	5 & \cname{WAVE\_RECTANGLE}
+	Start a rectangle waveform
+	& \begin{cmdreq}
+		\cfield{u8} channels
+		\cfield{u16} on-time (0--8191)
+		\cfield{u16} high level (0--4095)
+		\cfield{u16} low level (0--4095)
+	\end{cmdreq} \\
+
+	10 & \cname{SYNC}
+	Synchronize the two channels. The phase accumulator is reset to zero.
+	& \\
+
+	20 & \cname{SET\_FREQUENCY}
+	Set the channel frequency
+	& \begin{cmdreq}
+		\cfield{u8} channels
+		\cfield{float32} frequency
+	\end{cmdreq} \\
+
+	21 & \cname{SET\_PHASE}
+	Set a channel's phase. It's recommended to set the phase only of one channel, leaving the other at 0°.
+	& \begin{cmdreq}
+		\cfield{u8} channels
+		\cfield{u16} phase (0--8191)
+	\end{cmdreq} \\
+
+	22 & \cname{SET\_DITHER}
+	Control the dithering function of the DAC block. A high noise amplitude can cause an overflow to the other end of the output range due to a bug in the DAC peripheral. Use value 255 to leave the parameter unchanged.
+
+	& \begin{cmdreq}
+		\cfield{u8} channels
+		\cfield{u8} noise type (0-none, 1-white, 2-triangle)
+		\cfield{u8} number of noise bits (1--12)
+	\end{cmdreq} \\
+\end{cmdlist}
+
+
+

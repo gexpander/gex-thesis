@@ -6,7 +6,7 @@ Hardware buses implemented in GEX are presented in this chapter. The description
 
 The \textit{Universal Synchronous / Asynchronous Receiver Transmitter} has a long history and is still in widespread use today. It is the protocol used in RS-232, which was once a common way of connecting modems, printers, mice and other devices to personal computers. UART framing is also used in the industrial bus RS-485.
 
-\begin{figure}
+\begin{figure}[h]
 	\centering
 	\includegraphics[width=.8\textwidth] {img/usart.png}
 	\caption[UART frame structure]{\label{fig:uart-frame}UART frame, as shown by the STM32F072 Reference Manual. Break frames are used by some UART based protocols, like LIN (Local Interconnect Network).}
@@ -35,12 +35,13 @@ Transmission and reception on the SPI bus happen simultaneously. A bus master as
 
 SPI devices often provide a number of control, configuration and status registers that can be read and written by the bus master. The first byte of a command usually contains one bit that determines if it's a read or write access, and an address field selecting the target register.
 
-\begin{figure}
+\begin{figure}[h]
 	\centering
 	\includegraphics[width=.7\textwidth] {img/spi-multislave.png}
 	\caption[SPI master with multiple slaves]{\label{fig:spi-multislave}A SPI bus with 1 master and 3 slaves, each enabled by its own Slave Select signal (\textit{STM32F072 Reference Manual})}
 \end{figure}
 
+\pagebreak[1] % TODO
 \subsection{Examples of Devices Using SPI}
 
 \begin{itemize}
@@ -63,7 +64,7 @@ I2C is a two-wire (SDA--\textit{Serial Data}, SCL--\textit{Serial Clock}), open-
 
 I2C uses two addressing modes: 7-bit and 10-bit. Due to the small address space, exacerbated by many devices implementing only the 7-bit addressing, collisions between chips from different manufacturers are common; many devices thus offer several pins to let the board designer choose a few bits of the address by connecting them to different logic levels. I2C allows slow slave devices to stop the master from sending more data by holding the SCL line low at the end of a byte. As the bus is open-drain, the line can't go high until all participants release it. This function is called \textit{Clock Stretching}.
 
-\begin{figure}
+\begin{figure}[h]
 	\centering
 	\includegraphics[width=.9\textwidth] {img/i2c-frame.png}
 	\caption[I2C message diagram]{\label{fig:i2c-frame}An I2C message diagram. The frame starts with a start condition and stops with a stop condition, defined by an SDA edge while SCL is high. The address and data bytes are acknowledged by the slave by sending a 0 on the open-drain SDA line in the following clock cycle. A slave can terminate the transaction by sending 1 in place of the acknowledge bit. (\textit{Diagram taken from the I2C specification UM10204 by NXP Semiconductors})}
@@ -87,7 +88,7 @@ The 1-Wire bus, developed by Dallas Semiconductor, uses a single bi-directional 
 
 1-Wire is open-drain and the communication consists of short pulses sent by the master and (for bit reading) the line continuing to be held low by the slave. The pulse timing (fig. \ref{fig:1w-pulses}) defines if it's a read or write operation and what bit value it carries. A transaction is started by a 480us long "reset" pulse send by master and ended by a 1-byte CRC checksum.
 
-\begin{figure}
+\begin{figure}[h]
 	\centering
 	\includegraphics[width=.9\textwidth] {img/1w-topology.png}
 	\caption{\label{fig:1w-topology}1-Wire topology (by \textit{Dallas Semiconductor})}
@@ -104,7 +105,9 @@ The 1-Wire bus, developed by Dallas Semiconductor, uses a single bi-directional 
 
 Since 1-Wire is a proprietary protocol, there is a much smaller choice of available devices and they also tend to be more expensive. The DS18x20 thermometers are, however, popular enough to warrant the bus's inclusion in GEX.
 
-\begin{figure}
+\todo[inline]{Explain the ROM Search algorithm}
+
+\begin{figure}[h]
 	\centering
 	\includegraphics[width=.85\textwidth] {img/1w-rw.png}
 	\includegraphics[width=.85\textwidth] {img/1w-reset.png}
@@ -115,19 +118,35 @@ Since 1-Wire is a proprietary protocol, there is a much smaller choice of availa
 
 NeoPixel is a marketing name of the \textbf{WS2811}, \textbf{WS2812} and compatible intelligent LED drivers that is commonly used in "addressable LED strips". Those chips include the control logic, PWM drivers and usually the LED diodes all in one miniature package.
 
-The NeoPixel protocol is unidirectional, using only one data pin. The LED drivers are chained together. Ones and zeros are encoded by a pulse length on the data pin; after loading the color data to the LED string, a longer "reset" pulse is issued by the bus master and the set colors are displayed. The timing diagram and constraints are shown in figure \ref{fig:ws2812-dia}.
+The NeoPixel protocol is unidirectional, using only one data pin. The LED drivers are chained together. Ones and zeros are encoded by a pulse length on the data pin; after loading the color data to the LED string, a longer "reset" pulse is issued by the bus master and the set colors are displayed. The timing diagram and constraints are shown in table \ref{fig:ws2812-dia}.
 
 The NeoPixel timing is very sensitive to pulse length accuracy. Reliable ways to implement it use DMA with a hardware timer, or a I2S peripheral. An easier method that does not use any additional hardware resources is implementing the protocol as delay loops in the firmware; care must be taken to disable interrupts in the sensitive parts of the timing.
 
-\begin{figure}
+\begin{figure}[h]
 	\centering
-	\includegraphics[width=.6\textwidth] {img/ws2812b-detail.jpg}
+	\includegraphics[width=.5\textwidth] {img/ws2812b-detail.jpg}
 	\caption{\label{fig:ws2812-detail}A close-up photo of the WS2812B package, showing the LED driver IC}
 \end{figure}
 
-\begin{figure}
+\begin{table}[h]
 	\centering
-	\includegraphics[width=.4\textwidth] {img/neo-diagram.png}
-	\includegraphics[width=\textwidth] {img/neo-lengths.png}
-	\caption{\label{fig:ws2812-dia}NeoPixel pulse timing diagram and time constraints table \textit{(WS2812 datasheet)}}
-\end{figure}
+	\begin{tabular}{cll}
+		\toprule
+		\textbf{Bit value} & \textbf{Constraint} & \textbf{Duration} \\
+		\midrule
+		0 & High level & $0.4\,\mu\mathrm{s}\pm150\mathrm{ns}$ \\
+		0 & Low level & $0.85\,\mu\mathrm{s}\pm150\mathrm{ns}$ \\
+		1 & High level & $0.45\,\mu\mathrm{s}\pm150\mathrm{ns}$ \\
+		1 & Low level & $0.8\,\mu\mathrm{s}\pm150\mathrm{ns}$ \\
+		-- & Reset pulse (low) & $>50\,\mu\mathrm{s}$ \\
+		\bottomrule
+	\end{tabular}		
+%	\includegraphics[width=.4\textwidth] {img/neo-diagram.png}
+%	\includegraphics[width=\textwidth] {img/neo-lengths.png}
+	\caption{\label{fig:ws2812-dia}NeoPixel pulse timing, according to the datasheet}
+	%TODO reference
+\end{table}
+
+
+
+
