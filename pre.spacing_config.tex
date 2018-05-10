@@ -1,0 +1,43 @@
+
+%% SPACING
+
+% Booktabs
+\setlength{\heavyrulewidth}{0.5mm}
+\setlength{\lightrulewidth}{0.25mm}
+\setlength{\cmidrulewidth}{0.25mm}
+
+% More space in table cells
+\renewcommand{\arraystretch}{1.4}
+
+% Fix overful hbox
+\setlength{\emergencystretch}{.5em}
+
+% -- odstavce --
+\setlength\parskip{1.5ex plus 1pt minus 1 pt}
+%\setlength{\parskip}{1.5ex plus 0.2ex minus 0.1ex} % po změně je potřeba doladit nadpisy
+%\renewcommand{\baselinestretch}{1.1}
+\setlength\parindent{.5cm}
+
+% add blank page unless current is left
+%\newcommand*\cleartoleftpage{%
+%	\clearpage
+%	\ifodd\value{page}\hbox{}\newpage\fi
+%}
+
+% don't clear page before chapter
+%\renewcommand{\cleardoublepage}{\clearpage}
+
+% section on new page, except first
+%\pretocmd{\section}{%
+%	\ifnum\value{section}=0 \else\clearpage\fi
+%}{}{}
+
+% ??? what does this do
+\makeatletter
+\newcommand*{\centerfloat}{%
+	\parindent \z@
+	\leftskip \z@ \@plus 1fil \@minus \textwidth
+	\rightskip\leftskip
+	\parfillskip \z@skip}
+\makeatother
+

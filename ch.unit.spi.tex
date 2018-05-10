@@ -1,6 +1,6 @@
 \section{SPI Unit}
 
-The SPI unit provides access to one of the microcontroller's SPI peripherals. It can be configured to use any of the different speeds, clock polarity and phase settings available in its control registers. 
+The SPI unit provides access to one of the microcontroller's SPI peripherals. It can be configured to use any of the different speeds, clock polarity and phase settings available in its control registers.
 
 The unit handles up to 16 slave select (NSS) signals and supports message multi-cast (addressing more than one slaves at once). Protection resistors should be used if a multi-cast transaction is issued with MISO connected.
 
@@ -40,44 +40,26 @@ pins=0
 
 \subsection{SPI Commands}
 
-\begin{tabularx}{\textwidth}{p{\fldwcode}Xp{\fldwpld}}
-	\toprule
-	\textbf{Code} & \textbf{Function} & \textbf{Payload}  \\	
-	\midrule	
-	
-	0 & \flname{QUERY}
+\begin{cmdlist}
+	0 & \cname{QUERY}
 	Exchange bytes with a slave device
-	& \makecell[tl]{
-		\fldreq
-		\fld{u8} slave number 0--16 \\
-		\fld{u16} response padding \\
-		\fld{u16} response length \\
-		\fld{u8[]} bytes to write \\
-		\fldresp
-		\fld{u8[]} received bytes \\		
-	} \\
-	
-	1 & \flname{MULTICAST}
+	& \begin{cmdreq}
+		\cfield{u8} slave number 0--16
+		\cfield{u16} response padding
+		\cfield{u16} response length
+		\cfield{u8[]} bytes to write
+	    \end{cmdreq}
+	\cjoin
+    	\begin{cmdresp}
+		\cfield{u8[]} received bytes
+	\end{cmdresp} \\
+
+	1 & \cname{MULTICAST}
 	Send a message to multiple slaves at once. The address is a bit map (e.g. 0x8002 = slaves 1 and 15).
-	& \makecell[tl]{
-		\fldreq
-		\fld{u16} addressed slaves \\
-		\fld{u8[]} bytes to write
-	} \\
-	\bottomrule
-\end{tabularx}
-
-
-
-
-
-
-
-
-
-
-
-
-
+	& \begin{cmdreq}
+		\cfield{u16} addressed slaves
+		\cfield{u8[]} bytes to write
+	\end{cmdreq} \\
+\end{cmdlist}
 
 

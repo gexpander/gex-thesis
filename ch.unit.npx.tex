@@ -16,60 +16,52 @@ pixels=32
 
 \subsection{NeoPixel Commands}
 
-\begin{tabularx}{\textwidth}{p{\fldwcode}Xp{\fldwpld}}
-	\toprule
-	\textbf{Code} & \textbf{Function} & \textbf{Payload}  \\	
-	\midrule	
-	
-	0 & \flname{CLEAR}
+\begin{cmdlist}
+	0 & \cname{CLEAR}
 	Switch all LEDs off (sets them to black) & \\
-	
-	1 & \flname{LOAD}	
+
+	1 & \cname{LOAD}
 	Load a sequence of R,G,B bytes
-	& \makecell[tl]{
-		\fldreq
-		\tabitem For each LED: \\
-		~~\fldo{u8} red \\
-		~~\fldo{u8} green \\
-		~~\fldo{u8} blue \\
-	} \\
+	& \begin{cmdreq}
+		\item For each LED:
+		\begin{pldlist}
+			\cfield{u8} red
+			\cfield{u8} green
+			\cfield{u8} blue
+		\end{pldlist}
+	\end{cmdreq} \\
 
-	4 & \flname{LOAD\_U32\_ZRGB}
+	4 & \cname{LOAD\_U32\_ZRGB}
 	Load 32-bit big-endian 0xRRGGBB (0,R,G,B)
-	& \makecell[tl]{
-		\fldreq
-		\fld{u32[]} color data BE
-	} \\
+	& \begin{cmdreq}
+		\cfield{u32[]} color data BE
+	\end{cmdreq} \\
 
-	5 & \flname{LOAD\_U32\_ZBGR}
+	5 & \cname{LOAD\_U32\_ZBGR}
 	Load 32-bit big-endian 0xBBGGRR (0,B,G,R)
-	& \makecell[tl]{
-		\fldreq
-		\fld{u32[]} color data BE
-	} \\
+	& \begin{cmdreq}
+		\cfield{u32[]} color data BE
+	\end{cmdreq} \\
 
-	6 & \flname{LOAD\_U32\_RGBZ}
+	6 & \cname{LOAD\_U32\_RGBZ}
 	Load 32-bit little-endian 0xBBGGRR (R,G,B,0)
-	& \makecell[tl]{
-		\fldreq
-		\fld{u32[]} color data LE
-	} \\
+	& \begin{cmdreq}
+		\cfield{u32[]} color data LE
+	\end{cmdreq} \\
 
-	7 & \flname{LOAD\_U32\_BGRZ}
+	7 & \cname{LOAD\_U32\_BGRZ}
 	Load 32-bit little-endian 0xRRGGBB (B,G,R,0)
-	& \makecell[tl]{
-		\fldreq
-		\fld{u32[]} color data LE
-	} \\
+	& \begin{cmdreq}
+		\cfield{u32[]} color data LE
+	\end{cmdreq} \\
 
-	10 & \flname{GET\_LEN}
+	10 & \cname{GET\_LEN}
 	Get number of LEDs in the strip
-	& \makecell[tl]{
-		\fldresp
-		\fld{u16} number of LEDs
-	} \\
-	\bottomrule
-\end{tabularx}
+	& \begin{cmdresp}
+		\cfield{u16} number of LEDs
+	\end{cmdresp} \\
+
+\end{cmdlist}
 
 
 

@@ -1,0 +1,60 @@
+
+%% CTUTHESIS CONFIG
+
+\ctusetup{
+	xdoctype = M,
+	front-list-of-tables = false,
+	mainlanguage = english,
+	%
+	author = {Ondřej Hruška},
+	supervisor = {doc. Ing. Radislav Šmíd, Ph.D.},
+	%
+	title-english = {Learning and automation GPIO platform},
+	title-czech = {Výuková a automatizační GPIO platforma},
+	%
+	xfaculty = F3,
+	department-czech = {Katedra měření},  
+	fieldofstudy-czech = {Kybernetika a~robotika},
+	subfieldofstudy-czech = {Senzory a~přístrojová technika},
+	%
+	department-english = {Department of Measurement},
+	fieldofstudy-english = {Cybernetics and Robotics},
+	subfieldofstudy-english = {Sensors and Instrumentation},
+	front-specification = true,
+	specification-file = {zadani-zakryto.pdf},
+	%specification-file = {zadani-doc.pdf},
+	%specification-file = {zadani-doc.pdf},
+	%
+	keywords-czech = {},
+	keywords-english = {},
+	%
+	day = 0,     % ???
+	month = 0,  % ???
+	year = 2018, % ???
+}
+
+\ctuprocess
+
+\hypersetup{
+	pdftitle = {Learning and automation GPIO platform},
+	pdfauthor = {Ondřej Hruška}
+}
+
+% Extra info na titulní stránce
+\addto\ctucaptionsczech{%
+	\def\supervisorname{Vedoucí}%
+	\def\subfieldofstudyname{Studijní program}%
+}
+
+% Abstrakt, poděkování atd
+\ctutemplateset{maketitle twocolumn default}{
+	\begin{twocolumnfrontmatterpage}
+		\ctutemplate{twocolumn.thanks}
+		\ctutemplate{twocolumn.declaration}
+		\ctutemplate{twocolumn.abstract.in.titlelanguage}
+		\ctutemplate{twocolumn.abstract.in.secondlanguage}
+		\ctutemplate{twocolumn.tableofcontents}
+		\ctutemplate{twocolumn.listoffigures}
+	\end{twocolumnfrontmatterpage}
+}
+

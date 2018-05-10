@@ -16,49 +16,37 @@ initial=
 open-drain=
 \end{inicode}
 
-\subsection{Digital Output Events}
-
-This unit generates no events.
-
 \subsection{Digital Output Commands}
 
-\begin{tabularx}{\textwidth}{p{\fldwcode}Xp{\fldwpld}}
-	\toprule
-	\textbf{Code} & \textbf{Function} & \textbf{Payload}  \\	
-	\midrule	
-	
-	0 & \flname{WRITE} Write to all pins 
-	& \makecell[tl]{
-		\fldreq
-		\fld{u16} new value
-	} \\
-	
-	1 & \flname{SET} Set selected pins to 1 
-	& \makecell[tl]{
-		\fldreq
-		\fld{u16} pins to set
-	} \\
-	
-	2 & \flname{CLEAR} Set selected pins to 0 
-	& \makecell[tl]{
-		\fldreq
-		\fld{u16} pins to clear
-	} \\
+\begin{cmdlist}
 
-	3 & \flname{TOGGLE} Toggle selected pins 
-	& \makecell[tl]{
-		\fldreq
-		\fld{u16} pins to toggle
-	} \\
+	0 & \cname{WRITE} Write to all pins
+	& \begin{cmdreq}
+		\cfield{u16} new value
+	\end{cmdreq} \\
 
-	4 & \flname{PULSE}
+	1 & \cname{SET} Set selected pins to 1
+	& \begin{cmdreq}
+		\cfield{u16} pins to set
+	\end{cmdreq} \\
+
+	2 & \cname{CLEAR} Set selected pins to 0
+	& \begin{cmdreq}
+		\cfield{u16} pins to clear
+	\end{cmdreq} \\
+
+	3 & \cname{TOGGLE} Toggle selected pins
+	& \begin{cmdreq}
+		\cfield{u16} pins to toggle
+	\end{cmdreq} \\
+
+	4 & \cname{PULSE}
 	Generate a pulse on the selected pins. The $\mu$s scale may be used only for 0--999\,$\mu$s.
-	& \makecell[tl]{
-		\fldreq
-		\fld{u16} pins to pulse \\
-		\fld{u8} active level (0, 1) \\
-		\fld{u8} scale: 0-ms, 1-$\mu$s \\
-		\fld{u16} duration
-	} \\
-	\bottomrule
-\end{tabularx}
+	& \begin{cmdreq}
+		\cfield{u16} pins to pulse
+		\cfield{u8} active level (0, 1)
+		\cfield{u8} scale: 0-ms, 1-$\mu$s
+		\cfield{u16} duration
+	\end{cmdreq}
+
+\end{cmdlist}

@@ -25,32 +25,38 @@ data-pins=3
 
 \subsection{SIPO Commands}
 
-\begin{tabularx}{\textwidth}{p{\fldwcode}Xp{\fldwpld}}
-	\toprule
-	\textbf{Code} & \textbf{Function} & \textbf{Payload}  \\	
-	\midrule	
-	
-	0 & \flname{WRITE}
+\begin{cmdlist}
+	0 & \cname{WRITE}
 	Load the shift registers and leave the data outputs in the "trailing data" state before sending the Store pulse.
-	& \makecell[tl]{
-		\fldreq
-		\fld{u16} trailing data \\
-		\tabitem For each output: \\
-		~~\fldo{u8[]} data to load
-	} \\
-	
-	1 & \flname{DIRECT\_DATA}
-	Directly write to the data pins (same like the DO unit's WRITE command)
-	& \makecell[tl]{
-		\fldreq
-		\fld{u16} values to write
-	} \\
+	& 
+	\begin{cmdreq}
+		\cfield{u16} trailing data
+		\item For each output (same size)
+		\begin{pldlist}
+			\cfield{u8[]} data to load
+		\end{pldlist}
+	\end{cmdreq} 
+	\\
 
-	2 & \flname{DIRECT\_CLEAR} Pulse the Clear pin, erasing the registers' data & \\
-	3 & \flname{DIRECT\_SHIFT} Pulse the Shift pin & \\
-	4 & \flname{DIRECT\_STORE} Pulse the Store pin & \\
-	\bottomrule
-\end{tabularx}
+	1 & \cname{DIRECT\_DATA}
+	Directly write to the data pins (same like the DO unit's WRITE command)
+	&
+    \begin{cmdreq}
+		\cfield{u16} values to write
+	\end{cmdreq} \\
+
+	2 & 
+	\cname{DIRECT\_CLEAR} 
+	Pulse the Clear pin, erasing the registers' data & \\
+	
+	3 & 
+	\cname{DIRECT\_SHIFT}
+	Pulse the Shift pin & \\
+	
+	4 & 
+	\cname{DIRECT\_STORE} 
+	Pulse the Store pin & \\
+\end{cmdlist}
 
 
 

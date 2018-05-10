@@ -49,45 +49,38 @@ de-assert-time=8
 de-clear-time=8
 \end{inicode}
 
+
 \subsection{USART Events}
 
+\begin{cmdlist}
 
-\begin{tabularx}{\textwidth}{p{\fldwcode}Xp{\fldwpld}}
-	\toprule
-	\textbf{Code} & \textbf{Meaning} & \textbf{Payload}  \\	
-	\midrule	
-	
-	0 & \flname{DATA\_RECEIVED}
-	 Data was received on the serial port.
-	& \makecell[tl]{
-		\fld{u8[]} received bytes
-	} \\	
-	\bottomrule
-\end{tabularx}
+	0 & \cname{DATA\_RECEIVED}
+	Data was received on the serial port.
+	&
+    \begin{cmdpld}
+		\cfield{u8[]} received bytes
+    \end{cmdpld} \\
+
+\end{cmdlist}
+
 
 \subsection{USART Commands}
 
-\begin{tabularx}{\textwidth}{p{\fldwcode}Xp{\fldwpld}}
-	\toprule
-	\textbf{Code} & \textbf{Function} & \textbf{Payload}  \\	
-	\midrule	
-	
-	0 & \flname{WRITE} 
-	Add data to the transmit buffer. Sending is asynchronous, but the command may wait for free space in the DMA buffer.
-	& \makecell[tl]{
-		\fldreq
-		\fld{u8[]} bytes to write	
-	} \\	
-	
-	1 & \flname{WRITE\_SYNC}
-	Add data to the transmit buffer and wait for the transmission to complete.
-	& \makecell[tl]{
-		\fldreq
-		\fld{u8[]} bytes to write	
-	} \\	
+\begin{cmdlist}
 
-	\bottomrule
-\end{tabularx}
+	0 & \cname{WRITE}
+	Add data to the transmit buffer. Sending is asynchronous, but the command may wait for free space in the DMA buffer.
+	& \begin{cmdreq}
+		\cfield{u8[]} bytes to write
+    \end{cmdreq} \\
+
+	1 & \cname{WRITE\_SYNC}
+	Add data to the transmit buffer and wait for the transmission to complete.
+	& \begin{cmdreq}
+		\cfield{u8[]} bytes to write
+    \end{cmdreq} \\
+
+\end{cmdlist}
 
 
 

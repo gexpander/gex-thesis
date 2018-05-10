@@ -1,0 +1,7 @@
+%% MINTED
+\usepackage{minted}    % code listings 
+\usepackage{xpatch,letltxmacro}
+\LetLtxMacro{\cminted}{\minted}
+\let\endcminted\endminted
+\xpretocmd{\cminted}{\RecustomVerbatimEnvironment{Verbatim}{BVerbatim}{}}{}{}
+\newminted{ini}{frame=leftline,autogobble=true}

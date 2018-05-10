@@ -1,0 +1,88 @@
+\newcommand{\cfield}[1]{\item {\color{RubineRed} \texttt{#1}\,}} % \tabto{1cm}
+
+\newcommand{\cname}[1]{\textbf{#1}\newline}
+
+% https://tex.stackexchange.com/questions/157389/how-to-center-column-values-in-a-table
+% P will be a centered column that can have width
+\newcolumntype{P}[1]{>{\centering\arraybackslash}p{#1}}
+
+% this is put before a response that follows a request
+% this is needed for nice looking spacing
+\newcommand*{\cjoin}{\null\vspace*{-2pt}}
+
+% This is a table of commands of events
+\newenvironment{cmdlist}
+{
+	\tabulinesep=5pt
+	\begin{longtabu} to \textwidth {P{2.2em} X[3] X[3,l]}			
+		\toprule		
+		\textbf{Code} & \textbf{Function} & \textbf{Structure} \\
+		\midrule
+		\endhead
+		
+		\bottomrule	
+		\endfoot
+}{
+	\end{longtabu}
+}
+
+% a list of generic payload fields
+\newenvironment{pldlist}
+{
+	\begin{itemize}[
+		leftmargin=.7cm,
+		nosep		
+	]
+}
+{
+	\end{itemize}
+}
+
+
+% a list of request fields, with a caption
+\newenvironment{cmditemlistenv}[1]
+{
+	\begin{minipage}[t]{\linewidth}
+		
+	\begin{flushleft} % fix weird spacing in wrapped lines
+	
+	\textit{#1} % the caption, like Request: or Response:
+	\begin{pldlist}	
+}
+{
+	\end{pldlist}
+	\end{flushleft}
+
+	% the minipage somehow fixes vertical alignment 
+	% and also removes mysterious spacing around the itemize
+	\end{minipage}
+}
+
+
+% a list of request fields, with a caption
+\newenvironment{cmdreq}
+{
+	\begin{cmditemlistenv}{Request:}	
+}
+{
+	\end{cmditemlistenv}	
+}
+
+% a list of request fields, with a caption
+\newenvironment{cmdresp}
+{
+	\begin{cmditemlistenv}{Response:}	
+}
+{
+	\end{cmditemlistenv}
+}
+
+% a list of payload fields, with a caption
+\newenvironment{cmdpld}
+{
+	\begin{cmditemlistenv}{Payload:}		
+}
+{
+	\end{cmditemlistenv}
+}
+

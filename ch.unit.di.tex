@@ -1,8 +1,8 @@
 \section{Digital Input}
 
-The digital input unit is the input counterpart of the digital output unit. 
+The digital input unit is the input counterpart of the digital output unit.
 
-In addition to reading the immediate digital levels of the selected pins, this unit can generate asynchronous events on a pin change. The state of the entire input port, together with a microsecond timestamp (as is the case for all asynchronous events), is reported to the host either on a rising, falling, or any pin change. 
+In addition to reading the immediate digital levels of the selected pins, this unit can generate asynchronous events on a pin change. The state of the entire input port, together with a microsecond timestamp (as is the case for all asynchronous events), is reported to the host either on a rising, falling, or any pin change.
 
 The pin change event can be configured independently for each pin. In order to receive a pin change event, it must be armed first; The pin can be armed for a single event, or it may be re-armed automatically with a hold-off time. It's further possible to automatically arm selected pin triggers on start-up.
 
@@ -10,7 +10,7 @@ The pin change event can be configured independently for each pin. In order to r
 \subsection{Digital Input Configuration}
 
 \begin{inicode}
-[DI:in@2]	
+[DI:in@2]
 # Port name
 port=A
 # Pins (comma separated, supports ranges)
@@ -31,49 +31,37 @@ hold-off=100
 
 \subsection{Digital Input Events}
 
-\begin{tabularx}{\textwidth}{p{\fldwcode}Xp{\fldwpld}}
-	\toprule
-	\textbf{Code} & \textbf{Meaning} & \textbf{Payload}  \\	
-	\midrule	
-	
-	0 & \flname{PIN\_CHANGE}
+\begin{cmdlist}
+
+	0 & \cname{PIN\_CHANGE}
 	A pin change event. The payload includes a snapshot of all configured pins captured immediately after the change was registered.
-	& \makecell[tl]{
-		\fld{u16} changed pins \\
-		\fld{u16} port snapshot
-	} \\	
-	\bottomrule
-\end{tabularx}
+	& \begin{cmdpld}
+		\cfield{u16} changed pins
+		\cfield{u16} port snapshot
+	\end{cmdpld}
+
+\end{cmdlist}
 
 \subsection{Digital Input Commands}
 
-\begin{tabularx}{\textwidth}{p{\fldwcode}Xp{\fldwpld}}
-	\toprule
-	\textbf{Code} & \textbf{Function} & \textbf{Payload}  \\	
-	\midrule	
-	
-	0 & \flname{READ} Read the pins
-	& \makecell[tl]{
-		\fldresp
-		\fld{u16} pin states
-	} \\
+\begin{cmdlist}
+	0 & \cname{READ} Read the pins
+	& \begin{cmdresp}
+		\cfield{u16} pin states
+	\end{cmdresp} \\
 
-	1 & \flname{ARM\_SINGLE} Arm for a single event
-	& \makecell[tl]{
-		\fldreq
-		\fld{u16} pins to arm
-	} \\
+	1 & \cname{ARM\_SINGLE} Arm for a single event
+	& \begin{cmdreq}
+		\cfield{u16} pins to arm
+	\end{cmdreq} \\
 
-	2 & \flname{ARM\_AUTO} Arm with automatic re-arming after each event
-	& \makecell[tl]{
-		\fldreq
-		\fld{u16} pins to arm
-	} \\
+	2 & \cname{ARM\_AUTO} Arm with automatic re-arming after each event
+	& \begin{cmdreq}
+		\cfield{u16} pins to arm
+	\end{cmdreq} \\
 
-	3 & \flname{DISARM} Dis-arm selected pins
-	& \makecell[tl]{
-		\fldreq
-		\fld{u16} pins to dis-arm
-	} \\
-	\bottomrule
-\end{tabularx}
+	3 & \cname{DISARM} Dis-arm selected pins
+	& \begin{cmdreq}
+		\cfield{u16} pins to dis-arm
+	\end{cmdreq}
+\end{cmdlist}
