@@ -2,10 +2,10 @@
 
 This chapter presents an overview of the \gls{USB} Full Speed interface, with focus on the features used in the GEX firmware. \gls{USB} is a versatile but complex interface, thus explaining it in its entirety is beyond the scope of this text. References to external material which explains the protocol in greater detail will be provided where appropriate.\todo{add those refs}
 
-\begin{figure}[H]
+\begin{figure}[h]
 	\centering
-	\includegraphics[width=0.8\textwidth] {img/usb-hierarchy.png}
-	\caption[USB hierarchical structure]{\label{fig:usb-hierarchy}A diagram from the USB specification rev. 1.1 showing the hierarchical structure of the USB bus; the PC (Host) controls the bus and initiates all transactions.}
+	\includegraphics[scale=1] {img/usb-hierarchy-redraw.pdf}
+	\caption[USB hierarchical structure]{\label{fig:usb-hierarchy}The hierarchical structure of the USB bus}
 \end{figure}
 
 \section{Basic Principles and Terminology}
@@ -14,15 +14,15 @@ This chapter presents an overview of the \gls{USB} Full Speed interface, with fo
 
 \gls{USB} is a hierarchical bus with a single master (\textit{host}) and multiple slave devices. A \gls{USB} device that provides functionality to the host is called a \textit{function}. Communication between the host and a function is organized into virtual channels called \textit{pipes}. Each pipe is identified by an \textit{endpoint} number.
 
-\begin{figure}[H]
+\begin{figure}[h]
 	\centering
-	\includegraphics[width=\textwidth] {img/usb-structure.png}
-	\caption{\label{fig:usb-logical}A detailed view of the host-device connection (\textit{USB specification rev. 1.1})}
+	\includegraphics[scale=1] {img/usb-logical-redraw.pdf}
+	\caption{\label{fig:usb-logical}The logical structure of USB}
 \end{figure}
 
 Endpoints can be either unidirectional or bidirectional; the direction from the host to a function is called OUT, the other direction (function the host) is called IN. A bidirectional endpoint is technically composed of a IN and OUT endpoint with the same number. All transactions (both IN and OUT) are initiated by the host; functions have to wait for their turn. Endpoint 0 is bidirectional, always enabled, and serves as a \textit{control endpoint}. The host uses the control endpoint to read information about the device and configure it as needed.
 
-There are four types of transfers: control, bulk, isochronous, and interrupt. Each endpoint is configured for a fixed transfer type.
+There are four types of transfers: control, bulk, isochronous, and interrupt. Each endpoint is configured for a fixed transfer type:
 
 \begin{itemize}
 	\item \textit{Control} - initial configuration after device plug-in; also used for other aplication-specific control messages that can affect other pipes.
