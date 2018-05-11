@@ -34,6 +34,7 @@
 {
 	\begin{itemize}[
 		leftmargin=.7cm,
+		rightmargin=1mm,
 		nosep		
 	]
 }
@@ -89,3 +90,39 @@
 	\end{cmditemlistenv}
 }
 
+
+%% hack from https://tex.stackexchange.com/questions/145812/using-fbox-in-a-newenvironment
+% to allow using fbox inside a environment
+\newsavebox{\mybox}
+
+% a list of payload fields, with a caption
+\newenvironment{boxedpayload}[1][]
+{
+	\begingroup\setlength{\fboxsep}{0pt}
+	\indent
+	\begin{lrbox}{\mybox}
+	\begin{minipage}{\textwidth - \parindent*2}\null
+	\ifthenelse{\equal{#1}{}}{
+		\vspace{3pt} % no title
+	}{
+		% with title
+		\hspace{6pt}\textit{#1}
+		\vspace{-6pt}\newline
+		\noindent\rule{\textwidth}{.4pt}		
+		\vspace{-\baselineskip}
+		\vspace{-4pt}
+	}
+	\begin{itemize}[
+		itemsep=0pt, % this is not actually 0, for some reason. that's okay
+		leftmargin=24pt,
+		rightmargin=1mm
+	]
+}
+{
+	\end{itemize}
+	\vspace{-\baselineskip}
+	\vspace{14pt}
+	\end{minipage}
+	\end{lrbox}\fbox{\usebox{\mybox}}
+	\endgroup
+}

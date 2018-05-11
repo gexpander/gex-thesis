@@ -17,11 +17,11 @@ The storage medium is organized into \textit{sectors} (or \textit{blocks}), usua
 		\textbf{Disk area} & \textbf{Size / Notes} \\
 		\midrule
 		Boot sector & 1 sector \\
-		Reserved sectors & optional \\ 
-		FAT 1 & 1 or more sectors, depends on disk size \\ 
-		FAT 2 & optional, a back-up copy of FAT 1 \\ 
-		Root directory & 1 or more sectors \\ 
-		Data area & Organized in \textit{clusters} \\ 
+		Reserved sectors & optional \\
+		FAT 1 & 1 or more sectors, depends on disk size \\
+		FAT 2 & optional, a back-up copy of FAT 1 \\
+		Root directory & 1 or more sectors \\
+		Data area & Organized in \textit{clusters} \\
 		\bottomrule
 	\end{tabular}
 	\caption{\label{tab:fat16-disk-areas}Areas of a FAT-formatted disk}
@@ -35,7 +35,7 @@ This is a 1-sector structure which holds the \gls{OS} bootstrap code for bootabl
 
 The data area of the disk is organized in clusters, logical allocation units composed of groups of sectors. The use of a larger allocation unit allows the system to use shorter addresses and thus support a larger disk capacity.
 
-The \gls{FAT} acts as a look-up table combined with linked lists. In FAT16, it is organized in 16-bit fields, each corresponding to one cluster. The first two entries in the allocation table are reserved and hold special values set by the disk formatter and the host \gls{OS}: a "media descriptor" 0xFFF8 and a "clean/dirty flag" 0xFFFF/0x3FFF. 
+The \gls{FAT} acts as a look-up table combined with linked lists. In FAT16, it is organized in 16-bit fields, each corresponding to one cluster. The first two entries in the allocation table are reserved and hold special values set by the disk formatter and the host \gls{OS}: a "media descriptor" 0xFFF8 and a "clean/dirty flag" 0xFFFF/0x3FFF.
 
 Files can span multiple clusters; each \gls{FAT} entry either holds the address of the following file cluster, or a value with a special meaning:
 
@@ -72,7 +72,7 @@ The root directory has the same structure as any other directories, which reside
 
 A directory is organized in 32-byte entries representing individual files. Table \ref{tab:fat16-dir-entry} shows the structure of one such entry.
 
-The name and extension fields form together the well-known 8.3 filename format. Longer file names are encoded using a \gls{LFN} scheme as special hidden entries stored in the directory table alongside the regular 8.3 entries, ensuring backward compatibility. 
+The name and extension fields form together the well-known 8.3 filename format. Longer file names are encoded using a \gls{LFN} scheme as special hidden entries stored in the directory table alongside the regular 8.3 entries, ensuring backward compatibility.
 
 The first byte of the file name has a special meaning:
 
@@ -112,7 +112,7 @@ Now, just one problem remains: how to tell which sectors contain which part of o
 
 \subsection{Handling a Write Access}
 
-A file write access is more challenging to emulate than a read access, as the host OS tends to be somewhat unpredictable. In GEX's case we're interested only in the action of overwriting an already existing file, but it's interesting to also analyze other actions the host may perform. 
+A file write access is more challenging to emulate than a read access, as the host OS tends to be somewhat unpredictable. In GEX's case we're interested only in the action of overwriting an already existing file, but it's interesting to also analyze other actions the host may perform.
 
 It must be noted that due to the nonexistence of a physical storage medium, it's not possible to read back a file the host has written. The \gls{OS} may show the written file on the disk, but when the user tried to read it, it either fails, or shows a cached copy. In the DAPLink emulator this is worked around by temporarily reporting that the storage medium has been removed, forcing the host to re-load its contents. In GEX, the loaded INI file will be a newly generated copy, embedding possible error messages as comments.
 
@@ -123,7 +123,7 @@ A file is deleted by:
 \begin{enumerate}
 	\item Marking all sectors used by it as free in the \gls{FAT}
 	\item Replacing the first character of its name in the directory table by 0xE5 to indicate the slot is free
-\end{enumerate} 
+\end{enumerate}
 
 From the perspective of emulation, we can ignore the \gls{FAT} access and only detect writes to the directory sectors. This is slightly more complicated when one considers that all disk access is performed in sectors: the emulator must compare the written data with the original bytes to detect what change has been performed. Alternatively, we could parse the written sector as a directory table and compare it with our knowledge of its original contents.
 
@@ -143,7 +143,7 @@ A new file is created in three steps:
 
 It can be expected the host \gls{OS} first finds the free sectors and a free file entry before performing any write operations, to prevent a potential disk corruption.
 
-To properly handle such a file by the emulator, we could, in theory, find its name from the directory table, which has been updated, and then collect the data written to the corresponding clusters. In practice, confirmed by experiments with a real Linux host, those three steps may happen in any order, and often the content is written before the directory table is updated. 
+To properly handle such a file by the emulator, we could, in theory, find its name from the directory table, which has been updated, and then collect the data written to the corresponding clusters. In practice, confirmed by experiments with a real Linux host, those three steps may happen in any order, and often the content is written before the directory table is updated.
 
 The uncertain order of the written disk areas poses a problem when the file name has any significance, as we can't store the received file data while waiting for the name to be written. The DAPLink mbed flashing firmware solves this by analyzing the content of the first written sector of the file, which may contain the binary \gls{NVIC} table, or a character pattern typical for Intel hex files.
 
@@ -151,7 +151,7 @@ The uncertain order of the written disk areas poses a problem when the file name
 
 A change to a file's content is performed in a similar way to the creation of a new file, except instead of creating a new entry in the directory table, an existing one is updated with the new file size. The name of the file may be, again, unknown until the content is written, but we could detect the file by comparing the starting sector with those of all files known to the virtual file system.
 
-In the case of GEX, the detection of a file name is not important; We expect only INI files to be written, and the particular file may be detected by its first section marker, such as \verb|[UNITS]| or \verb|[SYSTEM]|. Should a non-INI file be written by accident, the INI parser will likely detect a syntax error and discard it.
+In the case of GEX, the detection of a file name is not important; we expect only INI files to be written, and the particular file may be detected by its first section marker, such as \verb|[UNITS]| or \verb|[SYSTEM]|. Should a non-INI file be written by accident, the INI parser will likely detect a syntax error and discard it.
 
 It should be noted that a file could be updated only partially, skipping the clusters which remain unchanged, and there's also no guarantee regarding the order in which the file's sectors are written. This is hard to detect and handle and the current firmware is not able to interpret it correctly, thus such a write operation will fail. Fortunately, this host behavior has not been conclusively observed in practice, but a write operation rarely fails for still unknown reasons and this could be a possible cause.
 

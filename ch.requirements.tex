@@ -44,7 +44,7 @@ A common characteristic of those buses is that they require precise timing and h
 
 Microcontrollers typically include a 10-12 bit ADC (\textit{Analog to Digital Converter}), often accompanied by a DAC (\textit{Digital to Analog Converter}), its output counterpart. In the lack of a real DAC, the analog output, albeit with worse dynamic parameters, can be realized using a PWM signal (\textit{Pulse Width Modulation}, pulse train) followed by a low-pass filter.
 
-While we mainly focused on digital interfaces thus far, providing means of generating and capturing analog signals is also valuable. This capability makes it possible to read sensors with voltage output and it can substitute a simple oscilloscope when sampled periodically at a sufficient speed. 
+While we mainly focused on digital interfaces thus far, providing means of generating and capturing analog signals is also valuable. This capability makes it possible to read sensors with voltage output and it can substitute a simple oscilloscope when sampled periodically at a sufficient speed.
 
 The analog output and input together can be used for automated characterization of electronic components, or for analog feedback regulation. Should the analog output be modulated, we could further use them to measure frequency-dependent characteristics, such as the frequency response of analog filters.
 
@@ -66,7 +66,7 @@ We could load those settings into GEX using the serial interface, and indeed thi
 
 It has been established that the designed device should be small and easily portable. It should support USB and wireless connection to a PC. Further, a plain UART interface should be offered in place of USB; this makes it easier to integrate GEX into other systems or use development kits fitted with a USB-UART converter.
 
-The following protocols and features should be implemented as a minimum; Other functions may be added based on input from prototype testing in model situations. 
+The following protocols and features should be implemented as a minimum; other functions may be added based on input from prototype testing in model situations.
 
 \begin{itemize}
 	\item Low level hardware functions
@@ -93,7 +93,7 @@ The following protocols and features should be implemented as a minimum; Other f
 		\end{itemize}
 \end{itemize}
 
-Considering the requirements, availability, and cost, the STM32F072 microcontroller will be used for the first prototypes, with the expectation of later porting the project to more powerful or power-efficient devices, like the STM32L072, STM32F103, STM32F303, or other STM32 microcontrollers. 
+Considering the requirements, availability, and cost, the STM32F072 microcontroller will be used for the first prototypes, with the expectation of later porting the project to more powerful or power-efficient devices, like the STM32L072, STM32F103, STM32F303, or other STM32 microcontrollers.
 
 The STM32F072 is a Cortex M0 device with 128\,KiB of flash memory, 16\,KiB of RAM and running at up to of 48\,MHz. It is equipped with a USB Full Speed peripheral block, a 12-bit ADC and DAC, a number of general purpose timers/counters, SPI, I$^2$C, and USART peripherals. It further supports a crystal-less USB operation, using the USB SOF packet for synchronization.
 

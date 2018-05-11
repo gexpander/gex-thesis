@@ -8,8 +8,19 @@ GEX uses a framing library \textit{TinyFrame}, developed likewise by the author 
 
 \section{Frame Structure}
 
-Message frames have the following structure:
+Message frames have the following structure (all little-endian):
 
+\begin{boxedpayload}[``TinyFrame'' frame structure, as used in GEX]
+	\cfield{u8} start-of-frame marker (0x01)
+	\cfield{u16} frame ID
+	\cfield{u16} payload length
+	\cfield{u8} frame type
+	\cfield{u8} header checksum	
+	\cfield{u8[]} payload
+	\cfield{u8} payload checksum (omitted for empty payloads)
+\end{boxedpayload}
+
+\iffalse
 \begin{table}[h]
 	\centering
 	%\hspace{-1.5em}
@@ -42,8 +53,7 @@ Message frames have the following structure:
 		\bottomrule
 	\end{tabular}
 \end{table}
-
-The field widths shown here are those used in GEX; TinyFrame is flexible and the data type of all fields can be customized, as well as the checksum type. The SOF byte is always 0x01.
+\fi
 
 \textit{Frame ID}, which could be better described as \textit{Transaction ID}, uniquely identifies each transaction. The most significant bit is set to a different value in each peer to avoid ID conflicts, and the rest of the ID field is incremented with each initiated transaction.
 
@@ -73,7 +83,7 @@ The following table lists all frame types used by GEX. It is divided into four l
 		0x04 & Bulk Read Poll & \textit{Requesting to read a block of data} \\
 		0x05 & Bulk Write Offer & \textit{An offer to receive a bulk write transaction} \\
 		0x06 & Bulk Data & \textit{Used for both reading and writing} \\
-		0x07 & Bulk End & \textit{Marks the last "Bulk Data" frame} \\
+		0x07 & Bulk End & \textit{Marks the last ``Bulk Data'' frame} \\
 		0x08 & Bulk Abort & \textit{} \\
 		\midrule
 		0x10 & Unit Request & \textit{Request to a unit} \\
@@ -108,52 +118,50 @@ Figure \ref{fig:bulk-rw} shows a diagram of the bulk read and write data flow.
 
 To read an INI file, we first send a frame 0x21 (INI Read), specifying the target file in the payload:
 
-\begin{minted}{c}
-struct Payload_INI_Read {
-    uint8_t filenum; // 0 - UNITS.INI, 1 - SYSTEM.INI
-};
-\end{minted}
+\begin{boxedpayload}[INI Read frame structure]
+	\cfield{u8} which file to write
+		\begin{pldlist}
+			\item 0 \dots UNITS.INI
+			\item 1 \dots SYSTEM.INI
+		\end{pldlist}
+\end{boxedpayload}
 
 What follows is a standard bulk read transaction with the requested file.
 GEX offers the file for reading with a frame 0x03 (Bulk Read Offer):
 
-\begin{minted}{c}
-struct Payload_BulkReadOffer {
-    uint32_t total_length;   // full size of the file in bytes
-    uint32_t max_chunk_size; // largest chunk that can be read at once
-};
-\end{minted}
+\begin{boxedpayload}[Bulk Read frame structure]
+	\cfield{u32} full size of the file in bytes
+	\cfield{u32} largest chunk that can be read at once
+\end{boxedpayload}
 
 Now we can proceed to read the file using 0x04 (Bulk Read Poll), which is always responded to with 0x06 (Bulk Data), or 0x07 (Bulk End) if this was the last frame. Data frames have only the useful data as their payload.
 
 The 0x04 (Bulk Read Poll) payload specifies how many bytes we want to read:
 
-\begin{minted}{c}
-struct Payload_BulkReadPoll {
-    uint32_t max_chunk_size; // how many bytes to read
-};
-\end{minted}
+\begin{boxedpayload}[Bulk Read Poll frame structure]
+	\cfield{u32} how many bytes to read (at most)
+\end{boxedpayload}
 
 \subsection{Bulk Write}
 
-To overwrite an INI file, we first send a frame 0x22 (INI Write), specifying its size in the payload. Which file is written is detected automatically from the first INI section.
+To overwrite an INI file, we first send a frame 0x22 (INI Write) with the file size as its payload. The name of the file is irrelevant, as it's detected automatically by inspecting the content.
 
-\begin{minted}{c}
-struct Payload_INI_Write {
-    uint32_t total_length; //  file size in bytes
-};
-\end{minted}
+\begin{boxedpayload}[INI Write frame structure]
+	\cfield{u32} size of the written file, in bytes
+\end{boxedpayload}
 
-The write request is confirmed by a frame 0x05 (Bulk Write Offer):
+The write request is confirmed by a frame 0x05 (Bulk Write Offer) sent back:
 
-\begin{minted}{c}
-struct Payload_BulkWriteOffer {
-    uint32_t total_length;   // the expected file size in bytes
-    uint32_t max_chunk_size; // largest chunk that can be written at once
-};
-\end{minted}
+\begin{boxedpayload}[Bulk Write Offer frame structure]
+	\cfield{u32} total bytes to write (here copied from the request frame)
+	\cfield{u32} how many bytes may be written per message
+\end{boxedpayload}
 
-We can now send the file as a series of frames 0x06 (Bulk Data), or 0x07 (Bulk End) in the last frame. Each written chunk is confirmed by 0x00 (Success).
+We can now send the file as a series of frames 0x06 (Bulk Data), or 0x07 (Bulk End) in the last frame, with chunks of the data as their payload. Each frame is confirmed by 0x00 (Success).
+
+\begin{boxedpayload}[Bulk Data or Bulk End frame structure]
+	\cfield{u8[]} a chunk of the written file
+\end{boxedpayload}
 
 \subsection{Persisting the Changed Configuration to Flash}
 
@@ -166,21 +174,20 @@ It should be noted that after flashing a firmware, the Flash control registers m
 
 \section{Reading a List of Units}
 
-The frame 0x20 (List Units) requests a list of all available units in the GEX module. The list includes all units' callsigns, names and types. The response payload has the following format (in pseudocode, as it can't be expressed as a C struct like the previous examples):
+The frame 0x20 (List Units) requests a list of all available units in the GEX module. The list includes all units' callsigns, names and types. The response payload has the following format (in pseudocode):
 
-\begin{minted}{c}
-struct {
-    uint8_t count;
-    for all units {
-        uint8_t callsign;
-        cstring unit_name;   // 0-terminated char array
-        cstring driver_name;
-    }
-}
-\end{minted}
+\begin{boxedpayload}[List Units response structure (frame type Success)]
+	\cfield{u8} the number of available units
+	\item For each unit:
+		\begin{pldlist}
+			\cfield{u8} unit callsign
+			\cfield{char[]} unit name (zero-terminated string)
+			\cfield{char[]} unit type (zero-terminated string)
+		\end{pldlist}
+\end{boxedpayload}
 
 
-\section{Unit Requests and Reports}
+\section{Unit Requests and Reports} \label{sec:unit_requests_reports}
 
 Frame types 0x10 (Unit Request) and 0x11 (Unit Report) are dedicated to messages sent to and by unit instances. Each has a fixed header (\textit{inside the payload}) followed by unit-specific data.
 
@@ -188,13 +195,11 @@ Frame types 0x10 (Unit Request) and 0x11 (Unit Report) are dedicated to messages
 
 Unit requests deliver a message from the host to a unit instance. Unit drivers implements different commands, each with its own payload structure. The frame 0x10 (Unit Request) has the following structure:
 
-\begin{minted}{c}
-struct Payload_UnitRequest {
-    uint8_t callsign;
-    uint8_t command;   // handled by the unit driver
-    uint8_t payload[]; // size and content depend on the command
-};
-\end{minted}
+\begin{boxedpayload}[Unit Request frame structure]
+	\cfield{u8} unit callsign
+	\cfield{u8} command number, handled by the unit driver
+	\cfield{u8[]} command payload, handled by the unit driver; its size and content depend on the unit driver and the particular command number
+\end{boxedpayload}
 
 The most significant bit of the command byte (0x80) has a special meaning: when set, the message delivering routine responds with 0x00 (Success) after the command completes, unless an error occurred. That is used to get a confirmation that the message was delivered and the module operates correctly (as opposed to e.g. a lock-up resulting in a watchdog reset). Requests which normally generate a response (e.g. reading a value from the unit) should not be sent with this bit set. As a result of this special treatment of the highest bit, there can be only 127 different commands per unit.
 
@@ -202,15 +207,12 @@ The most significant bit of the command byte (0x80) has a special meaning: when 
 
 Several unit types can produce asynchronous events, such as reporting a pin change or a triggering condition. The event is timestamped and sent with a frame type 0x11 (Unit Report):
 
-\begin{minted}{c}
-struct Payload_UnitRequest {
-    uint8_t callsign;
-    uint8_t report_type; // defines the payload structure
-    uint64_t timestamp;  // microseconds since power-on
-    uint8_t payload[];   // size and content depend on the report type
-};
-\end{minted}
-
+\begin{boxedpayload}[Unit Report (event) frame structure]
+	\cfield{u8} unit callsign
+	\cfield{u8} report type, defined by the unit driver
+	\cfield{u64} event time (microseconds since power-on)
+	\cfield{u8[]} report payload; its size and content depend on the unit driver and the particular report type
+\end{boxedpayload}
 
 
 

@@ -1,17 +1,16 @@
 \chapter{Units Overview, Commands and Events Description}
 
-This chapter describes all functional blocks (units) implemented in GEX at the time of publication of this work. Each unit supports a different set of binary commands and events. The term ``unit'' will be used to refer to both unit types (drivers) or their instances, where the distinction is not important.
+This chapter describes all functional blocks (units) implemented in GEX, version 1.0. The term ``unit'' will be used here to refer to both unit types (drivers) or their instances where the distinction is not important.
 
-\todo[inline]{link to the chapter about tinyframe as it's important for context here}
-\todo[inline]{also some diagram here}
+Each unit's description will be accompanied by a corresponding snippet from the configuration file, and a list of supported commands and events. The commands and events described here form the payload of TinyFrame messages 0x10 (Unit Request) and 0x11 (Unit Report), as described in section \ref{sec:unit_requests_reports}. The number in the first column of the command (or event) tables, marked as ``Code'', is the command number (or report type) used in the payload to identify how the message data should be treated.
 
-Each unit's description will be accompanied by a corresponding snippet from the configuration file, and a list of supported commands and events. When the command's request payload is empty, it's omitted from the table. The same applies to commands with no response, in which case adding 0x80 to the command number triggers a SUCCESS response if the command succeeds.
+When the request or response payload is empty, it's omitted from the table. The same applies to commands with no response, in which case adding 0x80 to the command number triggers a SUCCESS response after the command is finished.
 
 \section{Naming Conventions and Common Principles}
 
 \subsection{Unit Naming}
 
-Unit types are named in uppercase (e.g. SPI, 1WIRE, NPX) in the INI file and in the list of units. Unit instances can be named in any way the user desires; Using lowercase makes it easier to distinguish them from unit types. It is advisable to use descriptive names, e.g. not ``pin1'' but rather ``button''.
+Unit types are named in uppercase (e.g. SPI, 1WIRE, NPX) in the INI file and in the list of units. Unit instances can be named in any way the user desires; using lowercase makes it easier to distinguish them from unit types. It is advisable to use descriptive names, e.g. not ``pin1'' but rather ``button''.
 
 \subsection{Packed Pin Access}
 

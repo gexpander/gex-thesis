@@ -5,7 +5,7 @@ This chapter presents an overview of the \gls{USB} Full Speed interface, with fo
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.8\textwidth] {img/usb-hierarchy.png}
-	\caption[USB hierarchical structure]{\label{fig:usb-hierarchy}A diagram from the USB specification rev. 1.1 showing the hierarchical structure of the USB bus; The PC (Host) controls the bus and initiates all transactions.}
+	\caption[USB hierarchical structure]{\label{fig:usb-hierarchy}A diagram from the USB specification rev. 1.1 showing the hierarchical structure of the USB bus; the PC (Host) controls the bus and initiates all transactions.}
 \end{figure}
 
 \section{Basic Principles and Terminology}
@@ -22,7 +22,7 @@ This chapter presents an overview of the \gls{USB} Full Speed interface, with fo
 
 Endpoints can be either unidirectional or bidirectional; the direction from the host to a function is called OUT, the other direction (function the host) is called IN. A bidirectional endpoint is technically composed of a IN and OUT endpoint with the same number. All transactions (both IN and OUT) are initiated by the host; functions have to wait for their turn. Endpoint 0 is bidirectional, always enabled, and serves as a \textit{control endpoint}. The host uses the control endpoint to read information about the device and configure it as needed.
 
-There are four types of transfers: control, bulk, isochronous, and interrupt. Each endpoint is configured for a fixed transfer type. 
+There are four types of transfers: control, bulk, isochronous, and interrupt. Each endpoint is configured for a fixed transfer type.
 
 \begin{itemize}
 	\item \textit{Control} - initial configuration after device plug-in; also used for other aplication-specific control messages that can affect other pipes.
@@ -71,7 +71,7 @@ The data lines, D+ and D--, are also commonly labeled DP and DM. This differenti
 	\caption[USB pull-ups]{\label{fig:usb-pullup-fs}Pull-up and pull-down resistors of a Full Speed function, as prescribed by the USB specification rev. 2.0}
 \end{figure}
 
-When a function wants to be re-enumerated by the host, which is needed to reload the descriptors and re-attach the correct drivers, it can momentarily remove the pull-up resistor, which the host will interpret as if the device was plugged out. With an internal pull-up this can be done by flipping a bit in a control register. An external resistor can be connected through a transistor controlled by a \gls{GPIO} pin. 
+When a function wants to be re-enumerated by the host, which is needed to reload the descriptors and re-attach the correct drivers, it can momentarily remove the pull-up resistor, which the host will interpret as if the device was plugged out. With an internal pull-up this can be done by flipping a bit in a control register. An external resistor can be connected through a transistor controlled by a \gls{GPIO} pin.
 
 \todo[inline]{https://www.eevblog.com/forum/projects/driving-the-1k5-usb-pull-up-resistor-on-d/}
 \todo[inline]{http://www.beyondlogic.org/usbnutshell/usb2.shtml}
@@ -90,7 +90,7 @@ The \gls{MSC} is supported by all modern operating systems (MS Windows, MacOS, G
 %http://www.usb.org/developers/docs/devclass_docs/Mass_Storage_Specification_Overview_v1.4_2-19-2010.pdf
 %http://www.usb.org/developers/docs/devclass_docs/usbmassbulk_10.pdf
 
-The \gls{MSC} specification defines multiple \textit{transport protocols} that can be selected using the descriptors. For it's simplicity, the \gls{BOT} will be used. \gls{BOT} uses two bulk endpoints for reading and writing blocks of data and for the exchange of control commands and status messages. For the device to be recognized by the operating system, it must also implement a \textit{command set}. Most mass storage devices use the \textit{\gls{SCSI} Transparent command set} 
+The \gls{MSC} specification defines multiple \textit{transport protocols} that can be selected using the descriptors. For it's simplicity, the \gls{BOT} will be used. \gls{BOT} uses two bulk endpoints for reading and writing blocks of data and for the exchange of control commands and status messages. For the device to be recognized by the operating system, it must also implement a \textit{command set}. Most mass storage devices use the \textit{\gls{SCSI} Transparent command set}
 \footnote{To confirm this assertion, the descriptors of five thumb drives and an external hard disk were analyzed using \verb|lsusb|. All but one device used the SCSI command set, one (the oldest thumb drive) used \textit{SFF-8070i}. A list of possible command sets can be found in TODO (usb spec overview)}.
 The command set's commands let the host read information about the attached storage, such as its capacity, and check for media presence and readiness to write or detach. This is used e.g. for the "Safely Remove" function which checks that all internal buffers have been written to Flash.
 
@@ -112,7 +112,7 @@ In order to emulate a mass storage device without having a physical storage medi
 
 %https://www.keil.com/pack/doc/mw/USB/html/group__usbd__cdc_functions__acm.html
 
-Historically meant for modem communication, this class is now the de facto standard way of making \gls{USB} devices appear as serial ports on the host \gls{OS}. The \gls{CDC} uses three endpoints: bulk IN and OUT, and an interrupt endpoint. 
+Historically meant for modem communication, this class is now the de facto standard way of making \gls{USB} devices appear as serial ports on the host \gls{OS}. The \gls{CDC} uses three endpoints: bulk IN and OUT, and an interrupt endpoint.
 
 \todo{verify this vvv}
 The interrupt endpoint is used for control commands and notifications while the bulk endpoints are used for useful data. \gls{ACM} stands for \textit{Abstract Control Model} and it's a \gls{CDC}'s subclass that defines the control messages format. Since we don't use a physical UART and the line is virtual both on the PC and in the end device, the control commands can be ignored.
@@ -123,7 +123,7 @@ An interesting property of this class is that the bulk endpoints transport raw d
 
 Since it's creation, the \gls{USB} specification expected that each function will have only one interface enabled at a time. After it became apparent that there is a need for having multiple unrelated interfaces work in parallel, a workaround called the \gls{IAD} was introduced. \gls{IAD} is an entry in the descriptor table that defines which interfaces belong together and should be handled by the same software driver.
 
-To use the \gls{IAD}, the function's class must be set to 239 (0xEF), subclass 2 and protocol 1, so the \gls{OS} knows to look for the presence of \glspl{IAD} before binding drivers to any interfaces. 
+To use the \gls{IAD}, the function's class must be set to 239 (0xEF), subclass 2 and protocol 1, so the \gls{OS} knows to look for the presence of \glspl{IAD} before binding drivers to any interfaces.
 
 % TODO link to some references..
 
