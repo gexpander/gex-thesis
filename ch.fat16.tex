@@ -35,7 +35,7 @@ This is a 1-sector structure which holds the \gls{OS} bootstrap code for bootabl
 
 The data area of the disk is organized in clusters, logical allocation units composed of groups of sectors. The use of a larger allocation unit allows the system to use shorter addresses and thus support a larger disk capacity.
 
-The \gls{FAT} acts as a look-up table combined with linked lists. In FAT16, it is organized in 16-bit fields, each corresponding to one cluster. The first two entries in the allocation table are reserved and hold special values set by the disk formatter and the host \gls{OS}: a "media descriptor" 0xFFF8 and a "clean/dirty flag" 0xFFFF/0x3FFF.
+The \gls{FAT} acts as a look-up table combined with linked lists. In FAT16, it is organized in 16-bit fields, each corresponding to one cluster. The first two entries in the allocation table are reserved and hold special values set by the disk formatter and the host \gls{OS}: a ``media descriptor'' 0xFFF8 and a ``clean/dirty flag'' 0xFFFF/0x3FFF.
 
 Files can span multiple clusters; each \gls{FAT} entry either holds the address of the following file cluster, or a value with a special meaning:
 

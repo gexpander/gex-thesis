@@ -44,26 +44,12 @@ The function's endpoints are grouped into \textit{interfaces}. An interface desc
 
 \section{USB Physical Layer}
 
-\gls{USB} uses differential signaling with \gls{NRZI} encoding (fig. \ref{fig:nrzi}) and bit stuffing. The encoding, together with frame formatting, checksum verification, retransmission, and other low level aspects of the \gls{USB} connection are entirely handled by the \gls{USB} block in the microcontroller's silicon; normally we do not need to worry about those details. What needs more attention are the electrical characteristics of the bus, which need to be understood correctly for a successful schematic and \gls{PCB} design.
+\gls{USB} uses differential signaling with \gls{NRZI} encoding and bit stuffing (the insertion of dummy bits to prevent long intervals in the same \gls{DC} level). The encoding, together with frame formatting, checksum verification, retransmission, and other low level aspects of the \gls{USB} connection are entirely handled by the \gls{USB} physical interface block in the microcontroller's silicon; normally we do not need to worry about those details. What needs more attention are the electrical characteristics of the bus, which need to be understood correctly for a successful schematic and \gls{PCB} design.
 
-\begin{wrapfigure}[4]{r}{0.4\textwidth}
-	\centering
-	\includegraphics[width=0.3\textwidth]{img/usb-nrzi-diagram.png}
-	\caption{\label{fig:nrzi}NRZI encoding example}
-\end{wrapfigure}
+\noindent
+The \gls{USB} cable contains 4 conductors: V$_\mathrm{BUS}$ (+5\,V), D+, D--, and \gls{GND}. The data lines, D+ and D--, are also commonly labeled DP and DM. This differential pair should be routed in parallel on the \gls{PCB} and kept at the same length.
 
-The \gls{USB} cable contains 4 conductors:
-
-\begin{itemize}\setlength\itemsep{.2em}
-	\item V$_\mathrm{BUS}$ (+5\,V)
-	\item D+
-	\item D--
-	\item Ground
-\end{itemize}
-
-The data lines, D+ and D--, are also commonly labeled DP and DM. This differential pair should be routed in parallel and kept at approximately the same length.
-
-\gls{USB} revisions are, where possible, backwards compatible, often even keeping the same connector shape. The bus speed is negotiated by the device using a 1.5\,k$\Omega$ pull-up resistor to 3.3\,V on one of the data lines: for Full Speed, D+ is pulled high (figure \ref{fig:usb-pullup-fs}), for Low Speed it's on D--. The polarity of the differential signals is inverted depending on the used speed. Some microcontrollers integrate the correct pull-up resistor inside the \gls{USB} block (including out STM32F072), removing the need for an external resistor.
+\gls{USB} versions are often backwards compatible, even keeping the same connector shape. The bus speed to use is requested by the device using a 1.5\,k$\Omega$ pull-up resistor to 3.3\,V on one of the data lines: for Full Speed, D+ is pulled high (figure \ref{fig:usb-pullup-fs}), for Low Speed it's on D--. The polarity of the differential signals is inverted depending on the used speed. Some microcontrollers integrate the correct pull-up resistor inside the \gls{USB} block (including out STM32F072), removing the need for an external resistor.
 
 \begin{figure}
 	\centering
