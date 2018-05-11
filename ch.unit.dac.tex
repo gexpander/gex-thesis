@@ -1,6 +1,6 @@
 \section{DAC Unit}
 
-The digital/analog unit works with the two-channel DAC peripheral of the microcontroller. It can be used in two modes: DC output, and waveform generation.
+The digital/analog unit works with the two-channel \gls{DAC} peripheral of the microcontroller. It can be used in two modes: \gls{DC} output, and waveform generation.
 
 The waveform mode implements direct digital synthesis (explained in section \ref{sec:theory-dac-dds}) of a sine, rectangle, sawtooth or triangle wave. The generated frequency can be set with a sub-hertz precision up to the lower tens of kHz. The two outputs can use a different waveform shape, be synchronized, and their phase offset, as well as frequency, is dynamically adjustable.
 
@@ -34,14 +34,14 @@ Channels are specified in all commands as bit map:
 
 \begin{cmdlist}
 	0 & \cname{WAVE\_DC}
-	Set a DC level, disable DDS for the channel
+	Set a \gls{DC} level, disable \gls{DDS} for the channel
 	& \begin{cmdreq}
 		\cfield{u8} channels
 		\cfield{u16} level (0--4095)
 	\end{cmdreq} \\
 
 	1 & \cname{WAVE\_SINE}
-	Start a DDS sine waveform
+	Start a sine waveform
 	& \begin{cmdreq}
 		\cfield{u8} channels
 	\end{cmdreq} \\
@@ -92,7 +92,7 @@ Channels are specified in all commands as bit map:
 	\end{cmdreq} \\
 
 	22 & \cname{SET\_DITHER}
-	Control the dithering function of the DAC block. A high noise amplitude can cause an overflow to the other end of the output range due to a bug in the DAC peripheral. Use value 255 to leave the parameter unchanged.
+	Control the dithering function of the \gls{DAC} block. A high noise amplitude can cause an overflow to the other end of the output range due to a bug in the \gls{DAC} peripheral. Use value 255 to leave the parameter unchanged.
 
 	& \begin{cmdreq}
 		\cfield{u8} channels

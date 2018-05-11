@@ -27,15 +27,15 @@ data-pins=3
 
 \begin{cmdlist}
 	0 & \cname{WRITE}
-	Load the shift registers and leave the data outputs in the "trailing data" state before sending the Store pulse.
-	& 
+	Load the shift registers and leave the data outputs in the ``trailing data'' state before sending the Store pulse.
+	&
 	\begin{cmdreq}
 		\cfield{u16} trailing data
 		\item For each output (same size)
 		\begin{pldlist}
 			\cfield{u8[]} data to load
 		\end{pldlist}
-	\end{cmdreq} 
+	\end{cmdreq}
 	\\
 
 	1 & \cname{DIRECT\_DATA}
@@ -45,16 +45,16 @@ data-pins=3
 		\cfield{u16} values to write
 	\end{cmdreq} \\
 
-	2 & 
-	\cname{DIRECT\_CLEAR} 
+	2 &
+	\cname{DIRECT\_CLEAR}
 	Pulse the Clear pin, erasing the registers' data & \\
-	
-	3 & 
+
+	3 &
 	\cname{DIRECT\_SHIFT}
 	Pulse the Shift pin & \\
-	
-	4 & 
-	\cname{DIRECT\_STORE} 
+
+	4 &
+	\cname{DIRECT\_STORE}
 	Pulse the Store pin & \\
 \end{cmdlist}
 

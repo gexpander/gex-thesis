@@ -1,6 +1,6 @@
 \section{NeoPixel Unit}
 
-The NeoPixel unit implements the protocol needed to control a digital LED strip with WS2812, WS2811, or compatible LED driver chips. The protocol timing is implemented in software, therefore it is available on any GPIO pin of the module.
+The NeoPixel unit implements the protocol needed to control a digital \gls{LED} strip with WS2812, WS2811, or compatible \gls{LED} driver chips. The protocol timing is implemented in software, therefore it is available on any GPIO pin of the module.
 
 The color data can be loaded in five different format: as packed bytes, or as the little-endian or big-endian encoding of colors in the 32-bit format 0x00RRGGBB or 0x00BBGGRR. This data format is convenient when the colors are already represented by an array of 32-bit integers.
 
@@ -18,7 +18,7 @@ pixels=32
 
 \begin{cmdlist}
 	0 & \cname{CLEAR}
-	Switch all LEDs off (sets them to black) & \\
+	Switch all \glspl{LED} off (sets them to black) & \\
 
 	1 & \cname{LOAD}
 	Load a sequence of R,G,B bytes
@@ -56,9 +56,9 @@ pixels=32
 	\end{cmdreq} \\
 
 	10 & \cname{GET\_LEN}
-	Get number of LEDs in the strip
+	Get number of \glspl{LED} in the strip
 	& \begin{cmdresp}
-		\cfield{u16} number of LEDs
+		\cfield{u16} number of \glspl{LED}
 	\end{cmdresp} \\
 
 \end{cmdlist}

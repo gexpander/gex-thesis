@@ -1,10 +1,10 @@
 \section{SPI Unit}
 
-The SPI unit provides access to one of the microcontroller's SPI peripherals. It can be configured to use any of the different speeds, clock polarity and phase settings available in its control registers.
+The \gls{SPI} unit provides access to one of the microcontroller's \gls{SPI} peripherals. It can be configured to use any of the different speeds, clock polarity and phase settings available in its control registers.
 
-The unit handles up to 16 slave select (NSS) signals and supports message multi-cast (addressing more than one slaves at once). Protection resistors should be used if a multi-cast transaction is issued with MISO connected.
+The unit handles up to 16 slave select (\gls{NSS}) signals and supports message multi-cast (addressing more than one slaves at once). Protection resistors should be used if a multi-cast transaction is issued with \gls{MISO} connected.
 
-The QUERY command of this unit, illustrated by figure \ref{fig:spi_query}, is flexible enough to support all types of SPI transactions: read-only, write-only, and read-write with different request and response lengths. The slave select pin is held low during the entire transaction.
+The QUERY command of this unit, illustrated by figure \ref{fig:spi_query}, is flexible enough to support all types of \gls{SPI} transactions: read-only, write-only, and read-write with different request and response lengths. The slave select pin is held low during the entire transaction.
 
 \begin{figure}[h]
 	\centering

@@ -1,19 +1,21 @@
-\chapter{Units Overview and API}
+\chapter{Units Overview, Commands and Events Description}
 
-This chapter describes all functional blocks (units) implemented in GEX at the time of publication of this work. Each unit supports a different set of binary commands and events. The term "unit" will be used to refer to both unit types (drivers) or their instances, where the distinction is not important.
+This chapter describes all functional blocks (units) implemented in GEX at the time of publication of this work. Each unit supports a different set of binary commands and events. The term ``unit'' will be used to refer to both unit types (drivers) or their instances, where the distinction is not important.
+
+\todo[inline]{link to the chapter about tinyframe as it's important for context here}
+\todo[inline]{also some diagram here}
 
 Each unit's description will be accompanied by a corresponding snippet from the configuration file, and a list of supported commands and events. When the command's request payload is empty, it's omitted from the table. The same applies to commands with no response, in which case adding 0x80 to the command number triggers a SUCCESS response if the command succeeds.
-
 
 \section{Naming Conventions and Common Principles}
 
 \subsection{Unit Naming}
 
-Unit types are named in uppercase (e.g. SPI, 1WIRE, NPX) in the INI file and in the list of units. Unit instances can be named in any way the user desires; Using lowercase makes it easier to distinguish them from unit types. It is advisable to use descriptive names, e.g. not "pin1" but rather "button".
+Unit types are named in uppercase (e.g. SPI, 1WIRE, NPX) in the INI file and in the list of units. Unit instances can be named in any way the user desires; Using lowercase makes it easier to distinguish them from unit types. It is advisable to use descriptive names, e.g. not ``pin1'' but rather ``button''.
 
 \subsection{Packed Pin Access}
 
-Several units facilitate an access to a group of GPIO pins, such as the digital input and output units, or the SPI unit's slave select pins. The STM32 microcontroller's ports have 16 pins each, most of which can be configured to one of several alternate functions (e.g. SPI, PWM outputs, ADC input). As a consequence, it's common to be left with a discontiguous group of pins after assigning all the alternate functions needed by an application. 
+Several units facilitate an access to a group of GPIO pins, such as the digital input and output units, or the SPI unit's slave select pins. The STM32 microcontroller's ports have 16 pins each, most of which can be configured to one of several alternate functions (e.g. SPI, PWM outputs, ADC input). As a consequence, it's common to be left with a discontiguous group of pins after assigning all the alternate functions needed by an application.
 
 \begin{figure}[h]
 	\centering
@@ -21,7 +23,7 @@ Several units facilitate an access to a group of GPIO pins, such as the digital 
 	\caption{\label{fig:pin-packing}Pin packing}
 \end{figure}
 
-For instance, we could only have the pins 0, 1, 12--15 available on a GPIO port. GEX provides a helpful abstraction to bridge the gaps in the port: The selected pins are packed together and represented, in commands and events, as a block of six pins (0x3F) instead of their original positions in the register (0xF003). This scheme is shown in figure \ref{fig:pin-packing}. The translation is done in the unit driver and works transparently, as if the block of pins had no gaps---all the referenced pins are updated simultaneously without glitches. Where pin numbers are used, the order in the packed word should be provided---in our example, that would be 0--5, counting from the least significant bit.
+For instance, we could only have the pins 0, 1, 12--15 available on a \gls{GPIO} port. GEX provides a helpful abstraction to bridge the gaps in the port: The selected pins are packed together and represented, in commands and events, as a block of six pins (0x3F) instead of their original positions in the register (0xF003). This scheme is shown in figure \ref{fig:pin-packing}. The translation is done in the unit driver and works transparently, as if the block of pins had no gaps---all the referenced pins are updated simultaneously without glitches. Where pin numbers are used, the order in the packed word should be provided---in our example, that would be 0--5, counting from the least significant bit.
 
 
 % here are the unit sections, all following a common pattern

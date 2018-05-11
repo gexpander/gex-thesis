@@ -1,6 +1,6 @@
-\section{I2C Unit}
+\section{I\textsuperscript{2}C Unit}
 
-The I2C unit provides access to one of the microcontroller's I2C peripherals. It can be configured to use either of the three speeds (Standard, Fast and Fast+) and supports both 10-bit and 7-bit addressing. 10-bit addresses can be used in commands by setting their highest bit (0x8000), as a flag to the unit.
+The \gls{I2C} unit provides access to one of the microcontroller's \gls{I2C} peripherals. It can be configured to use either of the three speeds (Standard, Fast and Fast+) and supports both 10-bit and 7-bit addressing. 10-bit addresses can be used in commands by setting their highest bit (0x8000), as a flag to the unit.
 
 \subsection{I2C Configuration}
 
@@ -21,7 +21,7 @@ analog-filter=Y
 digital-filter=0
 \end{inicode}
 
-\subsection{I2C Commands}
+\subsection{I\textsuperscript{2}C Commands}
 
 \begin{cmdlist}
 
@@ -44,7 +44,7 @@ digital-filter=0
     \end{cmdresp} \\
 
 	2 & \cname{WRITE\_REG}
-	Write to a slave register. Sends the register number and the data in the same I2C transaction. Multiple registers can be written to slaves supporting auto-increment.
+	Write to a slave register. Sends the register number and the data in the same \gls{I2C} transaction. Multiple registers can be written to slaves supporting auto-increment.
 	& \begin{cmdreq}
 		\cfield{u16} slave address
 		\cfield{u8} register number

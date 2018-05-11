@@ -1,8 +1,8 @@
 \section{ADC Unit}
 
-The analog/digital converter unit is one of the most complicated units implemented in the project. The unit can measure the voltage on an input pin, either as its immediate value, or averaged with exponential forgetting. Isochronous sampling is available as well: It's possible to capture a fixed-length block of data on demand, or as a response to a triggering condition on any of the enabled input pins. The ADC must continuously sample the inputs to make the averaging and level based triggering possible; As a consequence, a pre-trigger buffer is available that can be read together with the block of samples following a trigger. The ADC unit can also be switched to a continuous streaming mode.
+The analog/digital converter unit is one of the most complicated units implemented in the project. The unit can measure the voltage on an input pin, either as its immediate value, or averaged with exponential forgetting. Isochronous sampling is available as well: It's possible to capture a fixed-length block of data on demand, or as a response to a triggering condition on any of the enabled input pins. The \gls{ADC} must continuously sample the inputs to make the averaging and level based triggering possible; As a consequence, a pre-trigger buffer is available that can be read together with the block of samples following a trigger. The \gls{ADC} unit can also be switched to a continuous streaming mode.
 
-It's possible to activate any number of the 16 analog inputs of the ADC peripheral simultaneously. The maximum continuous sampling frequency, which reaches 70\,ksps with one channel, lowers with an increasing number of enabled channels as the amount of data to transfer to the host increases.
+It's possible to activate any number of the 16 analog inputs of the \gls{ADC} peripheral simultaneously. The maximum continuous sampling frequency, which reaches 70\,ksps with one channel, lowers with an increasing number of enabled channels as the amount of data to transfer to the host increases.
 
 
 
@@ -88,7 +88,7 @@ avg_factor=500
 	\\
 
 	2 & \cname{READ\_CAL\_CONSTANTS}
-	Read factory calibration constants from the MCU's ROM
+	Read factory calibration constants from the \gls{MCU}'s \gls{ROM}
 	&
 	\begin{cmdresp}
 		\cfield{u16} VREFINT\_CAL (raw word)
@@ -196,7 +196,7 @@ avg_factor=500
     \\
 
 	31 & \cname{SET\_SAMPLE\_TIME}
-	Set the sample time of the ADC's sample\&hold circuit.
+	Set the sample time of the \gls{ADC}'s sample\&hold circuit.
 	&
 	\begin{cmdreq}
 		\cfield{u8} sample time 0--7

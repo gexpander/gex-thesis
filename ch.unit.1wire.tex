@@ -2,9 +2,9 @@
 
 The 1-Wire unit implements the Dallas Semiconductor's 1-Wire protocol, most commonly used to interface smart thermometers (DS18x20). The protocol is explained in section \ref{sec:theory-1wire}.
 
-This unit implements the ROM Search algorithm that is used to find the unique IDs of all 1-Wire devices connected to the bus. The algorithm can find up to 32 devices in one run; More devices can be found by issuing the SEARCH\_CONTINUE command.
+This unit implements the ROM Search algorithm that is used to find the ROM codes of all 1-Wire devices connected to the bus. The algorithm can find up to 32 devices in one run; More devices can be found by issuing the SEARCH\_CONTINUE command.
 
-Devices are addressed using their 64-bit (8-byte) identifiers. When only one device is connected, the value 0 may be used and the addressing will be skipped. Its ID may be recovered using the READ\_ADDR command or by the search algorithm.
+Devices are addressed using their ROM codes, unique 64-bit (8-byte) identifiers that work as addresses. When only one device is connected, the value 0 may be used instead and the addressing will be skipped. Its ROM code may be recovered using the READ\_ADDR command or by the search algorithm.
 
 \subsection{1-Wire Configuration}
 
@@ -29,41 +29,41 @@ parasitic=N
 	Start the search algorithm.
 	& \begin{cmdresp}
 		\cfield{u8} should continue (0, 1)
-		\cfield{u64[]} device addresses
+		\cfield{u64[]} ROM codes
 	 \end{cmdresp} \\
 
 	2 & \cname{SEARCH\_ALARM}
 	Start the search algorithm, finding only devices in an alarm state.
 	& \begin{cmdresp}
 		\cfield{u8} should continue (0, 1)
-		\cfield{u64[]} device addresses
+		\cfield{u64[]} ROM codes
 	 \end{cmdresp} \\
 
 	3 & \cname{SEARCH\_CONTINUE}
 	Continue a previously started search
 	& \begin{cmdresp}
 		\cfield{u8} should continue (0, 1)
-		\cfield{u64[]} device addresses
+		\cfield{u64[]} ROM codes
 	 \end{cmdresp} \\
 
 	4 & \cname{READ\_ADDR}
 	Read a device address (single device only)
 	& \begin{cmdresp}
-		\cfield{u64} device address
+		\cfield{u64} ROM code
 	 \end{cmdresp} \\
 
 	10 & \cname{WRITE}
 	Write bytes to a device.
 	& \begin{cmdreq}
-		\cfield{u64} device address
+		\cfield{u64} ROM code
 		\cfield{u8[]} bytes to write
 	\end{cmdreq} \\
 
 	11 & \cname{READ}
 	Write a request and read response.
-	& 
+	&
 	\begin{cmdreq}
-		\cfield{u64} device address
+		\cfield{u64} ROM code
 		\cfield{u16} read length
 		\cfield{u8} verify checksum (0, 1)
 		\cfield{u8[]} request bytes
@@ -71,7 +71,7 @@ parasitic=N
 	\cjoin
 	\begin{cmdresp}
 		\cfield{u8[]} read bytes
-	\end{cmdresp} 
+	\end{cmdresp}
 	\\
 
 	20 & \cname{POLL\_FOR\_1}

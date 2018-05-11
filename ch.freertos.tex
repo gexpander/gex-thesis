@@ -20,7 +20,7 @@ Tasks can be in one of four states: Suspended, Ready, Blocked, Running. The Susp
 
 Task switching occurs periodically in a SysTick interrupt, usually every 1\,ms. After one tick of run time, the running task is paused (enters Ready state), or continues to run if no higher priority task is available. If a high priority task waits for an object and this is made available in an interrupt, the previously running task is paused and the waiting task is resumed immediately (enters the Running state). 
 
-Only a subset of the FreeRTOS \ref{API} can be accessed from interrupt routines, for example it's not possible to use the delay function or wait for an object with a timeout, because the SysTick interrupt which increments the tick counter has the lowest priority and couldn't run. This is by design to prevent unexpected context switching in nested interrupts.
+Only a subset of the FreeRTOS \gls{API} can be accessed from interrupt routines, for example it's not possible to use the delay function or wait for an object with a timeout, because the SysTick interrupt which increments the tick counter has the lowest priority and couldn't run. This is by design to prevent unexpected context switching in nested interrupts.
 
 FreeRTOS uses a \textit{priority inheritance} mechanism to prevent situations where a high priority task waits for an object held by a lower priority task (called \textit{priority inversion}). The blocking task's priority is temporarily raised to the level of the blocked high priority task so it can finish faster and release the held object. Its priority is then degraded back to the original value. When the lower priority task itself is blocked, the same process can be repeated.
 

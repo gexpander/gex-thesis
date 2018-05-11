@@ -66,9 +66,11 @@
 
 
 %% ACRONYM CONFIG
-\usepackage[xindy,nomain,acronym,nopostdot,toc=false]{glossaries}
+\usepackage[xindy,nonumberlist,nomain,acronym,nopostdot,toc=false]{glossaries}
 %\glssetwidest{ABCD}
 \renewcommand*{\glsclearpage}{}
+\usepackage{glossary-mcols}
+\renewcommand*{\glspostdescription}{}
 \makeglossaries
 \glsaddall
 %\renewcommand*{\glstextformat}[1]{\textcolor{black}{#1}}
