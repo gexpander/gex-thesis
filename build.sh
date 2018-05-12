@@ -1,7 +1,7 @@
 #!/bin/bash
 
-pdflatex thesis.tex
+pdflatex -shell-escape thesis.tex
 makeglossaries thesis
 biber thesis
-pdflatex thesis.tex
-pdflatex thesis.tex
+pdflatex -shell-escape thesis.tex
+pdflatex -shell-escape thesis.tex

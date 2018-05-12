@@ -48,16 +48,3 @@ Each task in FreeRTOS is assigned a block of \gls{RAM} to use as its stack when 
 
 A stack overflow protection can be enabled by a flag in the FreeRTOS configuration file (more details in \cite{freertos-stackov}). This function works in two ways: the more obvious is a simple check that the stack pointer remains in the designated area; however, as the check may be performed only in the scheduler interrupt, it can happen that the stack pointer exceeds the bounds only temporarily and returns back before the stack can be checked for overflow. The stack is thus filled with a known filler value before starting the task, and the last few bytes are then tested to match this value. Not only can we detect a stack overflow more reliably, this feature also makes it possible to estimate the peak stack usage by counting the remaining filler values in the stack area. Naturally, we can't distinguish between the original filler values and the same value stored on the stack; still, this method proves remarkably successful in the detection of misconfigured stack size.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
