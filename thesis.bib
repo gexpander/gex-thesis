@@ -1,7 +1,366 @@
-@online{foo,
-	title = {Foo Bar},
-	url = {https://foo.bar},
-	urldate = {2016-05-08},
-	language = {english}
+% USB tutorials and articles
+
+@string{USBIF = {{USB Implementers Forum, Inc.}}}
+@string{MSFT = {{Microsoft Corporation}}}
+@string{STM = {{ST Microelectronics}}}
+
+@online{usb-nutshell,
+	title = {USB in a NutShell},
+	author = {Craig Peacock},
+	url = {https://www.beyondlogic.org/usbnutshell},
+	urldate = {2018-05-12}
+}
+
+@online{usb-made-simple,
+	title = {USB Made Simple},
+	author = {{MQP Electronics Ltd.}},
+	url = {http://www.usbmadesimple.co.uk/},
+	year = {2008},
+	urldate = {2018-05-12}
+}
+
+@online{tty-usb-acm,
+	title = {What is the difference between /dev/ttyUSB and /dev/ttyACM?},
+	author = {Samuel Tardieu},
+	url = {https://rfc1149.net/blog/2013/03/05/what-is-the-difference-between-devttyusbx-and-devttyacmx/},
+	year = {2013},
+	urldate = {2018-05-12}
+}
+
+@online{usb-tscsi,
+	title = {Mass Storage FAQ},
+	author = {Jan Axelson},
+	url = {http://janaxelson.com/mass_storage_faq.htm},
+	year = {2013},
+	urldate = {2018-05-12}
+}
+
+
+@online{usb-tscsi-wtf,
+	title = {Discussion in a USB storage driver development mailing list (site defunct, archived via Archive.org)},
+	url = {https://web.archive.org/web/20071108121822/https://lists.one-eyed-alien.net/pipermail/usb-storage/2004-September/000795.html},
+	year = {2004},
+	urldate = {2018-05-12}
+}
+
+@online{usb-function,
+	title = {Windows 2000 Professional Resource Kit / USB Functions},
+	author = MSFT,
+	url = {https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-2000-server/cc939102(v%3dtechnet.10)},
+	year = {2008},
+	urldate = {2018-05-12}
+}
+
+
+
+@online{usb-class-list,
+	title = {USB Class Codes},
+	author = USBIF,
+	url = {http://www.usb.org/developers/defined_class},
+	year = {2016},
+	urldate = {2018-05-12}
+}
+
+% USB specification
+
+@online{usbif-spec,
+	title = {Universal Serial Bus Specification},
+	author = USBIF,
+	url = {http://www.usb.org/developers/docs/usb20_docs/},
+	year = {2000},
+	urldate = {2018-05-12}
+}
+
+@online{usbif-msco,
+	title = {USB Mass Storage Class, Specification Overview},
+	author = USBIF,
+	url = {http://www.usb.org/developers/docs/devclass_docs/Mass_Storage_Specification_Overview_v1.4_2-19-2010.pdf},
+	year = {2010},
+	urldate = {2018-05-12}
+}
+
+@online{usbif-bot,
+	title = {USB Mass Storage Class, Bulk-Only Transport},
+	author = USBIF,
+	url = {http://www.usb.org/developers/docs/devclass_docs/usbmassbulk_10.pdf},
+	year = {1999},
+	urldate = {2018-05-12}
+}
+
+@online{usbif-cdc,
+	title = {Class definitions for Communication Devices 1.2},
+	author = USBIF,
+	url = {http://www.usb.org/developers/docs/devclass_docs/CDC1.2_WMC1.1_012011.zip},
+	year = {2010},
+	urldate = {2018-05-12}
+}
+
+@online{usbif-iad,
+	title = {USB Interface Association Descriptor, Device Class Code and Use Model},
+	author = USBIF,
+	url = {http://www.usb.org/developers/docs/whitepapers/iadclasscode_r10.pdf},
+	year = {2003},
+	urldate = {2018-05-12}
+}
+
+% Virtual FS
+
+@online{ms-fat,
+	title = {How FAT Works},
+	author = MSFT,
+	url = {https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2003/cc776720(v=ws.10)},
+	year = {2009},
+	urldate = {2018-05-12}
+}
+
+@online{daplink,
+	title = {Arm Mbed DAPLink source code repository},
+	author = {{Arm Mbed}},
+	url = {https://github.com/ARMmbed/DAPLink},
+	year = {2018},
+	urldate = {2018-05-12}
+}
+
+@online{fat16-brainy,
+	title = {FAT16 Structure Information},
+	author = {Jack Dobiash},
+	url = {http://home.teleport.com/~brainy/fat16.htm},
+	year = {1999},
+	urldate = {2018-05-12}
+}
+
+@online{fat16-maverick,
+	title = {FAT16 File System},
+	author = {{LKT Software}},
+	url = {http://www.maverick-os.dk/FileSystemFormats/FAT16_FileSystem.html},
+	year = {1999},
+	urldate = {2018-05-12}
+}
+
+@online{fat16-phobos,
+	title = {A tutorial on the FAT file system},
+	author = {Bob Eager},
+	url = {http://www.tavi.co.uk/phobos/fat.html},
+	year = {2017},
+	urldate = {2018-05-12}
+}
+
+@book{freertos-book,
+	title = {Mastering the FreeRTOS™ Real Time Kernel},	
+	subtitle = {A Hands-On Tutorial Guide},
+	author = {Richard Barry},
+	publisher= {Real Time Engineers Ltd.},
+	url = {https://www.freertos.org/Documentation/161204_Mastering_the_FreeRTOS_Real_Time_Kernel-A_Hands-On_Tutorial_Guide.pdf},
+	year = {2016},
+	urldate = {2018-05-12}
+}
+
+@manual{freertos-rm,
+	title = {The FreeRTOS™ Reference Manual},	
+	author = {{Real Time Engineers Ltd.}},
+	publisher= {Real Time Engineers Ltd.},
+	url = {https://www.freertos.org/Documentation/FreeRTOS_Reference_Manual_V10.0.0.pdf},
+	year = {2018},
+	urldate = {2018-05-12}
+}
+
+@article{fat-lfn,
+	author = {{vinDaci}},
+	title = {Long Filename Specification},
+	year = {1998},
+	url = {http://home.teleport.com/~brainy/lfn.htm},
+	urldate = {2018-05-12}
+}
+
+@techreport{fat-whitepaper,
+	author = MSFT,
+	title = {FAT: General Overview of On-Disk Format},
+	url = {https://staff.washington.edu/dittrich/misc/fatgen103.pdf},
+	year = {2000},
+	urldate = {2018-05-12}
+}
+
+
+% STM32
+
+@techreport{stm-timer-coockbook,
+	author = STM,
+	title = {AN4776: General-purpose timer cookbook},
+	year = {2017},
+	url = {http://www.st.com/resource/en/application_note/dm00236305.pdf},
+	urldate = {2018-05-12}
+}
+
+@techreport{stm-tsc-training,
+	author = STM,
+	title = {STM32L4 training: Touch Sensing Controller},
+	year = {2017},
+	url = {http://www.st.com/resource/en/product_training/stm32l4_peripheral_touchsense.pdf},
+	urldate = {2018-05-12}
+}
+
+% (couldnt find a proper link)
+@techreport{stm-tsc-ppt,
+	author = STM,
+	title = {Touch Sensing Controller (TSC) presentation},
+	year = {2015},
+	url = {https://wenku.baidu.com/view/8472044a6137ee06eef9180c.html?re=view},
+	urldate = {2018-05-12}
+}
+
+@techreport{stm-tsc-an1,
+	author = STM,
+	title = {AN4299: Guidelines to improve conducted noise robustness on STM32F0 Series, STM32F3 Series, STM32L0 Series and STM32L4 Series touch sensing	applications},
+	year = {2018},
+	url = {http://www.st.com/resource/en/application_note/dm00085385.pdf},
+	urldate = {2018-05-12}
+}
+
+@techreport{stm-tsc-an2,
+	author = STM,
+	title = {AN4310: Sampling capacitor selection guide for MCU based touch sensing
+	applications},
+	year = {2015},
+	url = {http://www.st.com/resource/en/application_note/dm00087593.pdf},
+	urldate = {2018-05-12}
+}
+
+@techreport{stm-tsc-an3,
+	author = STM,
+	title = {AN4312: Guidelines for designing touch sensing applications
+	with surface sensors},
+	year = {2017},
+	url = {http://www.st.com/resource/en/application_note/dm00087990.pdf},
+	urldate = {2018-05-12}
+}
+
+@techreport{stm-tsc-an4,
+	author = STM,
+	title = {AN4316: Tuning a STMTouch-based application},
+	year = {2015},
+	url = {http://www.st.com/resource/en/application_note/dm00088471.pdf},
+	urldate = {2018-05-12}
+}
+
+
+% other articles
+@article{all-about-dds,
+	title={All about direct digital synthesis},
+	author={Eva Murphy, Colm Slattery},
+	series={Ask The Application Engineer},
+	volume={33},
+	url={http://www.analog.com/media/en/analog-dialogue/volume-38/number-3/articles/all-about-direct-digital-synthesis.pdf},
+	year={2004}	
+}
+
+@techreport{understanding-i2c,
+	author = {Jonathan Valdez, Jared Becker},
+	title = {Understanding the I2C Bus},
+	year = {2015},
+	url = {http://www.ti.com/lit/an/slva704/slva704.pdf},
+	urldate = {2018-05-12},
+	organization = {Texas Instruments}
+}
+
+@manual{i2c-spec,
+	title = {I2C-bus specification and user manual},	
+	author = {{NXP Semiconductors}},
+	url = {https://www.nxp.com/docs/en/user-guide/UM10204.pdf},
+	year = {2014},
+	urldate = {2018-05-12}
+}
+
+@manual{nrf-manual,
+	title = {nRF24L01+ Single Chip 2.4GHz Transceiver Product Specification v1.0},	
+	author = {{Nordic Semiconductor}},
+	url = {http://www.nordicsemi.com/eng/content/download/2726/34069/file/nRF24L01P_Product_Specification_1_0.pdf},
+	year = {2008},
+	urldate = {2018-05-12}
+}
+
+@manual{semtech-manual,
+	title = {SX1276/77/78/79 datasheet},	
+	author = {{Semtech Corporation}},
+	url = {https://www.semtech.com/uploads/documents/DS_SX1276-7-8-9_W_APP_V5.pdf},
+	year = {2016},
+	urldate = {2018-05-12}
+}
+
+
+@manual{f072-rm,
+	title = {RM0091: STM32F0x1/STM32F0x2/STM32F0x8 reference manual},	
+	author = STM,
+	url = {http://www.st.com/resource/en/reference_manual/dm00031936.pdf},
+	year = {2017},
+	urldate = {2018-05-12}
+}
+
+@manual{f072-ds,
+	title = {STM32F072x8/STM32F072xB datasheet},	
+	author = STM,
+	url = {http://www.st.com/resource/en/datasheet/stm32f072c8.pdf},
+	year = {2017},
+	urldate = {2018-05-12}
+}
+
+
+@manual{f103-rm,
+	title = {RM0008: STM32F101xx, STM32F102xx, STM32F103xx, STM32F105xx reference manual},	
+	author = STM,
+	url = {http://www.st.com/resource/en/reference_manual/cd00171190.pdf},
+	year = {2009},
+	urldate = {2018-05-12}
+}
+
+@manual{f103-ds,
+	title = {STM32F103x8/STM32F103xB datasheet},	
+	author = STM,
+	url = {http://www.st.com/resource/en/datasheet/CD00161566.pdf},
+	year = {2015},
+	urldate = {2018-05-12}
+}
+
+@online{pidcodes,
+	title = {pid.codes, a registry of USB PID codes for open source hardware projects},
+	url = {http://pid.codes/},
+	urldate = {2018-05-12}
+}
+
+@online{eev-gpio-pu,
+	author = {{EEVblog Electronics Community Forum}},
+	title = {pid.codes, a registry of USB PID codes for open source hardware projects},
+	url = {https://www.eevblog.com/forum/projects/driving-the-1k5-usb-pull-up-resistor-on-d/},
+	urldate = {2018-05-12}
+}
+
+
+% Figure sources
+
+@online{buspirate-product-page,
+	author = {{Seeed Technology Co.,Ltd.}},
+	title = {Bus Pirate v4 product page},
+	url = {https://www.seeedstudio.com/Bus-Pirate-v4-p-740.html},
+	urldate = {2018-05-12}
+}
+
+@online{nidevice1,
+	author = {{National Instruments}},
+	title = {I²C/SPI Interface Device product page},
+	url = {https://www.ni.com/en-gb/shop/select/i2c-spi-interface-device},
+	urldate = {2018-05-12}
+}
+
+@online{nidevice2,
+	author = {{National Instruments}},
+	title = {USB-6008 product page},
+	url = {http://www.ni.com/en-gb/support/model.usb-6008.html},
+	urldate = {2018-05-12}
+}
+
+@online{tphasedevice,
+	author = {{Total Phase, Inc.}},
+	title = {USB-6008 product page},
+	url = {https://www.totalphase.com/products/aardvark-i2cspi/},
+	urldate = {2018-05-12}
 }
 
