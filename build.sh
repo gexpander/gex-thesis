@@ -1,3 +1,7 @@
 #!/bin/bash
 
-pdflatex -shell-escape -synctex=1 -interaction=nonstopmode thesis.tex
+pdflatex thesis.tex
+makeglossaries thesis
+biber thesis
+pdflatex thesis.tex
+pdflatex thesis.tex
