@@ -8,8 +8,8 @@ The \gls{USART} has a long history and is still in widespread use today. It is t
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=.8\textwidth] {img/usart.png}
-	\caption[UART frame structure]{\label{fig:uart-frame}\gls{UART} frame, as shown by the STM32F072 Reference Manual. Break frames are used by some \gls{UART} based protocols, like \gls{LIN}.}
+	\includegraphics[scale=.9] {img/uart-frame-redraw.pdf}
+	\caption[UART frame structure]{\label{fig:uart-frame}\gls{USART} frame format}
 \end{figure}
 
 \gls{UART} and \gls{USART} are two variants of the same interface. \gls{USART} includes a separate clock signal, while the \gls{UART} timing relies on a well-known clock speed and the bit clock is synchronized by start bits. \gls{USART} was historically used in modems to achieve higher bandwidth, but is now mostly obsolete.
@@ -30,6 +30,12 @@ RS232 uses the \gls{UART} framing, but its logic levels are different: logical 1
 \section{SPI} \label{sec:theory-spi}
 
 SPI (Serial Peripheral Interface) is a point-to-point or multi-drop master-slave interface based on shift registers. The \gls{SPI} connection with multiple slave devices is depicted in figure \ref{fig:spi-multislave}. It uses at least 4 wires: \gls{SCK}, \gls{MOSI}, \gls{MISO} and \gls{SS}. \gls{SS} is often marked \gls{CSB} or \gls{NSS} to indicate it's active low. Slave devices are addressed using their \gls{SS} input while the data connections are shared. A slave that's not addressed releases the \gls{MISO} line to a high impedance state so it doesn't interfere in ongoing communication.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=.9] {img/spi-timing.pdf}
+	\caption{\label{fig:spi-timing}SPI timing diagram, explaining the CPOL and CPHA settings}
+\end{figure}
 
 Transmission and reception on the \gls{SPI} bus happen simultaneously. A bus master asserts the SS pin of a slave it wishes to address and then sends data on the \gls{MOSI} line while receiving a response on \gls{MISO}. It's customary that the slave responds with zeros or a status byte as the first byte of the response.
 
