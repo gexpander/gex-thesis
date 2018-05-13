@@ -4,19 +4,19 @@ Hardware buses implemented in GEX are presented in this chapter. The description
 
 \section{UART and USART} \label{sec:theory-usart}
 
-The \gls{USART} has a long history and is still in widespread use today. It is the protocol used in RS-232, which was once a common way of connecting modems, printers, mice and other devices to personal computers. \gls{UART} framing is also used in the industrial bus RS-485.
+The \acrfull{USART} has a long history and is still in widespread use today. It is the protocol used in RS-232, which was once a common way of connecting modems, printers, mice and other devices to personal computers. \gls{UART} framing is also used in the industrial bus RS-485.
 
 \begin{figure}[h]
 	\centering
 	\includegraphics[scale=.9] {img/uart-frame-redraw.pdf}
-	\caption[UART frame structure]{\label{fig:uart-frame}\gls{USART} frame format}
+	\caption[UART frame format]{\label{fig:uart-frame}\gls{USART} frame format in the 8-bit configuration with parity}
 \end{figure}
 
 \gls{UART} and \gls{USART} are two variants of the same interface. \gls{USART} includes a separate clock signal, while the \gls{UART} timing relies on a well-known clock speed and the bit clock is synchronized by start bits. \gls{USART} was historically used in modems to achieve higher bandwidth, but is now mostly obsolete.
 
-\gls{USART}, as implemented by microcontrollers such as the STM32 family, is a two-wire full duplex interface that uses 3.3\,V or 5\,V logic levels. The data lines are in the high logical level when idle. A frame, pictured in figure \ref{fig:uart-frame} starts by a start-bit (low level for the period of one bit) followed by \textit{n} data bits (typically eight), an optional parity bit and a period of high level called a stop bit or stop bits, usually between one and two bits long.
+\gls{USART}, as implemented by microcontrollers such as the STM32 family, is a two-wire full duplex interface that uses 3.3\,V or 5\,V logic levels. The data lines are in the high logical level when idle. A frame, pictured in figure \ref{fig:uart-frame}, starts by a start-bit (low level for the period of one bit) followed by \textit{n} data bits (typically eight), an optional parity bit and a period of high level called a stop bit (or stop bits), dividing consecutive frames.
 
-RS232 uses the \gls{UART} framing, but its logic levels are different: logical 1 is represented by negative voltages $-3$ to $-25$\,V and logical 0 uses the same range, but positive. To convert between RS232 levels and \gls{TTL} (5\,V) levels, a level-shifting circuit such as the MAX232 can be used. In RS232, the two data lines (Rx and Tx) are accompanied by \gls{RTS}, \gls{CTS}, and \gls{DTR}, which facilitate handshaking and hardware flow control. In practice, those additional signals are often unused or their function differs; for instance, Arduino boards (using a USB-serial converter) use the \gls{DTR} line as a reset signal to automatically enter their bootloader for firmware flashing.
+RS-232 uses the \gls{UART} framing, but its logic levels are different: logical 1 is represented by negative voltages $-3$ to $-25$\,V and logical 0 uses the same range, but positive. To convert between RS232 levels and \gls{TTL} (5\,V) levels, a level-shifting circuit such as the MAX232 can be used. In RS232, the two data lines (Rx and Tx) are accompanied by \gls{RTS}, \gls{CTS}, and \gls{DTR}, which facilitate handshaking and hardware flow control. In practice, those additional signals are often unused or their function differs; for instance, Arduino boards (using a USB-serial converter) use the \gls{DTR} line as a reset signal to automatically enter their bootloader for firmware flashing.
 
 \subsection{Examples of Devices Using UART}
 
@@ -29,7 +29,7 @@ RS232 uses the \gls{UART} framing, but its logic levels are different: logical 1
 
 \section{SPI} \label{sec:theory-spi}
 
-SPI (Serial Peripheral Interface) is a point-to-point or multi-drop master-slave interface based on shift registers. The \gls{SPI} connection with multiple slave devices is depicted in figure \ref{fig:spi-multislave}. It uses at least 4 wires: \gls{SCK}, \gls{MOSI}, \gls{MISO} and \gls{SS}. \gls{SS} is often marked \gls{CSB} or \gls{NSS} to indicate it's active low. Slave devices are addressed using their \gls{SS} input while the data connections are shared. A slave that's not addressed releases the \gls{MISO} line to a high impedance state so it doesn't interfere in ongoing communication.
+\acrfull{SPI} is a point-to-point or multi-drop master-slave interface based on shift registers. The \gls{SPI} connection with multiple slave devices is depicted in figure \ref{fig:spi-multislave}. It uses at least 4 wires: \gls{SCK}, \gls{MOSI}, \gls{MISO} and \gls{SS}. \gls{SS} is often marked \gls{CSB} or \gls{NSS} to indicate it's active low. Slave devices are addressed using their \gls{SS} input while the data connections are shared. A slave that's not addressed releases the \gls{MISO} line to a high impedance state so it doesn't interfere in ongoing communication.
 
 \begin{figure}[h]
 	\centering
@@ -37,16 +37,15 @@ SPI (Serial Peripheral Interface) is a point-to-point or multi-drop master-slave
 	\caption{\label{fig:spi-timing}SPI timing diagram, explaining the CPOL and CPHA settings}
 \end{figure}
 
-Transmission and reception on the \gls{SPI} bus happen simultaneously. A bus master asserts the SS pin of a slave it wishes to address and then sends data on the \gls{MOSI} line while receiving a response on \gls{MISO}. It's customary that the slave responds with zeros or a status byte as the first byte of the response.
-
-\gls{SPI} devices often provide a number of control, configuration and status registers that can be read and written by the bus master. The first byte of a command usually contains one bit that determines if it's a read or write access, and an address field selecting the target register.
-
 \begin{figure}[h]
-	\centering
-	\includegraphics[width=.7\textwidth] {img/spi-multislave.png}
-	\caption[SPI master with multiple slaves]{\label{fig:spi-multislave}A SPI bus with 1 master and 3 slaves, each enabled by its own Slave Select signal (\textit{STM32F072 Reference Manual})}
+\centering
+\includegraphics[scale=1.1] {img/spi-multislave-redraw.pdf}
+\caption[SPI master with multiple slaves]{\label{fig:spi-multislave}A SPI bus with 1 master and 3 slaves, each enabled by its own Slave Select signal}
 \end{figure}
 
+Transmission and reception on the \gls{SPI} bus happen simultaneously. A bus master asserts the SS pin of a slave it wishes to address and then sends data on the \gls{MOSI} line while receiving a response on \gls{MISO}. The slave normally responds with 0x00 or a status byte as the first byte of the response, before it can process the received command. A timing diagram is shown in figure \ref{fig:spi-timing}.
+
+\gls{SPI} devices often provide a number of control, configuration and status registers that can be read and written by the bus master. The first byte of a command usually contains one bit that determines if it's a read or write access, and an address field selecting the target register.
 \pagebreak[1] % TODO
 \subsection{Examples of Devices Using SPI}
 
@@ -66,7 +65,7 @@ Transmission and reception on the \gls{SPI} bus happen simultaneously. A bus mas
 
 \section{I\textsuperscript{2}C} \label{sec:theory-i2c}
 
-\gls{I2C} is a two-wire (\gls{SDA}, \gls{SCL}), open-drain bus that supports multi-master operation. The protocol was developed by Philips Semiconductor (now NXP Semiconductors) and until 2006 implementors were required to pay licensing fees, leading to the development of compatible implementations with different names, such as Atmel's \gls{TWI} or Dallas Semiconductor's ``Serial 2-wire Interface'' (e.g. used in the DS1307 \gls{RTC} chip). \gls{I2C} is the basis of the \gls{SMBus} and \gls{PMBus} protocols which add additional constraints and rules for a more robust operation.
+\acrfull{I2C} is a two-wire (\gls{SDA}, \gls{SCL}), open-drain bus that supports multi-master operation. The protocol was developed by Philips Semiconductor (now NXP Semiconductors) and its implementors were required to pay licensing fees, until 2006, leading to the development of compatible implementations with different names, such as Atmel's \gls{TWI} or Dallas Semiconductor's ``Serial 2-wire Interface'' (e.g. used in the DS1307 \gls{RTC} chip). \gls{I2C} is a basis of the \gls{SMBus} and \gls{PMBus}, which add additional constraints and rules for a more robust operation.
 
 \gls{I2C} uses two addressing modes: 7-bit and 10-bit. Due to the small address space, exacerbated by many devices implementing only the 7-bit addressing, collisions between chips from different manufacturers are common; many devices thus offer several pins to let the board designer choose a few bits of the address by connecting them to different logic levels. \gls{I2C} allows slow slave devices to stop the master from sending more data by holding the SCL line low at the end of a byte. As the bus is open-drain, the line can't go high until all participants release it. This function is called \textit{Clock Stretching}.
 
@@ -90,17 +89,17 @@ The bus supports multi-master operation, which leads to the problem of collision
 
 \section{1-Wire} \label{sec:theory-1wire}
 
-The 1-Wire bus, developed by Dallas Semiconductor, uses a single bi-directional data line which can also power the slave devices, reducing the number of required wires to just two (compare with 3 in \gls{I2C} and 5 in \gls{SPI}, all including \gls{GND}).
+The 1-Wire bus, developed by Dallas Semiconductor (acquired by Maxim), uses a single bi-directional data line which can also power the slave devices, reducing the number of required wires to just two (compare with 3 in \gls{I2C} and 5 in \gls{SPI}, all including \gls{GND}).
 
-1-Wire is open-drain and the communication consists of short pulses sent by the master and (for bit reading) the line continuing to be held low by the slave. The pulse timing (fig. \ref{fig:1w-pulses}) defines if it's a read or write operation and what bit value it carries. A transaction is started by a 480us long ``reset'' pulse send by master and ended by a 1-byte \gls{CRC} code.
+1-Wire uses an open-drain connection (similar to \IIC). The communication consists of short pulses sent by the master and (for bit reading) the line continuing to be held low by the slave. The pulse timing defines a read or write operation and the bit value. Detailed timing diagrams can be found in \cite{ow-datasheet}. A transaction is started by a 480\,$\mu$s long ``reset'' pulse send by the master, and ended by a 1-byte \gls{CRC} code.
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=.9\textwidth] {img/1w-topology.png}
-	\caption{\label{fig:1w-topology}1-Wire topology (by \textit{Dallas Semiconductor})}
+	\includegraphics[scale=1] {img/1w-connection.pdf}
+	\caption{\label{fig:1w-topology}1-Wire connection topology}
 \end{figure}
 
-1-Wire is a master-slave multi-drop bus. Devices are addressed by their unique 64-bit ID numbers called ROMs; ROMs are found by the bus master with the cooperation from slaves using a ROM Search protocol. If only one device is connected, a wildcard command can be used to skip addressing.
+Devices are addressed by their unique 64-bit ID numbers called ROM codes or ROMs; they can be found by the bus master, with a cooperation from slaves, using a ROM Search algorithm. The search algorithm is well explained in \cite{ow-appnote}. If only one device is connected, a wild card command Skip ROM can be used to address the device without a known ROM code.
 
 \subsection{Examples of Devices Using 1-Wire}
 
@@ -111,14 +110,15 @@ The 1-Wire bus, developed by Dallas Semiconductor, uses a single bi-directional 
 
 Since 1-Wire is a proprietary protocol, there is a much smaller choice of available devices and they also tend to be more expensive. The DS18x20 thermometers are, however, popular enough to warrant the bus's inclusion in GEX.
 
-\todo[inline]{Explain the ROM Search algorithm}
-
+\iffalse
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=.85\textwidth] {img/1w-rw.png}
 	\includegraphics[width=.85\textwidth] {img/1w-reset.png}
 	\caption{\label{fig:1w-pulses}The 1-Wire data line pulse timing (by \textit{Dallas Semiconductor})}
 \end{figure}
+\fi
+
 
 \section{NeoPixel} \label{sec:theory-neo}
 
@@ -126,12 +126,12 @@ NeoPixel is a marketing name of the \textbf{WS2811}, \textbf{WS2812} and compati
 
 The NeoPixel protocol is unidirectional, using only one data pin. The \gls{LED} drivers are chained together. Ones and zeros are encoded by a pulse length on the data pin; after loading the color data to the \gls{LED} string, a longer "reset" pulse is issued by the bus master and the set colors are displayed. The timing diagram and constraints are shown in table \ref{fig:ws2812-dia}.
 
-The NeoPixel timing is very sensitive to pulse length accuracy. Reliable ways to implement it use \gls{DMA} with a hardware timer, or a \gls{I2S} peripheral. An easier method that does not use any additional hardware resources is implementing the protocol as delay loops in the firmware; care must be taken to disable interrupts in the sensitive parts of the timing.
+The NeoPixel timing is very sensitive to pulse length accuracy. Some ways to implement it use \gls{DMA} with a hardware timer, the \gls{I2S} peripheral, or abuse \gls{UART} timing for this purpose \cite{ow-uart}. An easier method that does not utilize any additional hardware resources beyond the \gls{GPIO} pin is to implement the protocol as delay loops in the firmware; care must be taken to disable interrupts in the sensitive parts of the timing, and it may be advantageous to implement it in assembly for a tighter control over the timing.
 
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=.5\textwidth] {img/ws2812b-detail.jpg}
-	\caption{\label{fig:ws2812-detail}A close-up photo of the WS2812B package, showing the LED driver IC}
+	\caption{\label{fig:ws2812-detail}A close-up photo of a WS2812B pixel, showing the LED driver IC}
 \end{figure}
 
 \begin{table}[h]
