@@ -4,16 +4,17 @@ In addition to communication buses, described in chapter \ref{ch:hw_buses}, GEX 
 
 \section{Frequency Measurement} \label{sec:theory-fcap}
 
-Applications like motor speed measurement and the reading of a \gls{VCO} or \gls{VCO}-based sensor's output demand a tool capable of measuring frequency. This can be done using a laboratory instrument such as the Agilent 53131A. A low cost solution is to use a timer/counter peripheral of a microcontroller, such as the STM32F072 used in GEX.
+Applications like motor speed measurement and the reading of a \gls{VCO} or \gls{VCO}-based sensor's output demand a tool capable of measuring frequency. This can be done using a laboratory instrument such as the Agilent 53131A. A low cost solution is to use a timer/counter peripheral of a microcontroller.
 
-Two basic methods to measure frequency exist, each with it's advantages and drawbacks:
+\noindent
+Two basic methods to measure frequency exist \cite{fcap-twotypes}, each with it's advantages and drawbacks:
 
 \begin{itemize}
 	\item The \textit{direct method} (fig. \ref{fig:fcap-direct-dia}) is based on the definition of frequency as a number of cycles $n$ in a fixed-length time window $\tau$ (usually 1\,s); the frequency is then calculated as $f=n/\tau$.
 
 	One timer generates the time window and its output gates the input of another, configured as a pulse counter. At the end of the measurement window an interrupt is generated and we can read the pulse count from the counter's register.
 
-	The direct method has a resolution of 1\,Hz with a sampling window of 1\,s (only a whole number of pulses can me counted). The resolution can be increased by using a longer time window, provided the measured signal is stable enough to make averaging possible without distorting the result.
+	The direct method has a resolution of 1\,Hz with a sampling window of 1\,s (only a whole number of pulses can me counted). The resolution can be increased by using a longer time window, provided the measured signal is stable enough to make averaging possible without distorting the result. Further increase of precision is possible through analog or digital interpolation \cite{fcap-increasing}, a method used in some professional equipment.
 
 	\item The \textit{indirect} or \textit{reciprocal method} (fig. \ref{fig:fcap-reci-dia}) measures one period $T$ as the time interval between two pulses and this is then converted to frequency as $f=1/T$.
 
@@ -61,9 +62,9 @@ A very common need in experiments involving the measurement of physical properti
 	\caption{\label{fig:adc-sar}A diagram of the SAR type ADC}
 \end{figure}
 
-The \gls{ADC} type commonly available in microcontrollers, including our STM32F072, uses a \textit{successive approximation} method. It is often called the SAR type \gls{ADC}, after its main component, the \gls{SAR}. A diagram of this type of \gls{ADC} is shown in figure \ref{fig:adc-sar}.
+The \gls{ADC} type commonly available in microcontrollers, including our STM32F072, uses a \textit{successive approximation} method. It is called the \textit{SAR type \gls{ADC}}, after its main component, the \gls{SAR}. A diagram of this \gls{ADC} is shown in figure \ref{fig:adc-sar}.
 
-The \gls{SAR} type converter uses a \gls{DAC} which approximates the input voltage, bit by bit, starting from the MSB, following the algorithm outlined below.
+The \gls{SAR} type converter uses a \gls{DAC}, controlled by the value in the \gls{SAR}, which approximates the input voltage, bit by bit, following the algorithm described in \cite{adc-sar} and outlined below:
 
 \begin{enumerate}
 	\item The \gls{SAR} is cleared to all zeros.
@@ -83,7 +84,7 @@ The \gls{DAC} peripheral can produce a \gls{DC} level on the output pin based on
 
 \subsection{Waveform Generation with DMA and a Timer} \label{sec:theory-dac-simple}
 
-A straightforward implementation of the waveform generator is illustrated in figure \ref{fig:wavegen-naive}. This approach has its advantages: it's simple and works entirely in the background, with no interrupt handling required. It could even be implemented entirely in software, using a loop periodically updating the \gls{DAC} values, of course such approach is less flexible and we would run into problems with asynchronous interrupts.
+A straightforward, intuitive implementation of the waveform generator is illustrated in figure \ref{fig:wavegen-naive}. This approach has its advantages: it's simple and works autonomously, with no interrupt handling or interventions from the program. It could be implemented without the use of \gls{DMA} as well, using a loop periodically updating the \gls{DAC} values; of course, such approach is less flexible and we would run into problems with interrupt handling affecting the timing accuracy.
 
 \begin{figure}[h]
 	\centering
@@ -97,7 +98,7 @@ A major disadvantage of this simple generation method is given by the limitation
 
 \subsection{Direct Digital Synthesis} \label{sec:theory-dac-dds}
 
-There are situations where the simple waveform generation method is not sufficient, particularly when a fine tuning or on-line frequency and phase changes are required. Those are the strengths of a signal generation method called \gls{DDS}.
+There are situations where the simple waveform generation method is not sufficient, particularly when a fine tuning or on-line frequency and phase changes are required. Those are the strengths of \gls{DDS}, an advanced digital waveform generation method well explained in \cite{all-about-dds}.
 
 \begin{figure}[h]
 	\centering
@@ -119,13 +120,13 @@ The used microcontroller, STM32F072, includes a \gls{TSC} peripheral block. It c
 
 The TSC requires a specific topology with a sampling capacitor connected close to the microcontroller pin, which may not be possible on a universal GEX module; for this reason, the touch sensing feature is best demonstrated on the STM32F072 Discovery development kit, which includes a 4-segment touch slider shown in figure \ref{fig:disco-touch}.
 
-\begin{figure}
+\begin{figure}[h]
 	\centering
 	\includegraphics[width=0.5\textwidth] {img/disco-touch.jpg}
 	\caption{\label{fig:disco-touch}The touch slider on a STM32F072 Discovery board}
 \end{figure}
 
-The principle of capacitive touch sensing is well explained in the microcontroller's reference manual XXX\todo{ref}. A key part of the \gls{TSC} is a set of analog switches, which can be combined to form several different signal paths between the external pins, Vdd, \gls{GND}, and an analog comparator. Two input pins are needed for every touch sensing channel: the sensing pad connects to one, the other is connected through a sampling capacitor  (47\,nF on the Discovery board) to \gls{GND}.
+The principle of capacitive touch sensing using the \gls{TSC} is well explained in the microcontroller's reference manual \cite{f072-rm}, the \gls{TSC} product training materials \cite{stm-tsc-training, stm-tsc-ppt} and application notes from ST Microelectronics \cite{stm-tsc-an1, stm-tsc-an2, stm-tsc-an3, stm-tsc-an4}. A key part of the \gls{TSC} is a set of analog switches which can be combined to form several different signal paths between external pins, Vdd, \gls{GND}, and an analog comparator. Two input pins are needed for every touch sensing channel: the sensing pad connects to one, the other is connected through a sampling capacitor  (47\,nF on the Discovery board) to \gls{GND}.
 
 Capacitive sensing is a sequential process described in the following steps:
 
