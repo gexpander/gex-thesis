@@ -1,0 +1,48 @@
+\chapter{Client Software}
+
+With the communication protocol clearly defined in chapters \ref{sec:tinyframe} and \ref{sec:units-overview}, respective \ref{sec:wireless} for the wireless gateway, the implementation of a client software is relatively straightforward.
+
+Two proof-of-concept client libraries have been developed in languages C and Python; the Python library can be accessed from MATLAB scripts thanks to the MATLAB's two-way Python integration \cite{matlabpy}. Controlling GEX from MATLAB may be useful when additional processing is required, e.g. with data from the \gls{ADC}; however, in many cases, an open source alternative native to Python exists that could be used for the same purpose, such as the NumPy and SciPy libraries \cite{numpyscipy}.
+
+\section{General Library Structure}
+
+The structure of a GEX support library is in all cases similar:
+
+\begin{itemize}
+	\item \textbf{USB or serial port access}
+	
+		This is the only platform-dependent part of the library. Unix-based systems provide a standardized POSIX API to configure the serial port. A raw access to \gls{USB} endpoints is possible using the libUSB C library. Access to the serial port or \gls{USB} from C on MS Windows has not been investigated, but should be possible using proprietary APIs. 
+		
+		Accessing the serial port or \gls{USB} endpoints from Python is more straightforward thanks to the cross platform libraries \textit{PySerial} and \textit{PyUSB}.
+		
+	\item \textbf{TinyFrame} 
+	
+		The \textit{TinyFrame} protocol library can be used directly in desktop C applications, and it has been ported to Python and other languages.
+		 
+	\item \textbf{Higher-level GEX logic} 
+	
+		The host side of the communication protocol described in chapter \ref{sec:tinyframe} should be implemented as a part of the library. This includes the reading and writing of configuration files, unit list read-out, command payload building, and asynchronous event parsing.
+		
+		Additional utilities may be defined on top of this basic protocol support for the command API of different GEX units, as described in \ref{sec:units-overview}. Those unit-specific ``drivers'' are available in the provided Python library.
+\end{itemize}
+
+\section{C Library}
+
+The full C API available to a user program can be found in the library header files. An example of a simple application built with the API is shown below:
+
+\todo[inline]{add the example}
+
+\section{Python Library}
+
+The Python library is more advanced than the C library, as it implements the raw USB access and includes support classes for each unit type. 
+
+\todo[inline]{describe the API and add an example}
+
+
+
+\todo[inline]{Measurement / evaluation examples here...}
+
+
+
+
+
