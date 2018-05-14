@@ -2,7 +2,7 @@
 
 Four methods of a wireless connection have been considered: Bluetooth (e.g. with CC2541), WiFi with ESP8266, a 868\,MHz long range link with SX1276, and a 2.4\,GHz link with nRF24L01+. Bluetooth was dismissed early for its complexity, and ESP8266 for its high consumption in continuous reception mode, although both solutions might be viable for certain applications and with more development time. 
 
-The Semtech SX1276 and Nordic Semiconductor nRF24L01+ transceivers have both been tested using the first GEX prototype, proving its usefulness as a hardware development tool, and it has been confirmed they could fulfill the requirements of our application.
+The Semtech SX1276 \cite{semtech-manual} and Nordic Semiconductor nRF24L01+  \cite{nrf-manual} transceivers have both been tested using the first GEX prototype, proving its usefulness as a hardware development tool, and it has been confirmed they could fulfill the requirements of our application.
 
 \begin{figure}[h]
 	\centering
@@ -63,7 +63,7 @@ The two transceivers are compared in table \ref{fig:nrf-sx-comparison}. It's app
 		\textbf{Price} & \$7.3 & \$1.6 \\
 		\bottomrule
 	\end{tabulary}
-	\caption[Comparison of the SX1276 and nRF24L01+ wireless transceivers]{\label{fig:nrf-sx-comparison}Comparison of the SX1276 and nRF24L01+ wireless transceivers (price from DigiKey @ 10 pieces, May 6th 2018)}
+	\caption[Comparison of the SX1276 and nRF24L01+ wireless transceivers]{\label{fig:nrf-sx-comparison}Comparison of the SX1276 and nRF24L01+ wireless transceivers, using data from their datasheets (price in USD from DigiKey in a 10\,pcs. quantity, recorded on May 6th 2018)}
 \end{table}
 
 SX1276 supports additional modulation modes, including a proprietary LoRa scheme with a frequency-hopping spread spectrum modulation that can be received at a distance up to 20\,km in ideal conditions. The long-range capability is reflected in a higher consumption during transmission. However, its consumption in receiver mode is slightly lower than that of the nRF24L01+.
@@ -78,6 +78,8 @@ Both devices implement some form of a packet engine with error checking; that of
 The nRF24L01+ was selected to be integrated into GEX thanks to its inclusion of the ShockBurst engine, higher possible data rates and significantly lower price. The SX1276, nonetheless, remains an interesting option that could be used as an alternative in the future, should the need for a long range communication arise.
 
 A separate device, the \textit{GEX wireless gateway}, was developed to provide the PC connection to a nRF24L01+ module. It is based on the STM32F103 microcontroller in its smallest package (LQFP48), selected for it's low cost and good availability.
+
+\todo[inline]{more about the hardware}
 
 \subsection{The Wireless Gateway Protocol}
 

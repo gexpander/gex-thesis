@@ -4,7 +4,7 @@ GEX can be controlled through a hardware \gls{UART}, the \gls{USB} or over a wir
 
 The communication is organized in transactions. A transaction consists of one or more messages going in either direction. Messages can be stand-alone, or chained with a response or a follow-up message using the transaction ID. Both peers, GEX and the client application running on the host PC, are equal in the communication: either side can independently initiate a transaction at any time.
 
-GEX uses a framing library \textit{TinyFrame}, developed likewise by the author but kept as a separate project for easier re-use in different applications. The library implements frame building and parsing, checksum calculation and a system of message listeners.
+GEX uses a framing library \textit{TinyFrame} \cite{tinyframerepo}, developed likewise by the author, but kept as a separate project for easier re-use in different applications. The library implements frame building and parsing, checksum calculation and a system of message listeners.
 
 \section{Frame Structure}
 

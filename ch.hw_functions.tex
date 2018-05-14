@@ -128,21 +128,31 @@ The TSC requires a specific topology with a sampling capacitor connected close t
 
 The principle of capacitive touch sensing using the \gls{TSC} is well explained in the microcontroller's reference manual \cite{f072-rm}, the \gls{TSC} product training materials \cite{stm-tsc-training, stm-tsc-ppt} and application notes from ST Microelectronics \cite{stm-tsc-an1, stm-tsc-an2, stm-tsc-an3, stm-tsc-an4}. A key part of the \gls{TSC} is a set of analog switches which can be combined to form several different signal paths between external pins, Vdd, \gls{GND}, and an analog comparator. Two input pins are needed for every touch sensing channel: the sensing pad connects to one, the other is connected through a sampling capacitor  (47\,nF on the Discovery board) to \gls{GND}.
 
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=1] {img/tsc-function.pdf}
+	\caption{\label{fig:tsc-schem}A simplified schematic of the touch sensing circuit}
+\end{figure}
+
+\noindent
 Capacitive sensing is a sequential process described in the following steps:
 
 \begin{enumerate}
-	\item The sensing capacitor is discharged by connecting its free end to \gls{GND}.
-	\item The sensing pad is connected to Vdd and, acting as a capacitor, charged to 3.3\,V. It stores a small amount of charge, depending on its capacitance---this is the variable property we are trying to measure.
+	\item The sampling capacitor is discharged by connecting its free end to \gls{GND}.
+	\item The sensing pad is connected to +3.3\,V and, acting as a capacitor, charged to this voltage. It stores a small amount of charge, depending on its capacitance---this is the variable property we are trying to measure.
 	\item The free terminals of the two capacitors (the sensing pad and the sampling capacitor) are connected together and their voltages reach an equilibrium as a portion of the stored charge leaves the sensing pad and flows into the bigger capacitor.
-	\item The steps (2) and (3) are repeated the sampling capacitor's voltage exceeds a fixed threshold (set to a half of the supply voltage). The number of cycles needed to charge the sampling capacitor corresponds to the capacitance of the sensing pad.
+	\item The steps (2) and (3) are repeated until the sampling capacitor's voltage exceeds a fixed threshold (set to a half of the supply voltage). The number of cycles needed to charge the sampling capacitor corresponds to the capacitance of the sensing pad.
 \end{enumerate}
+
+\noindent
+A real voltage waveform measured on the sensing pad using an oscilloscope is shown in figure \ref{fig:tsc-wfm}.
 
 \begin{figure}
 	\centering
 	\includegraphics[width=.9\textwidth] {img/tsc-wfm-bw.png} \\
 	\vspace{5mm}
 	\includegraphics[width=.9\textwidth] {img/tsc-wfm2-bw.png}
-	\caption[TSC operation oscilloscope screenshots]{\label{fig:tsc-wfm}A voltage waveform measured on the touch sensing pad. The bottom side of the envelope equals the sampling capacitor's voltage---this is the phase where both capacitors are connected. The detailed view (middle) shows the individual charging cycles. The bottom screenshot captures the entire waveform after the analog comparator was disabled.}
+	\caption[TSC operation oscilloscope screenshots]{\label{fig:tsc-wfm}A voltage waveform measured on the touch sensing pad. The bottom side of the envelope equals the sampling capacitor's voltage---this is the phase where both capacitors are connected. The detailed view (middle) shows the individual charging cycles. The bottom screenshot captures the entire waveform, left to continue until a timeout, after the analog comparator was disabled.}
 \end{figure}
 
 
