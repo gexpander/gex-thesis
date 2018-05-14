@@ -42,9 +42,9 @@ The \gls{FAT} acts as a look-up table combined with linked lists. In FAT16, it i
 Files can span multiple clusters; each \gls{FAT} entry either holds the address of the following file cluster, or a special value:
 
 \begin{itemize}[nosep]
-	\item 0x0000 \dots free cluster
-	\item 0xFFFF \dots last cluster of the file (still including file data)
-	\item 0xFFF7 \dots bad cluster
+	\item 0x0000 - free cluster
+	\item 0xFFFF - last cluster of the file (still including file data)
+	\item 0xFFF7 - bad cluster
 \end{itemize}
 
 The bad cluster mark, 0xFFF7, is used for clusters which are known to corrupt data due to a flaw in the storage medium, such us a bad memory cell.
