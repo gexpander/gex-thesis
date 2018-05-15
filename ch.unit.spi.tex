@@ -1,10 +1,10 @@
 \section{SPI Unit}
 
-The \gls{SPI} unit provides access to one of the microcontroller's \gls{SPI} peripherals. It can be configured to use any of the different speeds, clock polarity and phase settings available in its control registers.
+The \gls{SPI} unit provides access to one of the microcontroller's \gls{SPI} peripherals. The unit can be configured to any of the hardware-supported speeds, clock polarity, and clock phase settings. Explanation of those options, including diagrams, can be found in section \ref{sec:theory-spi}.
 
-The unit handles up to 16 slave select (\gls{NSS}) signals and supports message multi-cast (addressing more than one slaves at once). Protection resistors should be used if a multi-cast transaction is issued with \gls{MISO} connected.
+The unit handles up to 16 slave select (\gls{NSS}) signals and supports message multi-cast (addressing more than one slaves at once). Protection resistors should be used if a multi-cast transaction is issued with \gls{MISO} connected to prevent a short circuit between slaves transmitting the opposite logical level.
 
-The QUERY command of this unit, illustrated by figure \ref{fig:spi_query}, is flexible enough to support all types of \gls{SPI} transactions: read-only, write-only, and read-write with different request and response lengths. The slave select pin is held low during the entire transaction.
+The QUERY command of this unit, illustrated by figure \ref{fig:spi_query}, is flexible enough to support all types of \gls{SPI} transactions: read-only, write-only, and read-write, with different request and response lengths and paddings. The slave select signal is asserted during the entire transaction.
 
 \begin{figure}[h]
 	\centering
@@ -42,7 +42,7 @@ pins=0
 
 \begin{cmdlist}
 	0 & \cname{QUERY}
-	Exchange bytes with a slave device
+	Exchange bytes with a slave device; see the diagram in figure \ref{fig:spi_query}
 	& \begin{cmdreq}
 		\cfield{u8} slave number 0--16
 		\cfield{u16} response padding
@@ -55,7 +55,7 @@ pins=0
 	\end{cmdresp} \\
 
 	1 & \cname{MULTICAST}
-	Send a message to multiple slaves at once. The address is a bit map (e.g. 0x8002 = slaves 1 and 15).
+	Send a message to multiple slaves at once. The ``addressed slaves'' word uses the packed pins format (\ref{sec:packedpins}).
 	& \begin{cmdreq}
 		\cfield{u16} addressed slaves
 		\cfield{u8[]} bytes to write

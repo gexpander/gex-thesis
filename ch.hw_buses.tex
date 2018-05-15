@@ -130,7 +130,7 @@ Since 1-Wire is a proprietary protocol, there is a much smaller choice of availa
 
 \section{NeoPixel} \label{sec:theory-neo}
 
-NeoPixel is a marketing name of the \textbf{WS2812} and compatible intelligent \gls{LED} drivers that are commonly used in ``addressable \gls{LED} strips''. Details about the protocol may be found in the WS2812B datasheet \cite{neopixel-ds}. Those chips include the control logic, PWM drivers and the \gls{LED} diodes all in one 5$\times$5\,mm SMD package. 
+NeoPixel is a marketing name of the \textbf{WS2812} and compatible intelligent \gls{LED} drivers that are commonly used in ``addressable \gls{LED} strips''. Additional technical details about the chips and their protocol may be found in the WS2812B datasheet \cite{neopixel-ds}. Those chips include the control logic, PWM drivers and the \gls{LED} diodes all in one 5$\times$5\,mm SMD package. 
 
 The NeoPixel protocol is unidirectional, using only one data pin. The \gls{LED} drivers are chained together. Ones and zeros are encoded by pulses of a defined length on the data pin; after the color data was loaded into the \gls{LED} string, a longer "reset" pulse (low level) is issued by the bus master and the set colors are displayed. The timing constraints are listed in table \ref{fig:ws2812-dia}.
 

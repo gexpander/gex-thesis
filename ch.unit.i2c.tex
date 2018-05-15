@@ -1,6 +1,8 @@
 \section{\IIC Unit}
 
-The \gls{I2C} unit provides access to one of the microcontroller's \gls{I2C} peripherals. It can be configured to use either of the three speeds (Standard, Fast and Fast+) and supports both 10-bit and 7-bit addressing. 10-bit addresses can be used in commands by setting their highest bit (0x8000), as a flag to the unit.
+The \gls{I2C} unit provides access to one of the microcontroller's \gls{I2C} peripherals. More on the \IIC bus can be found in section \ref{sec:theory-i2c}.
+
+The unit can be configured to use either of the three standard speeds (Standard, Fast and Fast+) and supports both 10-bit and 7-bit addressing. 10-bit addresses can be used in commands by setting their highest bit (0x8000), as a flag to the unit; the 7 or 10 least significant bits will be used as the actual address.
 
 \subsection{\IIC Configuration}
 
@@ -26,25 +28,25 @@ digital-filter=0
 \begin{cmdlist}
 
 	0 & \cname{WRITE}
-	Raw write transaction
+	Perform a raw write transaction
 	& \begin{cmdreq}
 		\cfield{u16} slave address
 		\cfield{u8[]} bytes to write
 	\end{cmdreq} \\
 
 	1 & \cname{READ}
-	Raw read transaction
+	Perform a raw read transaction.
 	& \begin{cmdreq}
 		\cfield{u16} slave address
 		\cfield{u16} number of read bytes
     \end{cmdreq}
-\cjoin
+	\cjoin
     \begin{cmdresp}
 		\cfield{u8[]} received bytes
     \end{cmdresp} \\
 
 	2 & \cname{WRITE\_REG}
-	Write to a slave register. Sends the register number and the data in the same \gls{I2C} transaction. Multiple registers can be written to slaves supporting auto-increment.
+	Write to a slave register. Sends the register number and the data in the same transaction. Multiple registers can be written at once if the slave supports auto-increment.
 	& \begin{cmdreq}
 		\cfield{u16} slave address
 		\cfield{u8} register number
@@ -52,7 +54,7 @@ digital-filter=0
     \end{cmdreq} \\
 
 	3 & \cname{READ\_REG}
-	Read from a slave register. Writes the register number and issues a read transaction of the given length. Multiple registers can be read from slaves supporting auto-increment.
+	Read from a slave register. Writes the register number and issues a read transaction of the given length. Multiple registers can be read at once if the slave supports auto-increment.
 	& \begin{cmdreq}
 		\cfield{u16} slave address
 		\cfield{u8} register number

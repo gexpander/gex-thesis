@@ -1,10 +1,10 @@
 \section{ADC Unit}
 
-The analog/digital converter unit is one of the most complicated units implemented in the project. The unit can measure the voltage on an input pin, either as its immediate value, or averaged with exponential forgetting. Isochronous sampling is available as well: It's possible to capture a fixed-length block of data on demand, or as a response to a triggering condition on any of the enabled input pins. The \gls{ADC} must continuously sample the inputs to make the averaging and level based triggering possible; as a consequence, a pre-trigger buffer is available that can be read together with the block of samples following a trigger. The \gls{ADC} unit can also be switched to a continuous streaming mode.
+The analog/digital converter unit is one of the most complicated and powerful units implemented in the project. The unit can measure the voltage on an input pin, either as its immediate value, or averaged with exponential forgetting. Isochronous sampling is available as well: it is possible to capture a fixed-length block of data on demand, or as a response to a triggering condition on any of the enabled input pins. The \gls{ADC} must continuously sample the inputs to make the averaging and level based triggering possible; as a consequence, a pre-trigger buffer is available that can be read together with the block of samples following a trigger. The \gls{ADC} unit can also be switched to a continuous streaming mode, a block capture which continues indefinitely, until the host decides to stop the stream.
 
-It's possible to activate any number of the 16 analog inputs of the \gls{ADC} peripheral simultaneously. The maximum continuous sampling frequency, which reaches 70\,ksps with one channel, lowers with an increasing number of enabled channels as the amount of data to transfer to the host increases.
+It is possible to activate any number of the 16 analog inputs of the \gls{ADC} peripheral simultaneously, together with the internal input channels. The maximum continuous sampling frequency, which reaches 70\,ksps with one channel, lowers with an increasing number of enabled channels, as the amount of data to transfer host increases. Those high speeds are achievable in shorter block captures, taking advantage of the (configurable) data buffer. A streamed or too long block capture may be aborted after the buffer is exhausted.
 
-
+\todo[inline]{add a diagram}
 
 \subsection{ADC Configuration}
 
@@ -67,6 +67,7 @@ avg_factor=500
 		\cfield{u16[]} sample data
 	\end{cmdpld}
 \end{cmdlist}
+
 
 \subsection{ADC Commands}
 

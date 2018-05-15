@@ -1,8 +1,8 @@
 \section{NeoPixel Unit}
 
-The NeoPixel unit implements the protocol needed to control a digital \gls{LED} strip with WS2812, WS2811, or compatible \gls{LED} driver chips. The protocol timing is implemented in software, therefore it is available on any GPIO pin of the module.
+The NeoPixel unit implements the protocol needed to control a digital \gls{LED} strip with WS2812, WS2811, or compatible \gls{LED} driver chips. The NeoPixel protocol (explained in section \ref{sec:theory-neo}) is implemented in software, therefore it is available on any \gls{GPIO} pin of the module.
 
-The color data can be loaded in five different format: as packed bytes, or as the little-endian or big-endian encoding of colors in the 32-bit format 0x00RRGGBB or 0x00BBGGRR. This data format is convenient when the colors are already represented by an array of 32-bit integers.
+The color data can be loaded in five different format: as packed bytes (3$\times$8 bits color), or as the little- or big-endian encoding of colors in a 32-bit format: 0x00RRGGBB or 0x00BBGGRR. The 32-bit format is convenient when the colors are already represented as an array of 32-bit integers, e.g. extracted from a screen capture or an image.
 
 \subsection{NeoPixel Configuration}
 
@@ -23,7 +23,7 @@ pixels=32
 	1 & \cname{LOAD}
 	Load a sequence of R,G,B bytes
 	& \begin{cmdreq}
-		\item For each LED:
+		\item For each \glspl{LED}:
 		\begin{pldlist}
 			\cfield{u8} red
 			\cfield{u8} green
@@ -34,25 +34,25 @@ pixels=32
 	4 & \cname{LOAD\_U32\_ZRGB}
 	Load 32-bit big-endian 0xRRGGBB (0,R,G,B)
 	& \begin{cmdreq}
-		\cfield{u32[]} color data BE
+		\cfield{u32[]} color data (big-endian)
 	\end{cmdreq} \\
 
 	5 & \cname{LOAD\_U32\_ZBGR}
 	Load 32-bit big-endian 0xBBGGRR (0,B,G,R)
 	& \begin{cmdreq}
-		\cfield{u32[]} color data BE
+		\cfield{u32[]} color data (big-endian)
 	\end{cmdreq} \\
 
 	6 & \cname{LOAD\_U32\_RGBZ}
 	Load 32-bit little-endian 0xBBGGRR (R,G,B,0)
 	& \begin{cmdreq}
-		\cfield{u32[]} color data LE
+		\cfield{u32[]} color data (little-endian)
 	\end{cmdreq} \\
 
 	7 & \cname{LOAD\_U32\_BGRZ}
 	Load 32-bit little-endian 0xRRGGBB (B,G,R,0)
 	& \begin{cmdreq}
-		\cfield{u32[]} color data LE
+		\cfield{u32[]} color data (little-endian)
 	\end{cmdreq} \\
 
 	10 & \cname{GET\_LEN}

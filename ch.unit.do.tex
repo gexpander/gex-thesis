@@ -1,6 +1,6 @@
 \section{Digital Output}
 
-The digital output unit provides a write access to one or more pins of a GPIO port. This unit additionally supports pulse generation on any of its pins. This is implemented in software with the timing derived from the system timebase, as the hardware timer outputs, otherwise used for \gls{PWM} or pulse generation, are available only on several dedicated pins. The timing code is optimized to reduce jitter. \todo{Measure jitter and add it here}
+The digital output unit provides a write access to one or more pins of a \gls{GPIO} port. This unit additionally supports pulse generation on any of its pins; this is implemented in software, with timing derived from the system timebase, in order to support pulses on all pins regardless of hardware \gls{PWM} support. Pins in commands are expressed in the packed format (\ref{sec:packedpins}).
 
 \subsection{Digital Output Configuration}
 
@@ -41,7 +41,7 @@ open-drain=
 	\end{cmdreq} \\
 
 	4 & \cname{PULSE}
-	Generate a pulse on the selected pins. The $\mu$s scale may be used only for 0--999\,$\mu$s.
+	Generate a pulse on the selected pins. The microsecond scale may be used only for 0--999\,$\mu$s.
 	& \begin{cmdreq}
 		\cfield{u16} pins to pulse
 		\cfield{u8} active level (0, 1)

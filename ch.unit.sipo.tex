@@ -1,8 +1,22 @@
 \section{SIPO (Shift Register) Unit}
 
-The shift registers driver unit is designed for the loading of data into \textit{serial-in, parallel-out} (SIPO) shift registers, such as 74HC4094 or 74HC595. Those are commonly used to control segmented LED displays, LED matrices etc.
+The shift registers driver unit is designed for the loading of data into serial-in/parallel-out (SIPO) shift registers, such as 74xx4094 or 74xx595. Those are commonly used to control segmented LED displays, LED user interfaces, etc. 
 
-This unit handles both the \textit{Shift} and \textit{Store} signals and is capable of loading multiple shift registers simultaneously, reducing visible glitches in the display. It's also possible to set the data lines to arbitrary level(s) before sending the Store pulse, which can be latched and used for some additional feature of the LED display, such as brightness control.
+Those devices may be daisy-chained: the output of one is connected to the input of another, sharing the same clock and other signals, and they work together as one longer shift register.
+
+A SIPO shift register has the following pins (possibly named differently with chips from different vendors):
+
+\begin{itemize}
+	\item \textit{Shift} -- \gls{SCK}; shifts the data in the register by one bit
+	\item \textit{Data In} -- \gls{MOSI}; serial data to load into the register
+	\item \textit{Data Out} -- output for daisy-chaining with other shift registers
+	\item \textit{Store} -- latches the current register data and shows it on the output
+	\item \textit{Clear} -- erases the latched data and clears the display
+\end{itemize}
+
+This unit automatically handles both the \textit{Shift} and \textit{Store} signals, provides access to the \textit{Clear} output, and is capable of loading multiple shift registers in parallel (an arrangement sometimes used instead of daisy-chaining). The polarity (active level) of all signals can be configured.
+
+It is, additionally, possible to set the data lines to arbitrary ``idle'' level(s) before sending the \textit{Store} pulse; this may be latched and used for some additional feature on the user interface, such as a brightness control.
 
 
 \subsection{SIPO Configuration}
@@ -25,9 +39,11 @@ data-pins=3
 
 \subsection{SIPO Commands}
 
+The WRITE and CLEAR\_DIRECT commands are the only ones normally used. The others provide manual control over all the output signals for debugging or testing.
+
 \begin{cmdlist}
 	0 & \cname{WRITE}
-	Load the shift registers and leave the data outputs in the ``trailing data'' state before sending the Store pulse.
+	Load the shift registers and leave the data outputs in the ``trailing data'' state before sending the \textit{Store} pulse.
 	&
 	\begin{cmdreq}
 		\cfield{u16} trailing data
@@ -39,7 +55,7 @@ data-pins=3
 	\\
 
 	1 & \cname{DIRECT\_DATA}
-	Directly write to the data pins (same like the DO unit's WRITE command)
+	Directly write to the data pin(s)
 	&
     \begin{cmdreq}
 		\cfield{u16} values to write
@@ -47,15 +63,15 @@ data-pins=3
 
 	2 &
 	\cname{DIRECT\_CLEAR}
-	Pulse the Clear pin, erasing the registers' data & \\
+	Pulse the \textit{Clear} pin & \\
 
 	3 &
 	\cname{DIRECT\_SHIFT}
-	Pulse the Shift pin & \\
+	Pulse the \textit{Shift} pin & \\
 
 	4 &
 	\cname{DIRECT\_STORE}
-	Pulse the Store pin & \\
+	Pulse the \textit{Store} pin & \\
 \end{cmdlist}
 
 
