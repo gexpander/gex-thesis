@@ -112,7 +112,7 @@ The output frequency is calculated as \(f_\mathrm{out} = \dfrac{M\cdot f_\mathrm
 
 \subsubsection{DDS Implemented in Hardware}
 
-DDS may be implemented in hardware, including the look-up table, often together with the \gls{DAC} itself, which is then called a \textit{Complete \gls{DDS}}. That is the case of e.g. AD9833 from Analog Devices. As the software implementation depends on a periodic interrupt, it is often advantageous to use a component like this when we need higher output frequencies where the use of an interrupt is not possible. GEX can control an external waveform generator like the AD9833 using an \gls{SPI} port.
+DDS may be implemented in hardware, including the look-up table, often together with the \gls{DAC} itself, which is then called a \textit{Complete \gls{DDS}}. That is the case of, e.g., the AD9833 from Analog Devices. As the software implementation depends on a periodic interrupt, it is often advantageous to use a component like this when we need higher output frequencies where the use of an interrupt is not possible. GEX can control an external waveform generator like the AD9833 using an \gls{SPI} port.
 
 \section{Touch Sensing} \label{sec:theory-touch}
 

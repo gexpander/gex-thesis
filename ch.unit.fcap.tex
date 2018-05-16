@@ -3,11 +3,11 @@
 
 The frequency capture unit implements both the frequency measurement methods explained in \cref{sec:theory-fcap}: direct and reciprocal.
 
-The unit has several operational modes: idle, reciprocal continuous, reciprocal burst, direct continuous, direct burst, free counting, and single pulse. Burst mode is an on-demand measurement with optional averaging. Continuous mode doesn't support averaging, but the latest measurement can be read at any time without a delay.
+The unit has several operational modes: idle, reciprocal continuous, reciprocal burst, direct continuous, direct burst, free counting, and single pulse. Burst mode is an on-demand measurement with optional averaging. Continuous mode does not support averaging, but the latest measurement can be read at any time without a delay.
 
 \subsection{Value Conversion Formulas}
 
-Several of the features implemented in this unit would require floating point arithmetic to provide the measured value in the desired units (Hz, seconds). That is not available in Cortex-M0, only as a software implementation. The calculation is left to the client in order to save Flash space that would be otherwise used by the the arithmetic functions. This arrangement also avoids rounding errors and a possible loss of precision.
+Several of the features implemented in this unit would require floating point arithmetic to provide the measured value in the desired units (Hz, seconds). That is not available in Cortex-M0, only as a software implementation. The calculation is left to the client in order to save Flash space that would be otherwise used by the arithmetic functions. This arrangement also avoids rounding errors and a possible loss of precision.
 
 \subsubsection{Reciprocal (Indirect) Measurement}
 

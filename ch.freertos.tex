@@ -14,7 +14,7 @@ At start-up the firmware initializes the kernel, registers tasks to run and star
 
 \subsubsection{Task Run States}
 
-Tasks can be in one of four states: Suspended, Ready, Blocked, Running. The Suspended state does not normally occur in a task's life cycle, it is entered and left using API calls from the application. A task is in the Ready state when it can run, but is currently paused because a higher priority task is running. It enters the Running state when the scheduler switches to it. A Running task can wait for a synchronization object (e.g. a mutex) to be available; at this point it enters a Blocked state and the scheduler runs the next Ready task. When no tasks can run, the Idle Task takes control; it can either enter a sleep state to save power, or wait in a loop until another task is available. The Idle task is always either Ready or Running and has the lowest priority of all tasks.
+Tasks can be in one of four states: Suspended, Ready, Blocked, Running. The Suspended state does not normally occur in a task's life cycle, it is entered and left using API calls from the application. A task is in the Ready state when it can run, but is currently paused because a higher priority task is running. It enters the Running state when the scheduler switches to it. A Running task can wait for a synchronization object (e.g., a mutex) to be available; at this point it enters a Blocked state and the scheduler runs the next Ready task. When no tasks can run, the Idle Task takes control; it can either enter a sleep state to save power, or wait in a loop until another task is available. The Idle task is always either Ready or Running and has the lowest priority of all tasks.
 
 \subsubsection{Task Switching and Interrupts}
 
@@ -31,7 +31,7 @@ FreeRTOS uses a \textit{priority inheritance} mechanism to prevent situations wh
 FreeRTOS provides binary and counting semaphores, mutexes and queues. Each of those objects will now be briefly introduced.
 
 \begin{itemize}
-	\item \textbf{Binary semaphores} can be used for task notifications, e.g. a task waits for a semaphore to be set by an interrupt when a byte is received on the serial port. This makes the task Ready and if it has a higher priority than the previously running task, it is immediately resumed to process the event.
+	\item \textbf{Binary semaphores} can be used for task notifications, e.g., when a task waits for a semaphore to be set by an \gls{ISR}. This makes the task Ready and if it has a higher priority than the task previously running, it is immediately resumed to process the event.
 
 	\item  \textbf{Counting semaphores} are used to represent available resources. A pool of software or hardware resources is accompanied by a counting semaphore, so that tasks can wait for a resource to become available in the pool and then subtract the semaphore value. After finishing with a resource, the semaphore is incremented again and another task can use it.
 

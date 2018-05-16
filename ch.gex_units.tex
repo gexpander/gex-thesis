@@ -8,11 +8,11 @@ The number in the first column of the command (or event) tables, marked as ``Cod
 
 \subsection{Unit Naming}
 
-Unit types are named in uppercase (e.g. SPI, 1WIRE, NPX) in the INI file and in the list of units. Unit instances can be named in any way the user desires; using lowercase makes it easier to distinguish them from unit types. It is advisable to use descriptive names, e.g. not ``pin1'' but rather ``button''.
+Unit types are named in uppercase (SPI, 1WIRE, NPX) in the INI file and in the list of units. Unit instances can be named in any way the user desires; using lowercase makes it easier to distinguish them from unit types. It is advisable to use descriptive names, e.g., not ``pin1'', but rather ``button''.
 
 \subsection{Packed Pin Access} \label{sec:packedpins}
 
-Several units facilitate an access to a group of GPIO pins, such as the digital input and output units, or the SPI unit's slave select pins. The STM32 microcontroller's ports have 16 pins each, most of which can be configured to one of several alternate functions (e.g. SPI, PWM outputs, ADC input). As a consequence, it is common to be left with a discontiguous group of pins after assigning all the alternate functions needed by an application.
+Several units facilitate an access to a group of GPIO pins, such as the digital input and output units, or the SPI unit's slave select pins. The STM32 microcontroller's ports have 16 pins each, most of which can be configured to one of several alternate functions (e.g., SPI, PWM outputs, ADC input). As a consequence, it is common to be left with a discontiguous group of pins after assigning all the alternate functions needed by an application.
 
 \begin{figure}[h]
 	\centering
