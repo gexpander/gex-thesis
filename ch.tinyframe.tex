@@ -4,7 +4,7 @@ GEX can be controlled through a hardware \gls{UART}, the \gls{USB} or over a wir
 
 The communication is organized in transactions. A transaction consists of one or more messages going in either direction. Messages can be stand-alone, or chained with a response or a follow-up message using the transaction ID. Both peers, GEX and the client application running on the host PC, are equal in the communication: either side can independently initiate a transaction at any time.
 
-GEX uses a framing library \textit{TinyFrame} \cite{tinyframerepo}, developed likewise by the author, but kept as a separate project for easier re-use in different applications. The library implements frame building and parsing, checksum calculation and a system of message listeners.
+GEX uses a framing library \textit{TinyFrame}~\cite{tinyframerepo}, developed likewise by the author, but kept as a separate project for easier re-use in different applications. The library implements frame building and parsing, checksum calculation and a system of message listeners.
 
 \section{Frame Structure}
 
@@ -15,7 +15,7 @@ Message frames have the following structure (all little-endian):
 	\cfield{u16} frame ID
 	\cfield{u16} payload length
 	\cfield{u8} frame type
-	\cfield{u8} header checksum	
+	\cfield{u8} header checksum
 	\cfield{u8[]} payload
 	\cfield{u8} payload checksum (omitted for empty payloads)
 \end{boxedpayload}
@@ -106,7 +106,7 @@ The reason for splitting a long file into multiple messages, rather than sending
 
 A read or write transaction can be aborted by a frame 0x08 (Bulk Abort) at any time, though aborting a write transaction may leave the configuration in a corrupted state. As hinted in the introduction of this chapter, a transaction is defined by sharing a common frame ID. Thus, all frames in a bulk transaction must have the same ID, otherwise the ID listeners won't be called for the subsequent messages, and the transaction will time out.
 
-Figure \ref{fig:bulk-rw} shows a diagram of the bulk read and write data flow.
+Figure~\ref{fig:bulk-rw} shows a diagram of the bulk read and write data flow.
 
 \begin{figure}
 	\centering

@@ -1,6 +1,6 @@
 \chapter{FreeRTOS} \label{sec:freertos}
 
-FreeRTOS is a free, open-source real time operating system kernel targeted at embedded systems and ported to many different microcontroller architectures \cite{freertos-ports-list}. FreeRTOS provides the task scheduler, forming the central part of the RTOS, and implements queues, semaphores, and mutexes for message passing and synchronization between concurrent tasks (summarily called synchronization objects\footnote{In this chapter sometimes simply called ``objects''.}). FreeRTOS is compact and designed to be easy to understand; it is written in C, with the exception of some architecture-specific routines which use assembly. A complete overview of the system is available in the FreeRTOS reference manual \cite{freertos-rm} and its guide book \cite{freertos-book}.
+FreeRTOS is a free, open-source real time operating system kernel targeted at embedded systems and ported to many different microcontroller architectures~\cite{freertos-ports-list}. FreeRTOS provides the task scheduler, forming the central part of the RTOS, and implements queues, semaphores, and mutexes for message passing and synchronization between concurrent tasks (summarily called synchronization objects\footnote{In this chapter sometimes simply called ``objects''.}). FreeRTOS is compact and designed to be easy to understand; it is written in C, with the exception of some architecture-specific routines which use assembly. A complete overview of the system is available in the FreeRTOS reference manual~\cite{freertos-rm} and its guide book~\cite{freertos-book}.
 
 FreeRTOS is used in GEX for its synchronization objects that make it easy to safely pass messages between interrupts and working threads, without deadlocks or race conditions. The built-in stack overflow protection helps with a more efficient memory allocation, and the heap allocator provided by FreeRTOS enables a thread-safe dynamic allocation with a shared heap.
 
@@ -8,7 +8,7 @@ FreeRTOS is used in GEX for its synchronization objects that make it easy to saf
 
 \subsection{Tasks}
 
-Threads in FreeRTOS are called \textit{tasks}. Each task is assigned a memory area to use as its stack space, and a holding structure with its name, saved \textit{context}, and other metadata used by the kernel. A task context includes the program counter, stack pointer and other register values. Task switching is done by saving and restoring this context by manipulating the values on the stack before leaving and interrupt. The FreeRTOS website provides an example with the AVR port \cite{freertos-task-switching} demonstrating how its internal functionality is implemented, including the context switch.
+Threads in FreeRTOS are called \textit{tasks}. Each task is assigned a memory area to use as its stack space, and a holding structure with its name, saved \textit{context}, and other metadata used by the kernel. A task context includes the program counter, stack pointer and other register values. Task switching is done by saving and restoring this context by manipulating the values on the stack before leaving and interrupt. The FreeRTOS website provides an example with the AVR port~\cite{freertos-task-switching} demonstrating how its internal functionality is implemented, including the context switch.
 
 At start-up the firmware initializes the kernel, registers tasks to run and starts the scheduler. From this point onward the scheduler is in control and runs the tasks using a round robin scheme, always giving a task one tick of run time (usually 1\,ms) before interrupting it. Which task should run is primarily determined by their priority numbers, but there are other factors.
 
@@ -20,7 +20,7 @@ Tasks can be in one of four states: Suspended, Ready, Blocked, Running. The Susp
 
 Task switching occurs periodically in a timer interrupt, usually every 1\,ms; in Cortex-M, this is typically the SysTick interrupt, a timer designed for this purpose that is included in the Arm core itself and thus available on all derived platforms.
 
-After one tick of run time, the Running task is paused (enters Ready state), or continues to run if no higher priority task is available. If a higher priority task waits for an object and this is made available in an interrupt, the previously running task is paused and the waiting task is resumed immediately (enters the Running state). FreeRTOS defines an interrupt-friendly variant of some of the \gls{API} functions intended for this purpose. 
+After one tick of run time, the Running task is paused (enters Ready state), or continues to run if no higher priority task is available. If a higher priority task waits for an object and this is made available in an interrupt, the previously running task is paused and the waiting task is resumed immediately (enters the Running state). FreeRTOS defines an interrupt-friendly variant of some of the \gls{API} functions intended for this purpose.
 
 Only a subset of the FreeRTOS \gls{API} can be accessed from interrupt routines this way, for example it is not possible to use the delay function or wait for an object with a timeout, because the SysTick interrupt, which increments the tick counter, has the lowest priority and could not run. This is by design, to prevent unexpected context switching in application interrupts.
 
@@ -32,11 +32,11 @@ FreeRTOS provides binary and counting semaphores, mutexes and queues. Each of th
 
 \begin{itemize}
 	\item \textbf{Binary semaphores} can be used for task notifications, e.g. a task waits for a semaphore to be set by an interrupt when a byte is received on the serial port. This makes the task Ready and if it has a higher priority than the previously running task, it is immediately resumed to process the event.
-	
+
 	\item  \textbf{Counting semaphores} are used to represent available resources. A pool of software or hardware resources is accompanied by a counting semaphore, so that tasks can wait for a resource to become available in the pool and then subtract the semaphore value. After finishing with a resource, the semaphore is incremented again and another task can use it.
-	
+
 	\item \textbf{Mutexes} (locks), unlike semaphores, must be taken and released in the same thread (task). They're used to guard exclusive access to a resource, such as writing to a serial port, or accessing a shared memory. When a mutex is taken, a different task which needs to use it enters the Blocked state and is resumed once the mutex becomes available (at which point the task is resumed and simultaneously takes it).
-	
+
 	\item \textbf{Queues} are used for passing messages between tasks, or from interrupts to tasks. Both sending and receiving of queue messages can block the task until the operation becomes possible. A queue handing task is often simply a loop which tries to read from the queue with an infinite timeout and processes the received data once the reading succeeds.
 \end{itemize}
 
@@ -46,5 +46,5 @@ It must be noted that synchronization objects like mutexes and semaphores can he
 
 Each task in FreeRTOS is assigned a block of \gls{RAM} to use as its stack when it runs. This is where the stack pointer is restored to in the context switch. It can happen that a insufficient stack is exceeded and the stack pointer moves outside the designated area. Without countermeasures this would mean that we are overwriting bytes in some unrelated memory structure, perhaps another task's control block or a stack.
 
-A stack overflow protection can be enabled by a flag in the FreeRTOS configuration file (more details in \cite{freertos-stackov}). This function works in two ways: the more obvious is a simple check that the stack pointer remains in the designated area; however, as the check may be performed only in the scheduler interrupt, it can happen that the stack pointer exceeds the bounds only temporarily and returns back before the stack can be checked for overflow. The stack is thus filled with a known filler value before starting the task, and the last few bytes are then tested to match this value. Not only can we detect a stack overflow more reliably, this feature also makes it possible to estimate the peak stack usage by counting the remaining filler values in the stack area. Naturally, we cannot distinguish between the original filler values and the same value stored on the stack; still, this method proves remarkably successful in the detection of misconfigured stack size.
+A stack overflow protection can be enabled by a flag in the FreeRTOS configuration file (more details in~\cite{freertos-stackov}). This function works in two ways: the more obvious is a simple check that the stack pointer remains in the designated area; however, as the check may be performed only in the scheduler interrupt, it can happen that the stack pointer exceeds the bounds only temporarily and returns back before the stack can be checked for overflow. The stack is thus filled with a known filler value before starting the task, and the last few bytes are then tested to match this value. Not only can we detect a stack overflow more reliably, this feature also makes it possible to estimate the peak stack usage by counting the remaining filler values in the stack area. Naturally, we cannot distinguish between the original filler values and the same value stored on the stack; still, this method proves remarkably successful in the detection of misconfigured stack size.
 

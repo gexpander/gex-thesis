@@ -1,8 +1,8 @@
 \chapter{Wireless Interface} \label{sec:wireless}
 
-Four methods of a wireless connection have been considered: Bluetooth (e.g. with CC2541), WiFi with ESP8266, a 868\,MHz long range link with SX1276, and a 2.4\,GHz link with nRF24L01+. Bluetooth was dismissed early for its complexity, and ESP8266 for its high consumption in continuous reception mode, although both solutions might be viable for certain applications and with more development time. 
+Four methods of a wireless connection have been considered: Bluetooth (e.g. with CC2541), WiFi with ESP8266, a 868\,MHz long range link with SX1276, and a 2.4\,GHz link with nRF24L01+. Bluetooth was dismissed early for its complexity, and ESP8266 for its high consumption in continuous reception mode, although both solutions might be viable for certain applications and with more development time.
 
-The Semtech SX1276 \cite{semtech-manual} and Nordic Semiconductor nRF24L01+  \cite{nrf-manual} transceivers have both been tested using the first GEX prototype, proving its usefulness as a hardware development tool, and it has been confirmed they could fulfill the requirements of our application.
+The Semtech SX1276~\cite{semtech-manual} and Nordic Semiconductor nRF24L01+ ~\cite{nrf-manual} transceivers have both been tested using the first GEX prototype, proving its usefulness as a hardware development tool, and it has been confirmed they could fulfill the requirements of our application.
 
 \begin{figure}[h]
 	\centering
@@ -12,11 +12,11 @@ The Semtech SX1276 \cite{semtech-manual} and Nordic Semiconductor nRF24L01+  \ci
 
 \section{Modulations Overview}
 
-A brief overview of the different signal modulation techniques is presented here to aid the reader with understanding of table \ref{fig:nrf-sx-comparison} and the rest of the chapter.
+A brief overview of the different signal modulation techniques is presented here to aid the reader with understanding of table~\ref{fig:nrf-sx-comparison} and the rest of the chapter.
 
 \subsection{On-Off Keying (OOK)}
 
-In \gls{OOK}, the carrier generator is switched on and off to transmit ones and zeros. 
+In \gls{OOK}, the carrier generator is switched on and off to transmit ones and zeros.
 
 \subsection{Frequency Shift Keying (FSK)}
 
@@ -40,7 +40,7 @@ LoRa is a patented proprietary modulation developed by Semtech. It uses a direct
 
 \section{Comparing SX1276 and nRF24L01+}
 
-The two transceivers are compared in table \ref{fig:nrf-sx-comparison}. It is apparent that each of them has its strengths and weaknesses, which will be discussed below.
+The two transceivers are compared in table~\ref{fig:nrf-sx-comparison}. It is apparent that each of them has its strengths and weaknesses, which will be discussed below.
 
 \begin{table}[h]
 	\centering
@@ -70,7 +70,7 @@ SX1276 supports additional modulation modes, including a proprietary LoRa scheme
 
 nRF24L01+ provides higher data rates at short distances. Its power consumption is comparable or lower than that of the SX1276. It lacks a dedicated reset pin, but that can be easily worked around using an external transistor to momentarily disconnect its Vdd pin.
 
-Both devices implement some form of a packet engine with error checking; that of the nRF24L01+, called ShockBurst, is more advanced as it implements acknowledgment responses and automatic re-transmission, leading to a potentially more robust communication without an additional overhead on the side of the microcontroller. 
+Both devices implement some form of a packet engine with error checking; that of the nRF24L01+, called ShockBurst, is more advanced as it implements acknowledgment responses and automatic re-transmission, leading to a potentially more robust communication without an additional overhead on the side of the microcontroller.
 
 
 \section{Integration of the nRF24L01+ into GEX}
@@ -90,50 +90,50 @@ A separate device, the \textit{GEX wireless gateway}, was developed to provide t
 	\caption{A block diagram of the wireless connection}
 \end{wrapfigure}
 
-The gateway presents itself to the host as a \gls{CDCACM} device, much like the GEX modules themselves (here called \textit{nodes}) when connected over \gls{USB}. It implements a simple protocol which encapsulates the binary data sent to or from a connected node. The wrapped GEX protocol, which is described in chapter \ref{sec:tinyframe}, remains unchanged.
+The gateway presents itself to the host as a \gls{CDCACM} device, much like the GEX modules themselves (here called \textit{nodes}) when connected over \gls{USB}. It implements a simple protocol which encapsulates the binary data sent to or from a connected node. The wrapped GEX protocol, which is described in chapter~\ref{sec:tinyframe}, remains unchanged.
 
 The gateway has a 4-byte network ID, a number derived from the \gls{MCU}'s unique ID by calculating its 32-bit \gls{CRC}. The network ID must be entered into all nodes that wish to communicate with the gateway. Additionally, each module is assigned a 1-byte number which serves as its address in the network. The gateway can receive messages from up to 6 nodes.
 
 All messages sent to or from the gateway are a multiple of 64 bytes long, padded with zeros if shorter. The message starts with a control byte determining its type, as summarized in the following table:
 
-{	
+{
 \tabulinesep=5pt
-\begin{longtabu} to \textwidth {P{5em}  X[5] X[4,l]}	
+\begin{longtabu} to \textwidth {P{5em}  X[5] X[4,l]}
 	\toprule
 	\textbf{First byte} & \textbf{Function} & \textbf{Structure} \\
 	\midrule
 	\endhead
-	
-	\bottomrule	
+
+	\bottomrule
 	\endfoot
-	
-	`r' (114) & 
+
+	`r' (114) &
 	\cname{RESTART}
 	Restart the gateway, disconnecting all nodes. This is functionally equivalent to re-plugging it to the USB port.
 	& \\
-	
+
 	`i' (105) &
 	\cname{GET\_NET\_ID}
-	Read the unique 4-byte network ID. This command has no side effects and may be used as ``ping'' to verify the USB connection. & 	
+	Read the unique 4-byte network ID. This command has no side effects and may be used as ``ping'' to verify the USB connection. &
 	\begin{cmdresp}
 		\cfield{0x01}
 		\cfield{u8[4]} network ID
-	\end{cmdresp} 
+	\end{cmdresp}
 	\\
-	
+
 	`n' (110) &
 	\cname{ADD\_NODES}
 	Configure the gateway to listen for messages from the given nodes.
 	Nodes may be removed using the RESTART command.
-	& 
-	\begin{cmdreq}		
+	&
+	\begin{cmdreq}
 		\cfield{u8} count
 		\cfield{u8[]} node addresses
 	\end{cmdreq}
 	\\
-	
-	`m' (109)&	
-	\cname{SEND\_MSG}	
+
+	`m' (109)&
+	\cname{SEND\_MSG}
 	Send a binary message to one of the connected nodes. The message may span multiple 64-byte frames; the subsequent frames will contain only the payload bytes, or zero padding at the end of the last one.
 	& \begin{cmdreq}
 		\cfield{u8} node address
@@ -142,10 +142,10 @@ All messages sent to or from the gateway are a multiple of 64 bytes long, padded
 		\cfield{u8[]} payload
 	\end{cmdreq} \\
 
-	0x02 & 
+	0x02 &
 	\cname{INCOMING\_MSG}
 	A message was received from one of the configured nodes. This is an event frame sent by the gateway to the host.
-	& \begin{cmdpld}		
+	& \begin{cmdpld}
 		\cfield{u8} node address
 		\cfield{u8} message length
 		\cfield{u8[]} payload

@@ -28,7 +28,7 @@ Generating an analog signal is possible using a \gls{PWM} or by a dedicated digi
 
 \subsection{Logic Level Input and Output}
 
-We've covered some more advanced features, but skipped the simplest feature: a direct access to \gls{GPIO} pins. Considering the latencies of \gls{USB} and the \gls{PC}'s operating system, this cannot be used reliably for ``bit banging'', however we can still accomplish a lot with just changing logic levels - e.g. to control character \glspl{LCD}, or emulate some interfaces that include a clock line, like \gls{SPI}. As mentioned in \ref{sec:uses-digital-ifaces}, many digital sensors and modules use plain \glspl{GPIO} in addition to the communication bus for out-of-band signaling or features like chip selection or reset.
+We've covered some more advanced features, but skipped the simplest feature: a direct access to \gls{GPIO} pins. Considering the latencies of \gls{USB} and the \gls{PC}'s operating system, this cannot be used reliably for ``bit banging'', however we can still accomplish a lot with just changing logic levels - e.g. to control character \glspl{LCD}, or emulate some interfaces that include a clock line, like \gls{SPI}. As mentioned in~\ref{sec:uses-digital-ifaces}, many digital sensors and modules use plain \glspl{GPIO} in addition to the communication bus for out-of-band signaling or features like chip selection or reset.
 
 \subsection{Pulse Generation and Measurement}
 
@@ -56,7 +56,7 @@ Let's now summarize the features we wish to support in the GEX firmware, based o
 
 \begin{itemize}
 	\item \textbf{Hardware interfacing functions}
-		\begin{itemize}	
+		\begin{itemize}
 			\item I/O pin direct access (read, write), pin change interrupt
 			\item Analog input: voltage measurement, sampled capture
 			\item Analog output: static level, waveform generation
@@ -64,7 +64,7 @@ Let's now summarize the features we wish to support in the GEX firmware, based o
 			\item Single pulse and \gls{PWM} generation
 			\item \gls{SPI}, \gls{I2C}, \gls{UART}/\gls{USART}
 			\item Dallas 1-Wire
-			\item NeoPixel (addressable \gls{LED} strips)	
+			\item NeoPixel (addressable \gls{LED} strips)
 		\end{itemize}
 	\pagebreak[0]
 	\item \textbf{Communication with the host computer}
@@ -83,7 +83,7 @@ Let's now summarize the features we wish to support in the GEX firmware, based o
 
 \section{Microcontroller Selection}
 
-As discussed in section \ref{sec:expected-outcome}, this project will be based on microcontrollers from the STM32 family. The STM32F072 model was selected for the initial hardware and firmware design due to its low cost, advanced peripherals, and the availability of development boards. The firmware can be ported to other \glspl{MCU} later (e.g. to STM32L072, STM32F103 or STM32F303).
+As discussed in section~\ref{sec:expected-outcome}, this project will be based on microcontrollers from the STM32 family. The STM32F072 model was selected for the initial hardware and firmware design due to its low cost, advanced peripherals, and the availability of development boards. The firmware can be ported to other \glspl{MCU} later (e.g. to STM32L072, STM32F103 or STM32F303).
 
 The STM32F072 is a Cortex M0 device with 128\,KiB of flash memory, 16\,KiB of \gls{RAM} and running at 48\,MHz. It is equipped with a \gls{USB} Full Speed peripheral block, a 12-bit \gls{ADC} and \gls{DAC}, a number of general-purpose timers/counters, SPI, I$^2$C, and USART peripherals, among others. It supports crystal-less \gls{USB}, using the USB SOF packet for synchronization of the internal 48\,MHz RC oscillator; naturally, a real crystal resonator will provide better timing accuracy.
 
@@ -91,9 +91,9 @@ To effectively utilize the time available for this work, only the STM32F072 firm
 
 \section{Form Factor Considerations}
 
-While the GEX firmware can be used with existing evaluation boards from ST Microelectronics (see figure \ref{fig:discovery} for an example of one such board), we wish to design and realize a few custom hardware prototypes that will be smaller and more convenient to use. 
+While the GEX firmware can be used with existing evaluation boards from ST Microelectronics (see figure~\ref{fig:discovery} for an example of one such board), we wish to design and realize a few custom hardware prototypes that will be smaller and more convenient to use.
 
-Three possible form factors are drawn in figure \ref{fig:ff-sketches}. The use of a common connector layout and pin assignments, here Arduino and Raspberry Pi, makes it possible to reuse add-on boards from those platforms. When we copy the physical form factor of another product, in this example the Raspberry Pi Zero, we can further take advantage of existing enclosures designed for it.
+Three possible form factors are drawn in figure~\ref{fig:ff-sketches}. The use of a common connector layout and pin assignments, here Arduino and Raspberry Pi, makes it possible to reuse add-on boards from those platforms. When we copy the physical form factor of another product, in this example the Raspberry Pi Zero, we can further take advantage of existing enclosures designed for it.
 
 \begin{figure}[h]
 	\centering
