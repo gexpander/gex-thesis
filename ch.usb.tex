@@ -112,7 +112,7 @@ An interesting property of the \gls{CDC} class is that the bulk endpoints transp
 
 The original \gls{USB} specification expected that each function will have only one interface enabled at a time. After it became apparent that there is a need to have multiple unrelated interfaces working in parallel, the \gls{IAD}~\cite{usbif-iad} was introduced as a workaround.
 
-The \gls{IAD} is an entry in the descriptor table that defines which interfaces belong together and should be handled by the same software driver. To use the \gls{IAD}, the function's class must be set to 239 (0xEF), subclass 2 and protocol 1 in the top level descriptor, so that the \gls{OS} knows to look for this descriptor before binding drivers to any interfaces.
+The \gls{IAD} is an entry in the descriptor table that defines which interfaces belong together and should be handled by the same software driver. To use the \gls{IAD}, the function's class must be set to 0xEF, subclass 0x02, and protocol 0x01 in the top level descriptor, so that the \gls{OS} knows to look for this descriptor before binding drivers to any interfaces.
 
 In GEX, the \gls{IAD} is used to tie together the \gls{CDC} and \gls{ACM} interfaces while leaving out the \gls{MSC} interface which should be handled by a different driver. To make this work, a new \textit{composite class} had to be created as a wrapper for the library-provided \gls{MSC} and \gls{CDCACM} implementation.
 

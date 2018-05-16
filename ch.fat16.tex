@@ -111,7 +111,7 @@ As shown in \cref{tab:fat16-disk-areas}, the disk consists of several areas. The
 
 The user can only read files that already exist on the disk, in our case, \verb|UNITS.INI| and \verb|SYSTEM.INI|. Those files are generated from the binary settings storage, and conversely, parsed, line-by-line, without ever existing in their full form. This fact makes our task more challenging, as the files cannot be easily measured and there's no obvious way to read a sector from the middle of a longer file. We solve this by implementing two additional functions in the INI file writer: a \textit{read window} and a \textit{dummy read mode}.
 
-A read window is a byte range which we wish to generate. The INI writer discards bytes before the start of the read window, writes those inside the window to our data buffer, and stops when its end is reached. This lets us extract a sector from anywhere in a file. The second function, dummy read, is tied to the window function: we set the start index so high that it is never reached (e.g. 0xFFFFFFFF), and have the writer count discarded characters. When the dummy file generation ends, this character counter holds its size.
+A read window is a byte range which we wish to generate. The INI writer discards bytes before the start of the read window, writes those inside the window to our data buffer, and stops when its end is reached. This lets us extract a sector from anywhere in a file. The second function, dummy read, is tied to the window function: we set the start index so high that it is never reached (e.g., 0xFFFFFFFF), and have the writer count discarded characters. When the dummy file generation ends, this character counter holds its size.
 
 Now, just one problem remains: how to tell which sectors contain which part of our files? This is straightforward when we realize that the files change only when the user modifies the settings. After each such change, an algorithm is run which allocates clusters to the files and preserves this information in a holding structure. A subsequent read access simply requires a look into this structure and the corresponding chunk of a file may be served using the read window function. The \gls{FAT} can be dynamically generated from this information as well.
 
@@ -126,7 +126,7 @@ It must be noted that due to the nonexistence of a physical storage medium, it i
 A file is deleted by:
 
 \begin{enumerate}
-	\item Marking all sectors used by it as free in the \gls{FAT}
+	\item Marking all \gls{FAT} sectors used by the file as free
 	\item Replacing the first character of its name in the directory table by 0xE5 to indicate the slot is free
 \end{enumerate}
 
