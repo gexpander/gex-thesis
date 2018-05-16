@@ -16,19 +16,19 @@ Moving to industrial and automotive environments, we can encounter various field
 
 \subsection{Analog Signal Acquisition}
 
-Sometimes it's necessary to use a traditional analog sensor, capture a transient waveform or to just measure a voltage. GEX was meant to focus on digital interfaces, however giving it this capability makes it much more versatile. Nearly all microcontrollers include an \gls{ADC} which we can use to measure input voltages and, paired with a timer, to records signals varying in time.
+Sometimes it is necessary to use a traditional analog sensor, capture a transient waveform or to just measure a voltage. GEX was meant to focus on digital interfaces, however giving it this capability makes it much more versatile. Nearly all microcontrollers include an \gls{ADC} which we can use to measure input voltages and, paired with a timer, to records signals varying in time.
 
 Certain tasks, such as capturing transient effects on a thermocouple when inserted into a flame (an example from developing fire-proof materials) demand level triggering similar to that of oscilloscopes. The converter continuously measures the input voltage and a timed capture starts only after a set threshold is exceeded. This can be accompanied by a pre-trigger feature where the timed capture is continuously running and the last sample is always compared with the threshold, recording a portion of the historic records together with the following samples.
 
 \subsection{Analog Signal Output}
 
-An analog signal can not only be measured, but it's often necessary to also generate it. This could serve as an excitation signal for an experiment, for instance to measure the characteristic curves of a diode or a transistor. Conveniently, we can at the same time use GEX's analog input to record the output.
+An analog signal can not only be measured, but it is often necessary to also generate it. This could serve as an excitation signal for an experiment, for instance to measure the characteristic curves of a diode or a transistor. Conveniently, we can at the same time use GEX's analog input to record the output.
 
 Generating an analog signal is possible using a \gls{PWM} or by a dedicated digital-analog converter included in many microcontrollers. Higher frequencies or resolution can be achieved with a dedicated external \gls{IC}.
 
 \subsection{Logic Level Input and Output}
 
-We've covered some more advanced features, but skipped the simplest feature: a direct access to \gls{GPIO} pins. Considering the latencies of \gls{USB} and the \gls{PC}'s operating system, this can't be reliably used for "bit banging", however we can still accomplish a lot with just changing logic levels - e.g. to control character \glspl{LCD}, or emulate some interfaces that include a clock line, like \gls{SPI}. As mentioned in \ref{sec:uses-digital-ifaces}, many digital sensors and modules use plain \glspl{GPIO} in addition to the communication bus for out-of-band signaling or features like chip selection or reset.
+We've covered some more advanced features, but skipped the simplest feature: a direct access to \gls{GPIO} pins. Considering the latencies of \gls{USB} and the \gls{PC}'s operating system, this cannot be used reliably for ``bit banging'', however we can still accomplish a lot with just changing logic levels - e.g. to control character \glspl{LCD}, or emulate some interfaces that include a clock line, like \gls{SPI}. As mentioned in \ref{sec:uses-digital-ifaces}, many digital sensors and modules use plain \glspl{GPIO} in addition to the communication bus for out-of-band signaling or features like chip selection or reset.
 
 \subsection{Pulse Generation and Measurement}
 
@@ -83,9 +83,9 @@ Let's now summarize the features we wish to support in the GEX firmware, based o
 
 \section{Microcontroller Selection}
 
-As discussed in section \ref{sec:expected-outcome}, this project will be based on microcontrollers from the STM32 family. The STM32F072 model was selected for the initial hardware and firmware design due to it's low cost, advanced peripherals and the availability of development boards. The firmware can be ported to other \glspl{MCU} later (e.g. to STM32L072, STM32F103 or STM32F303).
+As discussed in section \ref{sec:expected-outcome}, this project will be based on microcontrollers from the STM32 family. The STM32F072 model was selected for the initial hardware and firmware design due to its low cost, advanced peripherals, and the availability of development boards. The firmware can be ported to other \glspl{MCU} later (e.g. to STM32L072, STM32F103 or STM32F303).
 
-The STM32F072 is a Cortex M0 device with 128\,KiB of flash memory, 16\,KiB of \gls{RAM} and running at 48\,MHz. It is equipped with a \gls{USB} Full Speed peripheral block, a 12-bit \gls{ADC} and \gls{DAC}, a number of general purpose timers/counters, SPI, I$^2$C, and USART peripherals, among others. It supports crystal-less \gls{USB}, using the USB SOF packet for synchronization of the internal 48\,MHz RC oscillator; naturally, a real crystal resonator will provide better timing accuracy.
+The STM32F072 is a Cortex M0 device with 128\,KiB of flash memory, 16\,KiB of \gls{RAM} and running at 48\,MHz. It is equipped with a \gls{USB} Full Speed peripheral block, a 12-bit \gls{ADC} and \gls{DAC}, a number of general-purpose timers/counters, SPI, I$^2$C, and USART peripherals, among others. It supports crystal-less \gls{USB}, using the USB SOF packet for synchronization of the internal 48\,MHz RC oscillator; naturally, a real crystal resonator will provide better timing accuracy.
 
 To effectively utilize the time available for this work, only the STM32F072 firmware will be developed while making sure the planned expansion is as straightforward as possible.
 
@@ -104,7 +104,7 @@ Three possible form factors are drawn in figure \ref{fig:ff-sketches}. The use o
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=\textwidth] {img/gex-ff-sketches.png}
-	\caption[Form factor sketches]{\label{fig:ff-sketches}A sketch of three possible form factors for the GEX hardware prototype. Note the ESP8266 module which was considered as an option for wireless access but was eventually not used due to it's high current usage, unsuitable for battery operation.}
+	\caption[Form factor sketches]{\label{fig:ff-sketches}A sketch of three possible form factors for a GEX hardware realization}
 \end{figure}
 
 

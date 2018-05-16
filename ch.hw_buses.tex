@@ -29,7 +29,7 @@ RS-232 uses the \gls{UART} framing, but its levels are different: logical 1 is r
 
 \section{SPI} \label{sec:theory-spi}
 
-\acrfull{SPI} is a point-to-point or multi-drop master-slave interface based on shift registers. The \gls{SPI} connection with multiple slave devices is depicted in figure \ref{fig:spi-multislave}. It uses at least 4 wires: \gls{SCK}, \gls{MOSI}, \gls{MISO} and \gls{SS}. \gls{SS} is often marked \gls{CSB} or \gls{NSS} to indicate it's active low. Slave devices are addressed using their \gls{SS} input while the data connections are shared. A slave that's not addressed releases the \gls{MISO} line to a high impedance state so it doesn't interfere in ongoing communication.
+\acrfull{SPI} is a point-to-point or multi-drop master-slave interface based on shift registers. The \gls{SPI} connection with multiple slave devices is depicted in figure \ref{fig:spi-multislave}. It uses at least 4 wires: \gls{SCK}, \gls{MOSI}, \gls{MISO} and \gls{SS}. \gls{SS} is often marked \gls{CSB} or \gls{NSS} to indicate that its active state is 0. Slave devices are addressed using their \gls{SS} input while the data connections are shared. A slave that's not addressed releases the \gls{MISO} line to a high impedance state so it doesn't interfere in ongoing communication.
 
 \begin{figure}[h]
 	\centering
@@ -45,7 +45,7 @@ RS-232 uses the \gls{UART} framing, but its levels are different: logical 1 is r
 
 Transmission and reception on the \gls{SPI} bus happen simultaneously. A bus master asserts the \gls{SS} pin of a slave it wishes to address and then sends data on the \gls{MOSI} line while receiving a response on \gls{MISO}. The slave normally responds with 0x00 or a status register as the first byte of the response, before it can process the received command. A timing diagram is shown in figure \ref{fig:spi-timing}, including two configurable parameters: \gls{CPOL} and \gls{CPHA}.
 
-\gls{SPI} devices often provide a number of control, configuration and status registers that can be read and written by the bus master. The first byte of a command usually contains one bit that determines if it's a read or write access, and an address field selecting the target register. The slave then either stores the following \gls{MOSI} byte(s) into the register, or sends its content back on \gls{MISO} (or both simultaneously).
+\gls{SPI} devices often provide a number of control, configuration and status registers that can be read and written by the bus master. The first byte of a command usually contains one bit that determines if it is a read or write access, and an address field selecting the target register. The slave then either stores the following \gls{MOSI} byte(s) into the register, or sends its content back on \gls{MISO} (or both simultaneously).
 
 \pagebreak[1] % TODO
 \subsection{Examples of Devices Using SPI}
@@ -71,7 +71,7 @@ It uses two connections (plus \gls{GND}): \gls{SDA} and \gls{SCL}, both open-dra
 
 The protocol was developed by Philips Semiconductor (now NXP Semiconductors) and its implementors were required to pay licensing fees, until 2006, leading to the development of compatible implementations with different names, such as Atmel's \gls{TWI} or Dallas Semiconductor's ``Serial 2-wire Interface'' (e.g. used in the DS1307 \gls{RTC} chip). \gls{I2C} is a basis of the \gls{SMBus} and \gls{PMBus}, which add additional constraints and rules for a more robust operation.
 
-The frame format is shown and explained in figure \ref{fig:i2c-frame}; more details may be found in the specification \cite{i2c-spec} or application notes and datasheets offered by chip vendors, such as the white paper from Texas Instruments \cite{understanding-i2c}. A frame starts with a start condition and stops with a stop condition, defined by an \gls{SDA} edge while the \gls{SCL} is high. The address and data bytes are acknowledged by the slave by sending a 0 on the open-drain \gls{SDA} line in the following clock cycle. A slave can terminate the transaction by sending 1 in place of the acknowledge bit. Slow slave devices may stop the master from sending more data by holding the SCL line low at the end of a byte, a feature called \textit{Clock Stretching}. As the bus is open-drain, the line can't go high until all participants release it.
+The frame format is shown and explained in figure \ref{fig:i2c-frame}; more details may be found in the specification \cite{i2c-spec} or application notes and datasheets offered by chip vendors, such as the white paper from Texas Instruments \cite{understanding-i2c}. A frame starts with a start condition and stops with a stop condition, defined by an \gls{SDA} edge while the \gls{SCL} is high. The address and data bytes are acknowledged by the slave by sending a 0 on the open-drain \gls{SDA} line in the following clock cycle. A slave can terminate the transaction by sending 1 in place of the acknowledge bit. Slow slave devices may stop the master from sending more data by holding the SCL line low at the end of a byte, a feature called \textit{Clock Stretching}. As the bus is open-drain, the line cannot go high until all participants release it.
 
 Two addressing modes are defined: 7-bit and 10-bit. Due to the small address space, exacerbated by many devices implementing only the 7-bit addressing, collisions between different chips on a shared bus are common; many devices thus offer several pins to let the board designer choose a few bits of the address by connecting them to different logic levels. 
 
@@ -95,7 +95,7 @@ The bus supports multi-master operation, which leads to the problem of collision
 
 \section{1-Wire} \label{sec:theory-1wire}
 
-The 1-Wire bus, developed by Dallas Semiconductor (acquired by Maxim Integrated), uses a single, bi-directional data line, which can also power the slave devices in a \textit{parasitic mode}, reducing the number of required wires to just two (compare with 3 in \gls{I2C} and 5 in \gls{SPI}, all including \gls{GND}). The parasitic operation is possible thanks to the data line resting at a logic high level most of the time, charging an internal capacitor.
+The 1-Wire bus, developed by Dallas Semiconductor (acquired by Maxim Integrated), uses a single, bi-directional data line, which can also power the slave devices in a \textit{parasitic mode}, reducing the number of required wires to just two (compare with 3 in \gls{I2C} and 5 in \gls{SPI}, all including \gls{GND}). The parasitic operation is possible thanks to the data line resting at a high logic level most of the time, charging an internal capacitor.
 
 1-Wire uses an open-drain connection for the data line, similar to \gls{I2C}, though the protocol demands it to be connected directly to V$_dd$ in some places when the parasitic mode is used; this is accomplished using an external transistor, or by reconfiguring the GPIO pin as output and setting it to 1, provided the microcontroller is able to supply a sufficient current.
 

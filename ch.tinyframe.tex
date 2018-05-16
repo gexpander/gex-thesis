@@ -144,7 +144,7 @@ The 0x04 (Bulk Read Poll) payload specifies how many bytes we want to read:
 
 \subsection{Bulk Write}
 
-To overwrite an INI file, we first send a frame 0x22 (INI Write) with the file size as its payload. The name of the file is irrelevant, as it's detected automatically by inspecting the content.
+To overwrite an INI file, we first send a frame 0x22 (INI Write) with the file size as its payload. The name of the file is irrelevant, as it is detected automatically by inspecting the content.
 
 \begin{boxedpayload}[INI Write frame structure]
 	\cfield{u32} size of the written file, in bytes

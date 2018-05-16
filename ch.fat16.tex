@@ -2,7 +2,7 @@
 
 A \gls{FS} is used by GEX to provide a comfortable access to the configuration files. By emulating a Mass Storage \gls{USB} device, the module appears as a thumb drive on the host \gls{PC}, and the user can edit its configuration using their preferred text editor. The FAT16 file system was selected for its simplicity and a good cross-platform support \cite{os-support-table}.
 
-Three variants of the \gls{FAT} file system exist: FAT12, FAT16, and FAT32. FAT12 was used on floppy disks and it is similar to FAT16, except for additional size constraints and a \gls{FAT} entry packing scheme. FAT16 and FAT32 are FAT12's later developments from the time when hard disks became more common and the old addressing scheme couldn't support their larger capacity.
+Three variants of the \gls{FAT} file system exist: FAT12, FAT16, and FAT32. FAT12 was used on floppy disks and it is similar to FAT16, except for additional size constraints and a \gls{FAT} entry packing scheme. FAT16 and FAT32 are FAT12's later developments from the time when hard disks became more common and the old addressing scheme could not support their larger capacity.
 
 This chapter will explain the structure of FAT16 and the challenges faced when trying to emulate it without a physical data storage.
 
@@ -109,9 +109,9 @@ The GEX firmware adapts several parts of the DAPLink code, optimizing its \gls{R
 
 As shown in table \ref{tab:fat16-disk-areas}, the disk consists of several areas. The boot sector is immutable and can be stored in and read from the Flash memory. The handling of the other disk areas (\gls{FAT}, data area) depends on the type of access: read or write.
 
-The user can only read files that already exist on the disk, in our case, \verb|UNITS.INI| and \verb|SYSTEM.INI|. Those files are generated from the binary settings storage, and conversely, parsed, line-by-line, without ever existing in their full form. This fact makes our task more challenging, as the files can't be easily measured and there's no obvious way to read a sector from the middle of a longer file. We solve this by implementing two additional functions in the INI file writer: a \textit{read window} and a \textit{dummy read mode}.
+The user can only read files that already exist on the disk, in our case, \verb|UNITS.INI| and \verb|SYSTEM.INI|. Those files are generated from the binary settings storage, and conversely, parsed, line-by-line, without ever existing in their full form. This fact makes our task more challenging, as the files cannot be easily measured and there's no obvious way to read a sector from the middle of a longer file. We solve this by implementing two additional functions in the INI file writer: a \textit{read window} and a \textit{dummy read mode}.
 
-A read window is a byte range which we wish to generate. The INI writer discards bytes before the start of the read window, writes those inside the window to our data buffer, and stops when its end is reached. This lets us extract a sector from anywhere in a file. The second function, dummy read, is tied to the window function: we set the start index so high that it's never reached (e.g. 0xFFFFFFFF), and have the writer count discarded characters. When the dummy file generation ends, this character counter holds its size.
+A read window is a byte range which we wish to generate. The INI writer discards bytes before the start of the read window, writes those inside the window to our data buffer, and stops when its end is reached. This lets us extract a sector from anywhere in a file. The second function, dummy read, is tied to the window function: we set the start index so high that it is never reached (e.g. 0xFFFFFFFF), and have the writer count discarded characters. When the dummy file generation ends, this character counter holds its size.
 
 Now, just one problem remains: how to tell which sectors contain which part of our files? This is straightforward when we realize that the files change only when the user modifies the settings. After each such change, an algorithm is run which allocates clusters to the files and preserves this information in a holding structure. A subsequent read access simply requires a look into this structure and the corresponding chunk of a file may be served using the read window function. The \gls{FAT} can be dynamically generated from this information as well.
 
@@ -119,7 +119,7 @@ Now, just one problem remains: how to tell which sectors contain which part of o
 
 A write access to the disk is more challenging to emulate than a read access, as the host OS tends to be somewhat unpredictable. In GEX's case we are interested only in the action of overwriting an already existing file, but it is interesting to also analyze other actions the host may perform.
 
-It must be noted that due to the nonexistence of a physical storage medium, it's not possible to read back a file the host has previously written, unless we store or re-generate its content when such a read access occurs. The \gls{OS} may show the written file on the disk, but when the user tried to read it, the action either fails, or shows a cached copy. The emulator woulds around this problem by temporarily reporting that the storage medium has been removed, forcing the host to re-load its contents.
+It must be noted that due to the nonexistence of a physical storage medium, it is not possible to read back a file the host has previously written, unless we store or re-generate its content when such a read access occurs. The \gls{OS} may show the written file on the disk, but when the user tried to read it, the action either fails, or shows a cached copy. The emulator woulds around this problem by temporarily reporting that the storage medium has been removed, forcing the host to re-load its contents.
 
 \subsubsection{File Deletion}
 
@@ -150,7 +150,7 @@ It can be expected the host \gls{OS} first finds the free sectors and a free fil
 
 To properly handle such a file by the emulator, we could, in theory, find its name from the directory table, which has been updated, and then collect the data written to the corresponding clusters. In practice, confirmed by experiments with a real Linux host, those three steps may happen in any order, and often the content is written before the directory table is updated.
 
-The uncertain order of the written disk areas poses a problem when the file name has any significance, as we can't store the received file data while waiting for the name to be written. The DAPLink mbed flashing firmware solves this by analyzing the content of the first written sector of the file, which may contain the binary \gls{NVIC} table, or a character pattern typical for Intel hex files.
+The uncertain order of the written disk areas poses a problem when the file name has any significance, as we cannot store the received file data while waiting for the name to be written. The DAPLink mbed flashing firmware solves this by analyzing the content of the first written sector of the file, which may contain the binary \gls{NVIC} table, or a character pattern typical for Intel hex files.
 
 \subsection{File Content Change}
 

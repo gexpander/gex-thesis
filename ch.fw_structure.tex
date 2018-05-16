@@ -1,6 +1,6 @@
 \chapter{Application Structure}
 
-GEX is designed to be modular and easy to extend. It's composed of a set of functional blocks (also called \textit{units}), sometimes available in more than one instance, which can be configured by the user to fit their application needs. The firmware is built around a \textit{core framework} which provides services to the functional blocks, such as a settings storage, resource allocation, message delivery and periodic updates.
+GEX is designed to be modular and easy to extend. It is composed of a set of functional blocks (also called \textit{units}), sometimes available in more than one instance, which can be configured by the user to fit their application needs. The firmware is built around a \textit{core framework} which provides services to the functional blocks, such as a settings storage, resource allocation, message delivery and periodic updates.
 
 In this chapter we will focus on the general function of the GEX module and will look at the services provided by the core framework. Individual functional blocks and the communication protocol will be described in chapters \ref{sec:tinyframe} and \ref{sec:units-overview}.
 
@@ -18,7 +18,9 @@ Before going into implementation details, we'll have a look at GEX from the outs
 	\caption{\label{fig:users-view-of-gex}Physical user interface of a GEX module}
 \end{figure}
 
-The GEX firmware can be flashed to a STM32 Nucleo or Discovery board or a custom \gls{PCB}. It's equipped with a \gls{USB} connector to connect to the host \gls{PC}. GEX loads its configuration from the Flash memory, configures its peripherals, sets up the function blocks and enables the selected communication interface(s). 
+The GEX firmware can be flashed to a STM32 Nucleo or Discovery board or a custom \gls{PCB}. Discovery boards are equipped with a ``user \gls{USB}'' connector routed to the application \gls{MCU}; Nucleo boards have only the ST-Link \gls{USB} connector and, since the ST-Link version 2.1, offer a built-in USB-serial converter leading to one of the \gls{MCU}'s hardware \glspl{UART}.
+
+After powering on, GEX loads its configuration from the Flash memory, configures its peripherals, sets up the function blocks and enables the selected communication interface(s). From this point, the module is operational and can be configured or used as needed by the user.
 
 The physical user interface of the module is shown in figure \ref{fig:users-view-of-gex}. When a \gls{USB} cable connects the board to a \gls{PC}, the \gls{PC} \gls{OS} enumerates it and either recognizes the communication interface as \gls{CDCACM} (Virtual serial port), or leaves it without a software driver attached, to be accessed directly as raw \gls{USB} endpoints, based on GEX settings.
 The connection using a physical UART and a USB/UART adapter works in a very similar way, as does the wireless connection (described in more detail below).
@@ -39,7 +41,7 @@ To use it, the user needs to connect a wireless gateway module to their host \gl
 
 \subsection{Using the Control Interface}
 
-Now that GEX is connected and configured, the user can start using it. This involves writing a program in C or Python that uses the GEX client library, using the Python library from MATLAB, or controlling GEX using a \gls{GUI} front-end built on those libraries. The configuration can be stored in the module, but it's also possible to temporarily replace it using the control \gls{API}. This way, the settings are loaded automatically when the user's program starts and may differ for different programs.
+Now that GEX is connected and configured, the user can start using it. This involves writing a program in C or Python that uses the GEX client library, using the Python library from MATLAB, or controlling GEX using a \gls{GUI} front-end built on those libraries. The configuration can be stored in the module, but it is also possible to temporarily replace it using the control \gls{API}. This way, the settings are loaded automatically when the user's program starts and may differ for different programs.
 
 \section{Internal Structure Block Diagram}
 
@@ -163,7 +165,7 @@ The resources used by the core framework are taken by a virtual unit \verb|SYSTE
 
 The system and unit settings are written, in a binary form, into designated pages of the microcontroller's Flash memory. The unit settings serialization and parsing is implemented by the respective unit drivers.
 
-As the settings persist after a firmware update, it's important to maintain backwards compatibility. This is achieved by prefixing the unit's settings by a version number. When the settings are loaded by a new version of the firmware, it first checks the version and decides whether to use the old or new format. When the settings are next changed, the new format will be used.
+As the settings persist after a firmware update, it is important to maintain backwards compatibility. This is achieved by prefixing the settings block of each unit with a version number. When the settings are loaded by a new version of the firmware, it first checks the version and decides whether to use the old or new format. When the settings are next changed, the new format will be used.
 
 The INI files, which can be edited through the communication \gls{API} or using a text editor with the virtual mass storage, are parsed and generated on demand and are never stored in the Flash or \gls{RAM}, other than in short temporary buffers. The INI parser processes the byte stream on-the-fly as it is received, and a similar method is used to build a INI file from the configured units and system settings.
 
@@ -171,7 +173,7 @@ The INI files, which can be edited through the communication \gls{API} or using 
 
 The firmware supports three different communication ports: hardware \gls{UART}, \gls{USB} (virtual serial port), and a wireless connection. Each interface is configured and accessed in a different way, but for the rest of the firmware (and for the \gls{PC}-side application) they all appear as a full duplex serial port. To use interfaces other than \gls{USB}, the user must configure those in the system settings (a file \verb|SYSTEM.INI| on the configuration disk).
 
-At start-up, the firmware enables the \gls{USB} peripheral, configures the device library and waits for enumeration by the host \gls{PC}. When not enumerated, it concludes the \gls{USB} cable is not connected, and tries some other interface. The \gls{UART} interface can't be tested as reliably, but it's possible to measure the voltage on the Rx pin. When idle, a \gls{UART} Rx line should be high (here 3.3\,V). The wireless module, when connected using \gls{SPI}, can be detected by reading a register with a known value and comparing those.
+At start-up, the firmware enables the \gls{USB} peripheral, configures the device library and waits for enumeration by the host \gls{PC}. When not enumerated, it concludes the \gls{USB} cable is not connected, and tries some other interface. The \gls{UART} interface cannot be tested as reliably, but it is possible to measure the voltage on the Rx pin. When idle, a \gls{UART} Rx line should be high (here 3.3\,V). The wireless module, when connected using \gls{SPI}, can be detected by reading a register with a known value and comparing those.
 
 \subsubsection{USB Connection}
 
@@ -179,7 +181,7 @@ GEX uses vid:pid \verb|1209:4c60| and the wireless gateway \verb|1209:4c61|. The
 
 \subsubsection{Communication UART}
 
-The parameters of the communication \gls{UART} (such as the baud rate) are defined in \verb|SYSTEM.INI|. It's mapped to pins PA2 and PA3; this is useful with STM32 Nucleo boards that don't include a User \gls{USB} connector, but provide a \gls{USB}-serial bridge using the on-board ST-Link programmer, connected to those pins.
+The parameters of the communication \gls{UART} (such as the baud rate) are defined in \verb|SYSTEM.INI|. It is mapped to pins PA2 and PA3; this is useful with STM32 Nucleo boards that do not include a User \gls{USB} connector, but provide a \gls{USB}-serial bridge using the on-board ST-Link programmer, connected to those pins.
 
 This is identical to the \gls{USB} connection from the \gls{PC} application's side, except a physical \gls{UART} is necessarily slower and does not natively support flow control. The use of the Xon and Xoff software flow control is not practical with binary messages that could include those bytes by accident, and the ST-Link \gls{USB}-serial adapter does not implement hadware flow control.
 
@@ -195,14 +197,14 @@ One of the key functions of the core framework is to deliver messages from the h
 
 A message that is not a response in a multi-part session (this is handled by the framing library) is identified by its Type field. Two main groups of messages exist: \textit{system messages} and \textit{unit messages}. System messages can access the INI files, query a list of the available units, restart the module etc. Unit messages are addressed to a particular unit by their callsign (see \ref{sec:units-function}), and their payload format is defined by the unit driver. The framework reads the message type, then the callsign byte, and tries to find a matching unit in the unit list. If no unit with the callsign is found, an error response is sent back, otherwise the unit driver is given the message to handle it as required.
 
-The framework provides one more messaging service to the units: event reporting. An asynchronous event, such as an external interrupt, an \gls{ADC} trigger or an \gls{UART} data reception needs to be reported to the host. This message is annotated by the unit callsign so the user application knows it's origin.
+The framework provides one more messaging service to the units: event reporting. An asynchronous event, such as an external interrupt, an \gls{ADC} trigger or an \gls{UART} data reception needs to be reported to the host. This message is annotated by the unit callsign so the user application knows its origin.
 
 
 \subsection{Interrupt Routing} \label{sec:irq-routing}
 
 Interrupts are an important part of almost any embedded application. They provide a way to rapidly react to asynchronous external or internal events, temporarily leaving the main program, jumping to an interrupt handler routine, and then returning back after the event is handled. Interrupts are also the way FreeRTOS implements multitasking without a multi-core processor.
 
-In the Cortex-M0-based STM32F072, used in the initial GEX prototypes, the interrupt handlers table, defining which routine is called for which interrupt, is stored in the program memory and can't be changed at run-time. This is a complication for the modular structure of GEX where different unit drivers may use the same peripheral, and we would want to dynamically assign the interrupt handlers based on the active configuration. Let's have a look at an interrupt handler, in this case handling four different \gls{DMA} channels, as is common in STM32 microcontrollers:
+In the Cortex-M0-based STM32F072, used in the initial GEX prototypes, the interrupt handlers table, defining which routine is called for which interrupt, is stored in the program memory and cannot be changed at run-time. This is a complication for the modular structure of GEX where different unit drivers may use the same peripheral, and we would want to dynamically assign the interrupt handlers based on the active configuration. Let's have a look at an interrupt handler, in this case handling four different \gls{DMA} channels, as is common in STM32 microcontrollers:
 
 \begin{minted}{c}
 void DMA1_Channel4_5_6_7_IRQHandler(void)

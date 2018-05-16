@@ -4,10 +4,10 @@ In addition to communication buses, described in chapter \ref{ch:hw_buses}, GEX 
 
 \section{Frequency Measurement} \label{sec:theory-fcap}
 
-Applications like motor speed measurement and the reading of a \gls{VCO} or \gls{VCO}-based sensor's output demand a tool capable of measuring frequency. This can be done using a laboratory instrument such as the Agilent 53131A. A low cost solution is to use a timer/counter peripheral of a microcontroller.
+Applications like motor speed measurement and the reading of a \gls{VCO} or \gls{VCO}-based sensor's output demand a tool capable of measuring frequency. This can be done using a laboratory instrument such as the Agilent 53131A. A low-cost solution can be realized using a timer/counter peripheral of a microcontroller.
 
 \noindent
-Two basic methods to measure frequency exist \cite{fcap-twotypes}, each with it's advantages and drawbacks:
+Two basic methods to measure frequency exist \cite{fcap-twotypes}, each with its advantages and drawbacks:
 
 \begin{itemize}
 	\item The \textit{direct method} (fig. \ref{fig:fcap-direct-dia}) is based on the definition of frequency as a number of cycles $n$ in a fixed-length time window $\tau$ (usually 1\,s); the frequency is then calculated as $f=n/\tau$.
@@ -46,7 +46,7 @@ Which method to use depends on the frequency we want to measure; the worst-case 
 	\caption[Frequency measurement methods comparison]{\label{fig:freqmethods-graph}Worst-case error using the two frequency measurement methods with an ideal 48\,MHz timer clock. The crossing lies at 7\,kHz with an error of 0.015\,\%, or 1.05\,Hz.}
 \end{figure}
 
-A good approach to a universal measurement, when we don't know the expected frequency beforehand, could be to first obtain an estimate using the direct method, and if the frequency is below the worst-case error crossing point (here 7\,kHz), to take a more precise measurement using the reciprocal method.
+A good approach to a universal measurement, for cases where we do not know the expected frequency beforehand, could be to obtain an estimate using the direct method first, and if the frequency is below the worst-case error crossing point (here 7\,kHz, according to figure \ref{fig:freqmethods-graph}), to take a more precise measurement using the reciprocal method.
 
 The system clock's frequency, which we use to measure pulse lengths and to gate the pulse counter, will be affected by tolerances of the used components, the layout of the \gls{PCB}, temperature effects etc., causing measurement errors. A higher accuracy could be achieved using a \gls{TCO}, or, in the direct method, with the synchronization pulse provided by a \gls{GPS} receiver to time the measurement interval.
 
@@ -84,7 +84,7 @@ The \gls{DAC} peripheral can produce a \gls{DC} level on the output pin based on
 
 \subsection{Waveform Generation with DMA and a Timer} \label{sec:theory-dac-simple}
 
-A straightforward, intuitive implementation of the waveform generator is illustrated in figure \ref{fig:wavegen-naive}. This approach has its advantages: it's simple and works autonomously, with no interrupt handling or interventions from the program. It could be implemented without the use of \gls{DMA} as well, using a loop periodically updating the \gls{DAC} values; of course, such approach is less flexible and we would run into problems with interrupt handling affecting the timing accuracy.
+A straightforward, intuitive implementation of the waveform generator is illustrated in figure \ref{fig:wavegen-naive}. This approach has its advantages: it is simple and works autonomously, with no interrupt handling or interventions from the program. It could be implemented without the use of \gls{DMA} as well, using a loop periodically updating the \gls{DAC} values; of course, such approach is less flexible and we would run into problems with interrupt handling affecting the timing accuracy.
 
 \begin{figure}[h]
 	\centering
@@ -112,7 +112,7 @@ The output frequency is calculated as \(f_\mathrm{out} = \dfrac{M\cdot f_\mathrm
 
 \subsubsection{DDS Implemented in Hardware}
 
-DDS may be implemented in hardware, including the look-up table, often together with the \gls{DAC} itself, which is then called a \textit{Complete \gls{DDS}}. That is the case of e.g. AD9833 from Analog Devices. As the software implementation depends on a periodic interrupt, it's often advantageous to use a component like this when we need higher output frequencies where the use of an interrupt is not possible. GEX can control an external waveform generator like the AD9833 using an \gls{SPI} port.
+DDS may be implemented in hardware, including the look-up table, often together with the \gls{DAC} itself, which is then called a \textit{Complete \gls{DDS}}. That is the case of e.g. AD9833 from Analog Devices. As the software implementation depends on a periodic interrupt, it is often advantageous to use a component like this when we need higher output frequencies where the use of an interrupt is not possible. GEX can control an external waveform generator like the AD9833 using an \gls{SPI} port.
 
 \section{Touch Sensing} \label{sec:theory-touch}
 

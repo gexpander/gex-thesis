@@ -26,7 +26,7 @@ The structure of a GEX support library is in all cases similar:
 
 \section{Python Library}
 
-The Python GEX library it implements both serial port and raw USB endpoint access, and includes support classes for each unit type. Its development has been proritized over the C library because of it's potential to integrate with MATLAB, and the general ease-of-use that comes with the Python syntax.
+The Python GEX library it implements both serial port and raw USB endpoint access, and includes support classes for each unit type. Its development has been proritized over the C library because of its potential to integrate with MATLAB, and the general ease-of-use that comes with the Python syntax.
 
 The library is composed of a \textit{transport}, the core class called \textit{client}, and unit classes. Three transport implementations have been developed; the gateway is accessed by wrapping either of the transports in an instance of \mono{DongleAdapter}.
 
@@ -82,7 +82,7 @@ The Python library can be accessed from MATLAB scripts thanks to the MATLAB's tw
 
 The C library is more simplistic than the Python one; it supports only the serial port transport (\gls{UART} or \gls{CDCACM}) and does not implement asynchronous polling or the unit support drivers. What \textit{is} implement---the transport, a basic protocol handler, and payload building and parsing utilities---is sufficient for most applications, though less convenient than the Python library. 
 
-This low level library is intended for applications where the performance of the Python implementation is insufficient, or where an integration with existing C code is required. The full \gls{API} can be found in the library header files. A C version of the example Python script controlling a \gls{LED} matrix driver follows:
+This low-level library is intended for applications where the performance of the Python implementation is insufficient, or where an integration with existing C code is required. The full \gls{API} can be found in the library header files. A C version of the example Python script controlling a \gls{LED} matrix driver follows:
 
 \todo[inline]{add the example}
 

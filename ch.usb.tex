@@ -58,7 +58,7 @@ The descriptor table used by GEX is captured in figure \ref{fig:gex-descriptors}
 
 \section{USB Physical Layer}
 
-\gls{USB} uses differential signaling with \gls{NRZI} encoding and bit stuffing (the insertion of dummy bits to prevent long intervals in the same \gls{DC} level). The encoding, together with frame formatting, checksum verification, retransmission, and other low level aspects of the \gls{USB} connection are entirely handled by the \gls{USB} physical interface block in the microcontroller's silicon. Normally we do not need to worry about those details; nonetheless, a curious reader may find more information in chapters 7 and 8 of \cite{usbif-spec}. What needs our attention are the electrical characteristics of the physical connection, which need to be understood correctly for a successful schematic and \gls{PCB} design.
+\gls{USB} uses differential signaling with \gls{NRZI} encoding and bit stuffing (the insertion of dummy bits to prevent long intervals in the same \gls{DC} level). The encoding, together with frame formatting, checksum verification, retransmission, and other low-level aspects of the \gls{USB} connection are entirely handled by the \gls{USB} physical interface block in the microcontroller's silicon. Normally we do not need to worry about those details; nonetheless, a curious reader may find more information in chapters 7 and 8 of \cite{usbif-spec}. What needs our attention are the electrical characteristics of the physical connection, which need to be understood correctly for a successful schematic and \gls{PCB} design.
 
 The \gls{USB} cable contains 4 conductors: V$_\mathrm{BUS}$ (+5\,V), D+, D--, and \gls{GND}. The data lines, D+ and D--, are also commonly labeled DP and DM. This differential pair should be routed in parallel on the \gls{PCB} and kept at the same length.
 
@@ -87,7 +87,7 @@ The \gls{MSC} is supported by all modern operating systems (MS Windows, MacOS, G
 %http://www.usb.org/developers/docs/devclass_docs/Mass_Storage_Specification_Overview_v1.4_2-19-2010.pdf
 %http://www.usb.org/developers/docs/devclass_docs/usbmassbulk_10.pdf
 
-The \gls{MSC} specification \cite{usbif-msco} defines multiple \textit{transport protocols} that can be selected using the descriptors. For it's simplicity, the \gls{BOT} \cite{usbif-bot} will be used. \gls{BOT} uses two bulk endpoints for reading and writing blocks of data and for the exchange of control commands and status messages. 
+The \gls{MSC} specification \cite{usbif-msco} defines multiple \textit{transport protocols} that can be selected using the descriptors. The \gls{BOT} \cite{usbif-bot} will be used for its simplicity. \gls{BOT} uses two bulk endpoints for reading and writing blocks of data and for the exchange of control commands and status messages. 
 
 For the mass storage device to be recognized by the host operating system, it must also implement a \textit{command set}. Most mass storage devices use the \textit{\gls{SCSI} Transparent command set}
 \footnote{To confirm this assertion, the descriptors of five thumb drives and an external hard disk were analyzed using \verb|lsusb|. All but one device used the SCSI command set, one (the oldest thumb drive) used \textit{SFF-8070i}. A list of possible command sets can be found in \cite{usbif-msco}}. 
@@ -110,7 +110,7 @@ An interesting property of the \gls{CDC} class is that the bulk endpoints transp
 
 \subsection{Interface Association: Composite Class}
 
-Since it's creation, the \gls{USB} specification expected that each function will have only one interface enabled at a time. After it became apparent that there is a need for having multiple unrelated interfaces work in parallel, the \gls{IAD} \cite{usbif-iad} was introduced as a workaround.
+The original \gls{USB} specification expected that each function will have only one interface enabled at a time. After it became apparent that there is a need to have multiple unrelated interfaces working in parallel, the \gls{IAD} \cite{usbif-iad} was introduced as a workaround.
 
 The \gls{IAD} is an entry in the descriptor table that defines which interfaces belong together and should be handled by the same software driver. To use the \gls{IAD}, the function's class must be set to 239 (0xEF), subclass 2 and protocol 1 in the top level descriptor, so that the \gls{OS} knows to look for this descriptor before binding drivers to any interfaces.
 
