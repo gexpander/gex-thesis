@@ -1,10 +1,10 @@
 \chapter{Client Software}
 
-With the communication protocol clearly defined in \cref{sec:tinyframe,sec:units-overview}, respective \cref{sec:wireless} for the wireless gateway, the implementation of a client software is relatively straightforward. Two proof-of-concept client libraries have been developed, in languages C and Python.
+With the communication protocol clearly defined in \cref{sec:tinyframe,sec:units-overview}, respective \cref{sec:wireless} for the wireless gateway, the implementation of a client software is relatively straightforward. Two client libraries have been developed, in languages C and Python.
 
 \section{General Library Structure}
 
-The structure of a GEX support library is in all cases similar:
+The structure of a GEX client library is in all cases similar:
 
 \begin{itemize}
     \item \textbf{USB or serial port access}
@@ -13,9 +13,9 @@ The structure of a GEX support library is in all cases similar:
 
         Accessing the serial port or \gls{USB} endpoints from Python is more straightforward thanks to the cross platform libraries \textit{PySerial} and \textit{PyUSB}.
 
-    \item \textbf{TinyFrame}
+    \item \textbf{TinyFrame implementation}
 
-        The \textit{TinyFrame} protocol library can be used directly in desktop C applications, and it has been ported to Python and other languages.
+        The \textit{TinyFrame} protocol library can be used directly in desktop C applications, and it has been re-implemented in Python and other languages.
 
     \item \textbf{Higher-level GEX logic}
 
@@ -26,54 +26,61 @@ The structure of a GEX support library is in all cases similar:
 
 \section{Python Library}
 
-The Python GEX library it implements both serial port and raw USB endpoint access, and includes support classes for each unit type. Its development has been proritized over the C library because of its potential to integrate with MATLAB, and the general ease-of-use that comes with the Python syntax.
+The Python GEX library implements both a serial port access and a raw access to \gls{USB} endpoints. Its development has been prioritized over the C library because of its potential to integrate with MATLAB, and because it promises to be the most convenient method to interact with GEX thanks to the ease-of-use that comes with the Python syntax. This library provides a high level \gls{API} above the individual unit types, removing the burden of building and parsing of the binary command payloads from the user.
 
-The library is composed of a \textit{transport}, the core class called \textit{client}, and unit classes. Three transport implementations have been developed; the gateway is accessed by wrapping either of the transports in an instance of \mono{DongleAdapter}.
+The library is composed of a \textit{transport} class, the core class \mono{gex.Client}, and unit classes (e.g., \mono{gex.I2C} or \mono{gex.SPI}). 
+
+\noindent
+Three transport implementations have been developed:
 
 \begin{itemize}
-    \item \mono{TrxSerialSync} -- virtual serial port access with polling for a response
+    \item \mono{gex.TrxSerialSync} -- virtual serial port access with polling for a response
 
-    \item \mono{TrxSerialThread} -- virtual serial port access with a polling thread and semaphore-based notifications
+    \item \mono{gex.TrxSerialThread} -- virtual serial port access with a polling thread and semaphore-based notifications
 
-    \item \mono{TrxRawUSB} -- similar to \mono{TrxSerialThread}, but using a raw USB endpoint access
+    \item \mono{gex.TrxRawUSB} -- similar to \mono{gex.TrxSerialThread}, but using a raw USB endpoint access
 \end{itemize}
 
-The unit classes wrap the command and event \gls{API} described in \cref{sec:units-overview}; all classes and methods are annotated by documentation comments for easy understanding.
+The wireless gateway is accessed by wrapping either of the transports in an instance of \mono{gex.DongleAdapter} before passing it to \mono{gex.Client}.
+
+\subsection{Example Python Script}
 
 An example Python program displaying a test pattern on a \gls{LED} matrix using the \gls{I2C}-connected driver chip IS31FL3730 is presented in \cref{lst:py_api} as an illustration of the library usage. A photo of the produced \gls{LED} pattern can be seen in \cref{fig:pydemo}.
 
 \begin{listing}[h]
 	\begin{pythoncode}
-	#!/bin/env python3
-	# The I2C unit called 'i2c' is configured to use PB6 and PB7
-	import gex
-	with gex.Client(gex.TrxRawUSB()) as client:
-	    bus = gex.I2C(client, 'i2c')
-	    addr = 0x61
-	    bus.write_reg(addr, 0x00, 0b00011000) # dual matrix
-	    bus.write_reg(addr, 0x0D, 0b00001110) # 34 mA
-	    bus.write_reg(addr, 0x19, 64) # set brightness
-	    # matrix 1
-	    bus.write_reg(addr, 0x01, [
-	        0xAA, 0x55, 0xAA, 0x55,
-	        0xAA, 0x55, 0xAA, 0x55
-	    ])
-	    # matrix 2
-	    bus.write_reg(addr, 0x0E, [
-	        0xFF, 0x00, 0xFF, 0x00,
-	        0xFF, 0x00, 0xFF, 0x00
-	    ])
-	    # update display
-	    bus.write_reg(addr, 0x0C, 0x01)
+		#!/bin/env python3
+		# The I2C unit, called 'i2c', is configured to use PB6 and PB7
+		import gex
+		with gex.Client(gex.TrxRawUSB()) as client:
+		bus = gex.I2C(client, 'i2c')
+		addr = 0x61
+		bus.write_reg(addr, 0x00, 0b00011000) # dual matrix
+		bus.write_reg(addr, 0x0D, 0b00001110) # 34 mA
+		bus.write_reg(addr, 0x19, 64) # set brightness
+		# matrix 1
+		bus.write_reg(addr, 0x01, [
+		0xAA, 0x55, 0xAA, 0x55,
+		0xAA, 0x55, 0xAA, 0x55
+		])
+		# matrix 2
+		bus.write_reg(addr, 0x0E, [
+		0xFF, 0x00, 0xFF, 0x00,
+		0xFF, 0x00, 0xFF, 0x00
+		])
+		# update display
+		bus.write_reg(addr, 0x0C, 0x01)
 	\end{pythoncode}
 	\caption{\label{lst:py_api} An example Python program using the GEX client library}
 \end{listing}
 
 \begin{figure}[h]
-    \centering
-    \includegraphics[width=.7\textwidth] {img/phatmtx.jpg}
-    \caption{\label{fig:pydemo}GEX Zero with the Micro Dot pHAT add-on board, showing a test pattern defined in a Python script}
+	\centering
+	\includegraphics[width=.7\textwidth] {img/phatmtx.jpg}
+	\caption{\label{fig:pydemo}GEX Zero with the Micro Dot pHAT add-on board, showing a test pattern defined in a Python script}
 \end{figure}
+
+First, a client instance is created, receiving the transport as an argument. We use a With block in the example to ensure the transport is safely closed before the program ends, even if that happens due to an exception; this is similar to the Try-Finally pattern in Java. The client (and subsequently the transport) can be closed manually by calling its \mono{.close()} method. Inside the With block, the script proceeds to create unit handles and use them to perform the desired task, in our case a communication with the \gls{LED} matrix driver over the \gls{I2C} bus.
 
 \section{MATLAB integration}
 
@@ -81,9 +88,9 @@ The Python library can be accessed from MATLAB scripts thanks to the MATLAB's tw
 
 The example in \cref{lst:matlab_api} demonstrates the use of MATLAB to calculate the frequency spectrum of an analog signal captured with GEX. The syntax needed to use the serial port transport (instead of a raw access to USB endpoints) is shown in a comment.
 
-\begin{listing}
+\begin{listing}[h]
 	\begin{matlabcode}
-	% The ADC unit called 'adc' is configured to use PA1 as Channel 0
+	% The ADC unit, called 'adc', is configured to use PA1 as Channel 0
 	
 	%trx = py.gex.TrxSerialThread(pyargs('port', '/dev/ttyUSB1', ...
 	%                                    'baud', 115200));
@@ -114,30 +121,18 @@ The example in \cref{lst:matlab_api} demonstrates the use of MATLAB to calculate
 
 The C library is more simplistic than the Python one; it supports only the serial port transport (\gls{UART} or \gls{CDCACM}) and does not implement asynchronous polling or the unit support drivers. What \textit{is} implement---the transport, a basic protocol handler, and payload building and parsing utilities---is sufficient for most applications, though less convenient than the Python library.
 
-This low-level library is intended for applications where the performance of the Python implementation is insufficient, or where an integration with existing C code is required. The full \gls{API} can be found in the library header files. A C version of the example Python script shown above, controlling a \gls{LED} matrix driver, is presented in \cref{lst:c_api_full}.
+This low-level library is intended for applications where the performance of the Python implementation is insufficient, or where an integration with existing C code is required. The full \gls{API} can be found in the library header files. A C version of the example Python script shown above, controlling a \gls{LED} matrix driver, is presented in \cref{lst:c_api_full}. Readers might point out that this example is unnecessarily obtuse, and that the payloads could be constructed in a more readable way. Indeed, two better methods of payload construction are available: one using C structs, and the other taking advantage of the Payload Builder utility bundled with TinyFrame, which is included in the library package.
 
 \begin{listing}
 	\begin{ccode}
 	#include <signal.h>
 	#include <assert.h>
 	#include "gex.h"
-	
-	static GexClient *gex;
-	
-	/** Signal handler closing the serial port at exit */
-	static void sigintHandler(int sig)
+			
+	void main(void)
 	{
-	    (void)sig;
-	    if (gex != NULL) GEX_DeInit(gex);
-	    exit(0);
-	}
-	
-	int main(void)
-	{
-	    signal(SIGINT, sigintHandler);
-	    
 	    // Initialize GEX and the I2C unit handle
-	    gex = GEX_Init("/dev/ttyACM0", 200);
+	    GexClient *gex = GEX_Init("/dev/ttyACM0", 200);
 	    assert(NULL != gex);        
 	    GexUnit *bus = GEX_GetUnit(gex, "i2c", "I2C");
 	    assert(NULL != bus);
@@ -154,12 +149,12 @@ This low-level library is intended for applications where the performance of the
 	                                "\xFF\x00\xFF\x00\xFF\x00\xFF\x00", 11);
 	    // Update display
 	    GEX_Send(bus, 2, (uint8_t*) "\x61\x00\x0c\x01", 4);
+	    	    
+	    GEX_DeInit(gex);
 	}    
 	\end{ccode}
-	\caption{\label{lst:c_api_full} An example C program controlling GEX using the low-level GEX library; this code has the same effect as the Python script shown in \cref{lst:py_api}.}
+	\caption{\label{lst:c_api_full} An example C program (GNU C99) controlling GEX using the low-level GEX library; this code has the same effect as the Python script shown in \cref{lst:py_api}, with payloads built following the command tables from \cref{sec:units-overview}.}
 \end{listing}
-
-The reader might point out that this example is unnecessarily obtuse, and that the payloads could be constructed in a more readable way. Indeed, two better methods are available.
 
 \subsection{Structure-based Payload Construction}
 
@@ -214,7 +209,9 @@ The structure-based method utilizes C structs to access individual fields in the
 	\caption{\label{lst:c_api_pb}Building and sending payloads using the PayloadBuilder utility}
 \end{listing}
 
-The Payload Builder utility, which comes with the TinyFrame library, may be used to construct message payloads; its usage is shown in \cref{lst:c_api_pb}. The third parameter of \mono{pb\_init()} is optional: a pointer to a function called when the buffer overflows; this callback is used to flush the buffer and rewind it, or to throw an error.
+The Payload Builder utility offers a flexible solution to the construction of arbitrary binary payloads. It is used in the GEX firmware to construct messages and events, along with the binary settings storage content. 
 
-Payload Builder is accompanied by Payload Parser, a tool doing exactly the opposite, parsing a binary payload. That is not needed in our example, but we will find Payload Parser useful when processing the response to a query command, or an asynchronous event payload. Where a variable is written to a payload with \mono{pb\_u8(\&pb, var)}, it is retrieved with \mono{pp\_u8(\&pp)}. The full API of those payload utilities can be found in their well-commented header files.
+An example of Payload Builder's usage is shown in \cref{lst:c_api_pb}. We give it a byte buffer and it then fills it with the payload values, taking care of buffer overflow and to advance the write pointer by the right number of bytes. The third parameter of \mono{pb\_init()} is optional, a pointer to a function called when the buffer overflows; this callback can flush the buffer and rewind it, or report an error.
+
+Payload Builder is accompanied by Payload Parser, a tool doing the exact opposite. While it is not needed in our example, we will find this utility useful when processing command responses or events payloads. The full API of those utilities can be found in their header files.
 
