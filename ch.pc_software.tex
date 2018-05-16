@@ -77,7 +77,7 @@ An example Python program displaying a test pattern on a \gls{LED} matrix using 
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=.7\textwidth] {img/phatmtx.jpg}
-	\caption{\label{fig:pydemo}GEX Zero with the Micro Dot pHAT add-on board, showing a test pattern defined in a Python script}
+	\caption[GEX Zero with the Micro Dot pHAT add-on board]{\label{fig:pydemo}GEX Zero with the Micro Dot pHAT add-on board, showing a test pattern defined in a Python script}
 \end{figure}
 
 First, a client instance is created, receiving the transport as an argument. We use a With block in the example to ensure the transport is safely closed before the program ends, even if that happens due to an exception; this is similar to the Try-Finally pattern in Java. The client (and subsequently the transport) can be closed manually by calling its \mono{.close()} method. Inside the With block, the script proceeds to create unit handles and use them to perform the desired task, in our case a communication with the \gls{LED} matrix driver over the \gls{I2C} bus.

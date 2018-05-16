@@ -72,7 +72,6 @@
 
 \usepackage[nameinlink,capitalize,noabbrev]{cleveref}
 
-
 %% ACRONYM CONFIG
 \usepackage[xindy,nonumberlist,nomain,acronym,nopostdot,toc=false]{glossaries}
 %\glssetwidest{ABCD}
@@ -81,8 +80,8 @@
 \renewcommand*{\glspostdescription}{}
 \makeglossaries
 \glsaddall
-%\renewcommand*{\glstextformat}[1]{\textcolor{black}{#1}}
 
+\renewcommand*{\glstextformat}[1]{\textcolor{black}{#1}}
 
 \input{pre.utils}
 
