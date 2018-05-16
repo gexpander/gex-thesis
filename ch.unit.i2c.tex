@@ -1,13 +1,13 @@
-\section{\IIC Unit}
+\section{\texorpdfstring{\IIC}{I2C} Unit}
 
 The \gls{I2C} unit provides access to one of the microcontroller's \gls{I2C} peripherals. More on the \IIC bus can be found in \cref{sec:theory-i2c}.
 
 The unit can be configured to use either of the three standard speeds (Standard, Fast and Fast+) and supports both 10-bit and 7-bit addressing. 10-bit addresses can be used in commands by setting their highest bit (0x8000), as a flag to the unit; the 7 or 10 least significant bits will be used as the actual address.
 
-\subsection{\IIC Configuration}
+\subsection{\texorpdfstring{\IIC}{I2C} Configuration}
 
 \begin{inicode}
-[I2C:d@4]
+[I2C:i2c@4]
 # Peripheral number (I2Cx)
 device=1
 # Pin mappings (SCL,SDA)
@@ -23,7 +23,7 @@ analog-filter=Y
 digital-filter=0
 \end{inicode}
 
-\subsection{\IIC Commands}
+\subsection{\texorpdfstring{\IIC}{I2C} Commands}
 
 \begin{cmdlist}
 
