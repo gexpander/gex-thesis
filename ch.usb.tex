@@ -29,10 +29,10 @@ Endpoints can be either unidirectional or bidirectional; the direction from the 
 There are four types of data transfers defined in \gls{USB}: control, bulk, isochronous, and interrupt. Each endpoint is configured for a fixed transfer type:
 
 \begin{itemize}
-	\item \textit{Control} - initial configuration after device plug-in; also used for other aplication-specific control messages that can affect other pipes.
-	\item \textit{Bulk} - used for burst transfers of large messages, commonly e.g. for mass storage devices
-	\item \textit{Isochronous} - streaming with guaranteed low latency; designed for audio or video streams where some data loss is preferred over stuttering
-	\item \textit{Interrupt} - low latency short messages, used for human interface devices like mice and keyboards
+	\item \textit{Control} -- initial configuration after device plug-in; also used for other aplication-specific control messages that can affect other pipes.
+	\item \textit{Bulk} -- used for burst transfers of large messages, commonly e.g. for mass storage devices
+	\item \textit{Isochronous} -- streaming with guaranteed low latency; designed for audio or video streams where some data loss is preferred over stuttering
+	\item \textit{Interrupt} -- low latency short messages, used for human interface devices like mice and keyboards
 \end{itemize}
 
 \subsection{Interfaces and Classes}
@@ -51,7 +51,7 @@ Each descriptor starts with a declaration of its length (in bytes), followed by 
 
 The topmost descriptor holds information about the entire function, including the vendor and product IDs which uniquely identifies the device model. It is followed by a Configuration descriptor, grouping a set of interfaces. More than one configuration may be present and available for the host to choose from; however, this is rarely used or needed. Each configuration descriptor is followed by one or more interface descriptors, each with its class-specific sub-descriptors and/or endpoint descriptors.
 
-The descriptor table used by GEX is captured in figure~\ref{fig:gex-descriptors} for illustration. The vendor and product IDs were obtained from the pid.codes repository~\cite{pidcodes} providing free product codes to open source projects. The official way of obtaining the unique code involves high recurring fees (\$4000 per annum) to the USB Implementers Forum, Inc. and is therefore not affordable for non-commercial use; alternatively, a product code may be obtained from some \gls{MCU} vendors if their product is used in the device.
+The descriptor table used by GEX is captured in \cref{fig:gex-descriptors} for illustration. The vendor and product IDs were obtained from the pid.codes repository~\cite{pidcodes} providing free product codes to open source projects. The official way of obtaining the unique code involves high recurring fees (\$4000 per annum) to the USB Implementers Forum, Inc. and is therefore not affordable for non-commercial use; alternatively, a product code may be obtained from some \gls{MCU} vendors if their product is used in the device.
 \newpage
 
 \input{fig.gex-descriptors}
@@ -62,7 +62,7 @@ The descriptor table used by GEX is captured in figure~\ref{fig:gex-descriptors}
 
 The \gls{USB} cable contains 4 conductors: V$_\mathrm{BUS}$ (+5\,V), D+, D--, and \gls{GND}. The data lines, D+ and D--, are also commonly labeled DP and DM. This differential pair should be routed in parallel on the \gls{PCB} and kept at the same length.
 
-\gls{USB} versions that share the same connector are backwards compatible. The desired bus speed is requested by the device using a 1.5\,k$\Omega$ pull-up resistor to 3.3\,V on one of the data lines: D+ pulled high for Full Speed (shown in figure~\ref{fig:usb-pullup-fs}), D-- pulled high for Low Speed. The polarity of the differential signals is also inverted depending on the used speed, as the idle level changes. Some microcontrollers integrate the correct pull-up resistor inside the \gls{USB} peripheral block (including out STM32F072), removing the need for an external resistor.
+\gls{USB} versions that share the same connector are backwards compatible. The desired bus speed is requested by the device using a 1.5\,k$\Omega$ pull-up resistor to 3.3\,V on one of the data lines: D+ pulled high for Full Speed (shown in \cref{fig:usb-pullup-fs}), D-- pulled high for Low Speed. The polarity of the differential signals is also inverted depending on the used speed, as the idle level changes. Some microcontrollers integrate the correct pull-up resistor inside the \gls{USB} peripheral block (including out STM32F072), removing the need for an external resistor.
 
 \begin{figure}[h]
 	\centering
@@ -96,7 +96,7 @@ Unfortunately, the \gls{SCSI} Transparent command set appears to have been delib
 
 This command set lets the host read information about the attached storage, such as its capacity, and check for media presence and readiness to write or detach. This is used e.g. for the ``Safely Remove'' function, which ensures that all internal buffers have been written to Flash.
 
-In order to emulate a mass storage device without having a physical storage medium, we need to generate and parse the file system on-the-fly as the host \gls{OS} tries to access it. This will be discussed in chapter~\ref{sec:fat16}.
+In order to emulate a mass storage device without having a physical storage medium, we need to generate and parse the file system on-the-fly as the host \gls{OS} tries to access it. This will be discussed in \cref{sec:fat16}.
 
 \subsection{CDC/ACM Class} \label{sec:cdc-acm}
 

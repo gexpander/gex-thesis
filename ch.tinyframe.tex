@@ -106,7 +106,7 @@ The reason for splitting a long file into multiple messages, rather than sending
 
 A read or write transaction can be aborted by a frame 0x08 (Bulk Abort) at any time, though aborting a write transaction may leave the configuration in a corrupted state. As hinted in the introduction of this chapter, a transaction is defined by sharing a common frame ID. Thus, all frames in a bulk transaction must have the same ID, otherwise the ID listeners won't be called for the subsequent messages, and the transaction will time out.
 
-Figure~\ref{fig:bulk-rw} shows a diagram of the bulk read and write data flow.
+\Cref{fig:bulk-rw} shows a diagram of the bulk read and write data flow.
 
 \begin{figure}
 	\centering

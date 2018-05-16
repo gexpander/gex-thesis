@@ -1,6 +1,6 @@
 \chapter{Client Software}
 
-With the communication protocol clearly defined in chapters~\ref{sec:tinyframe} and~\ref{sec:units-overview}, respective~\ref{sec:wireless} for the wireless gateway, the implementation of a client software is relatively straightforward. Two proof-of-concept client libraries have been developed, in languages C and Python.
+With the communication protocol clearly defined in \cref{sec:tinyframe,sec:units-overview}, respective \cref{sec:wireless} for the wireless gateway, the implementation of a client software is relatively straightforward. Two proof-of-concept client libraries have been developed, in languages C and Python.
 
 \section{General Library Structure}
 
@@ -19,9 +19,9 @@ The structure of a GEX support library is in all cases similar:
 
 	\item \textbf{Higher-level GEX logic}
 
-		The host side of the communication protocol described in chapter~\ref{sec:tinyframe} should be implemented as a part of the library. This includes the reading and writing of configuration files, unit list read-out, command payload building, and asynchronous event parsing.
+		The host side of the communication protocol described in \cref{sec:tinyframe} should be implemented as a part of the library. This includes the reading and writing of configuration files, unit list read-out, command payload building, and asynchronous event parsing.
 
-		Additional utilities may be defined on top of this basic protocol support for the command API of different GEX units, as described in~\ref{sec:units-overview}. Those unit-specific ``drivers'' are available in the provided Python library.
+		Additional utilities may be defined on top of this basic protocol support for the command API of different GEX units, as described in \cref{sec:units-overview}. Those unit-specific ``drivers'' are available in the provided Python library.
 \end{itemize}
 
 \section{Python Library}
@@ -38,9 +38,9 @@ The library is composed of a \textit{transport}, the core class called \textit{c
 	\item \mono{TrxRawUSB} -- similar to \mono{TrxSerialThread}, but using a raw USB endpoint access
 \end{itemize}
 
-The unit classes wrap the command and event \gls{API} described in chapter~\ref{sec:units-overview}; all classes and methods are annotated by documentation comments for easy understanding.
+The unit classes wrap the command and event \gls{API} described in \cref{sec:units-overview}; all classes and methods are annotated by documentation comments for easy understanding.
 
-An example Python program showing a pattern with the \gls{LED} matrix driver IS31FL3730 is presented below as an illustration of the library usage. A photo of the produced pattern can be seen in figure~\ref{fig:pydemo}.
+An example Python program showing a pattern with the \gls{LED} matrix driver IS31FL3730 is presented below as an illustration of the library usage. A photo of the produced pattern can be seen in \cref{fig:pydemo}.
 
 \todo[inline]{add left line next to this listing}
 \begin{minted}{python}

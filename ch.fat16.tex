@@ -42,9 +42,9 @@ The \gls{FAT} acts as a look-up table combined with linked lists. In FAT16, it i
 Files can span multiple clusters; each \gls{FAT} entry either holds the address of the following file cluster, or a special value:
 
 \begin{itemize}[nosep]
-	\item 0x0000 - free cluster
-	\item 0xFFFF - last cluster of the file (still including file data)
-	\item 0xFFF7 - bad cluster
+	\item 0x0000 -- free cluster
+	\item 0xFFFF -- last cluster of the file (still including file data)
+	\item 0xFFF7 -- bad cluster
 \end{itemize}
 
 The bad cluster mark, 0xFFF7, is used for clusters which are known to corrupt data due to a flaw in the storage medium, such us a bad memory cell.
@@ -72,21 +72,21 @@ The root directory has the same structure as any other directories, which reside
 	\caption{\label{tab:fat16-dir-entry}Structure of a FAT16 directory entry}
 \end{table}
 
-A directory is organized in 32-byte entries representing individual files. Table~\ref{tab:fat16-dir-entry} shows the structure of one such entry. The name and extension fields form together the well-known 8.3 filename format (referring to the byte size of the first two entries). Longer file names are encoded using a \gls{LFN} scheme~\cite{fat-lfn} as special hidden entries stored in the directory table alongside the regular 8.3 entries, ensuring backward compatibility.
+A directory is organized in 32-byte entries representing individual files. \Cref{tab:fat16-dir-entry} shows the structure of one such entry. The name and extension fields form together the well-known ``8.3'' filename format (referring to the byte size of the first two entries). Longer file names are encoded using a \gls{LFN} scheme~\cite{fat-lfn} as special hidden entries stored in the directory table alongside the regular ``8.3'' entries, ensuring backward compatibility.
 
 \noindent
 The first byte of the file name has a special meaning:
 
 \begin{itemize}
-	\item 0x00 - indicates that there are no more files when searching the directory
-	\item 0xE5 - marks a free slot; this is used when a file is deleted
-	\item 0x05 - indicates that the first byte should actually be 0xE5, a code used in some character sets at the time, and the slot is \textit{not} free\footnote{The special meaning of 0xE5 appears to be a correction of a less than ideal design choice earlier in the development of the file system}.
-	\item Any other value, except 0x20 (space) and characters forbidden in a DOS file name, starts a valid file entry. Generally, only space, A-Z, 0-9, \verb|-| and \verb|_| should be used in file names for maximum compatibility.
+	\item 0x00 -- indicates that there are no more files when searching the directory
+	\item 0xE5 -- marks a free slot; this is used when a file is deleted
+	\item 0x05 -- indicates that the first byte should actually be 0xE5, a code used in some character sets at the time, and the slot is \textit{not} free\footnote{The special meaning of 0xE5 appears to be a correction of a less than ideal design choice earlier in the development of the file system}.
+	\item Any other value, except 0x20 (space) and characters forbidden in a DOS file name, starts a valid file entry. Generally, only space, A--Z, 0--9, \verb|-| and \verb|_| should be used in file names for maximum compatibility.
 \end{itemize}
 
 The attributes field contains flags such as \textit{directory}, \textit{volume label}, \textit{read-only} and \textit{hidden}. Volume label is a special entry in the root directory, which defines the disk's label shown on the host \gls{PC}. A file with the directory bit set is actually a pointer to a subdirectory, meaning that when we open the linked cluster, we'll find a new directory table.
 
-Figure~\ref{fig:fat-example} shows a possible organization of the GEX file system with two INI files, one spanning two clusters, the other being entirely inside one. The clusters need not be used completely; an exact file size is stored in the directory entries.
+\Cref{fig:fat-example} shows a possible organization of the GEX file system with two INI files, one spanning two clusters, the other being entirely inside one. The clusters need not be used completely; an exact file size is stored in the directory entries.
 
 \begin{figure}[h]
 	\centering
@@ -101,13 +101,13 @@ The FAT16 file system is relatively straightforward to implement. However, it is
 
 \subsection{DAPLink Emulator}
 
-A FAT16 emulator was developed as part of the open-source Arm Mbed DAPLink project~\cite{daplink}. It is used there for a drag-and-drop flashing of firmware images to the target microcontroller, taking advantage of the inherent cross-platform support (it uses the same software driver as any thumb drive, as discussed in~\ref{sec:msc}). Arm Mbed also uses a browser-based \gls{IDE} and cloud build servers, thus the end user does not need to install or set up any software to program a compatible development kit.
+A FAT16 emulator was developed as part of the open-source Arm Mbed DAPLink project~\cite{daplink}. It is used there for a drag-and-drop flashing of firmware images to the target microcontroller, taking advantage of the inherent cross-platform support (it uses the same software driver as any thumb drive, as discussed in \cref{sec:msc}). Arm Mbed also uses a browser-based \gls{IDE} and cloud build servers, thus the end user does not need to install or set up any software to program a compatible development kit.
 
 The GEX firmware adapts several parts of the DAPLink code, optimizing its \gls{RAM} usage and porting it to work with FreeRTOS. Those modified files are located in the folder \mono{User/vfs} of the GEX source code repository; the original Apache 2.0 open source software license headers, as well as file names, have been retained.
 
 \subsection{Handling a Read Access}
 
-As shown in table~\ref{tab:fat16-disk-areas}, the disk consists of several areas. The boot sector is immutable and can be stored in and read from the Flash memory. The handling of the other disk areas (\gls{FAT}, data area) depends on the type of access: read or write.
+As shown in \cref{tab:fat16-disk-areas}, the disk consists of several areas. The boot sector is immutable and can be stored in and read from the Flash memory. The handling of the other disk areas (\gls{FAT}, data area) depends on the type of access: read or write.
 
 The user can only read files that already exist on the disk, in our case, \verb|UNITS.INI| and \verb|SYSTEM.INI|. Those files are generated from the binary settings storage, and conversely, parsed, line-by-line, without ever existing in their full form. This fact makes our task more challenging, as the files cannot be easily measured and there's no obvious way to read a sector from the middle of a longer file. We solve this by implementing two additional functions in the INI file writer: a \textit{read window} and a \textit{dummy read mode}.
 

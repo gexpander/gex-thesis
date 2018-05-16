@@ -1,6 +1,6 @@
 \section{NeoPixel Unit}
 
-The NeoPixel unit implements the protocol needed to control a digital \gls{LED} strip with WS2812, WS2811, or compatible \gls{LED} driver chips. The NeoPixel protocol (explained in section~\ref{sec:theory-neo}) is implemented in software, therefore it is available on any \gls{GPIO} pin of the module.
+The NeoPixel unit implements the protocol needed to control a digital \gls{LED} strip with WS2812, WS2811, or compatible \gls{LED} driver chips. The NeoPixel protocol (explained in \cref{sec:theory-neo}) is implemented in software, therefore it is available on any \gls{GPIO} pin of the module.
 
 The color data can be loaded in five different format: as packed bytes (3$\times$8 bits color), or as the little- or big-endian encoding of colors in a 32-bit format: 0x00RRGGBB or 0x00BBGGRR. The 32-bit format is convenient when the colors are already represented as an array of 32-bit integers, e.g. extracted from a screen capture or an image.
 

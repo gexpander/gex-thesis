@@ -12,7 +12,7 @@ The Semtech SX1276~\cite{semtech-manual} and Nordic Semiconductor nRF24L01+ ~\ci
 
 \section{Modulations Overview}
 
-A brief overview of the different signal modulation techniques is presented here to aid the reader with understanding of table~\ref{fig:nrf-sx-comparison} and the rest of the chapter.
+A brief overview of the different signal modulation techniques is presented here to aid the reader with understanding of \cref{fig:nrf-sx-comparison} and the rest of the chapter.
 
 \subsection{On-Off Keying (OOK)}
 
@@ -40,7 +40,7 @@ LoRa is a patented proprietary modulation developed by Semtech. It uses a direct
 
 \section{Comparing SX1276 and nRF24L01+}
 
-The two transceivers are compared in table~\ref{fig:nrf-sx-comparison}. It is apparent that each of them has its strengths and weaknesses, which will be discussed below.
+The two transceivers are compared in \cref{fig:nrf-sx-comparison}. It is apparent that each of them has its strengths and weaknesses, which will be discussed below.
 
 \begin{table}[h]
 	\centering
@@ -90,7 +90,7 @@ A separate device, the \textit{GEX wireless gateway}, was developed to provide t
 	\caption{A block diagram of the wireless connection}
 \end{wrapfigure}
 
-The gateway presents itself to the host as a \gls{CDCACM} device, much like the GEX modules themselves (here called \textit{nodes}) when connected over \gls{USB}. It implements a simple protocol which encapsulates the binary data sent to or from a connected node. The wrapped GEX protocol, which is described in chapter~\ref{sec:tinyframe}, remains unchanged.
+The gateway presents itself to the host as a \gls{CDCACM} device, much like the GEX modules themselves (here called \textit{nodes}) when connected over \gls{USB}. It implements a simple protocol which encapsulates the binary data sent to or from a connected node. The wrapped GEX protocol, which is described in \cref{sec:tinyframe}, remains unchanged.
 
 The gateway has a 4-byte network ID, a number derived from the \gls{MCU}'s unique ID by calculating its 32-bit \gls{CRC}. The network ID must be entered into all nodes that wish to communicate with the gateway. Additionally, each module is assigned a 1-byte number which serves as its address in the network. The gateway can receive messages from up to 6 nodes.
 
