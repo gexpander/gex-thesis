@@ -20,9 +20,9 @@ Two basic methods to measure frequency exist~\cite{fcap-twotypes}, each with its
 
 	This method needs only one timer/counter. Cycles of the system clock are counted for the duration of one period on the input pin (between two rising edges). If we additionally detect the falling edge in between, the counter's value gives us the duty cycle when related to the overall period length.
 
-	Te reciprocal method's resolution depends on the counter's clock speed; if driven at 48\,MHz, the tick period is 20.83\,ns, which defines the granularity of our time measurement. It is common to measure several pulses and average the obtained values to further increase the precision.
+	The reciprocal method's resolution depends on the counter's clock speed; if driven at 48\,MHz, the tick period is 20.83\,ns, which defines the granularity of our time measurement. It is common to measure several pulses and average the obtained values to further increase the precision.
 
-	We can easily achieve a sub-hertz resolution with this method, but its performance degrades at high frequencies where the time measurement precision becomes insufficient. The input frequency range can be extended using a hardware prescaller\footnote{\textit{Prescaller} is a divider implemented as part of the timer/counter peripheral block that can be optionally enabled and configured to a desired division factor.}, which is also applicable to the direct method, should the measurement of frequencies outside the counter's supported range be required. A duty cycle measurement available in this method can be used to read the output of sensors that use a pulse-width modulation.
+	We can easily achieve a sub-hertz resolution with this method, but its performance degrades at high frequencies where the time measurement precision becomes insufficient. The input frequency range can be extended using a hardware prescaler\footnote{\textit{Prescaler} is a divider implemented as part of the timer/counter peripheral block that can be optionally enabled and configured to a desired division factor.}, which is also applicable to the direct method, should the measurement of frequencies outside the counter's supported range be required. A duty cycle measurement available in this method can be used to read the output of sensors that use a pulse-width modulation.
 
 \end{itemize}
 
@@ -52,9 +52,9 @@ The system clock's frequency, which we use to measure pulse lengths and to gate 
 
 \section{Analog Signal Acquisition} \label{sec:theory-adc}
 
-A very common need in experiments involving the measurement of physical properties is the acquisition of analog signals, respective voltages. Those can be roughly divided into \gls{DC} and \gls{AC} or time-changing signals. Analog signals are converted to digital values using \glspl{ADC}. Several principles of analog signal measurement exist with different cost, speed, resolution, and many other factors which determine their suitability for a particular application.
+A very common need in experiments involving the measurement of physical properties is the acquisition of analog signals, respective voltages. These can be roughly divided into \gls{DC} and \gls{AC} or time-changing signals. Analog signals are converted to digital values using \glspl{ADC}. Several principles of analog signal measurement exist with different cost, speed, resolution, and many other factors which determine their suitability for a particular application.
 
-\gls{DC} signals can be measured by taking several samples and calculating their average value; in the presence of a 50\,Hz or 60\,Hz mains interference, its advisable to spread those samples over the 20\,ms (resp. 16.7\,ms) time of one period so that the interfering waveform cancels out. Time-changing signals can be captured by taking isochronous samples at a frequency conforming to the Nyquist theorem, that is, at least twice that of the measured signal. In practice, a frequency several times higher is preferred for a more accurate capture.
+\gls{DC} signals can be measured by taking several samples and calculating their average value; in the presence of mains interference (50\,Hz or 60\,Hz), it is advisable to spread those samples over the 20\,ms (resp. 16.7\,ms) time of one period, so that the interfering waveform cancels out. Time-changing signals can be captured by taking isochronous samples at a frequency conforming to the Nyquist theorem, that is, at least twice that of the measured signal. In practice, a frequency several times higher is preferred for a more accurate capture.
 
 \begin{figure}
 	\centering
@@ -71,7 +71,7 @@ The \gls{SAR} type converter uses a \gls{DAC}, controlled by the value in the \g
 	\item The \gls{DAC} generates an approximation voltage.
 	\item Its output is compared with the sampled input, and the comparator's output is stored as the active bit in the approximation register.
 	\item The approximation continues with step 2 and the following (less significant) bit.
-	\item When all bits of the data word were found, an interrupt request is generated and the application program can read it from the \gls{SAR}.
+	\item After finding all bits of the data word, an \gls{IRQ} is generated and the application program can read the result from the \gls{SAR}.
 \end{enumerate}
 
 A change of the input value would make this principle unreliable, which is why the input is buffered by a sample \& hold circuit. The holding capacitor is charged to the input voltage and maintains this level during the conversion. The duration for which the capacitor is connected to the input is called a \textit{sampling time}.
@@ -94,11 +94,11 @@ A straightforward, intuitive implementation of the waveform generator is illustr
 
 The highest achievable output frequency largely depends on the size of our look-up table. For instance, assuming a timer frequency of 48\,MHz and a 8192-word table, holding one period of the waveform, the maximum frequency would be short of 6\,kHz, whereas if we shorten the table to just 1024 words, we can get almost 47\,kHz on the analog output. The downside of a shorter table is a lower resolution, which will appear as \gls{DC} plateaus or steps when observed with an oscilloscope, producing harmonic components similar to those of a square wave.
 
-A major disadvantage of this simple generation method is given by the limitations of the used timer, which defines the output frequency. Its output trigger fires when the internal counter reaches a pre-defined value, after which the counting register is reset. The counting speed is derived from the system clock frequency $f_\mathrm{c}$ using a prescaller $P$ and the set maximum value $N$. Only output frequencies that can be exactly expressed as $f=f_\mathrm{c}/(P\cdot N \cdot \mathrm{TableSize})$ can be accurately produced. Still, this simple and efficient method may be used where fine tuning is not required to take advantage of its fully asynchronous operation.
+A major disadvantage of this simple generation method is given by the limitations of the used timer, which defines the output frequency. Its output trigger fires when the internal counter reaches a predefined value, after which the counting register is reset. The counting speed is derived from the system clock frequency $f_\mathrm{c}$ using a prescaler $P$ and the set maximum value $N$. Only output frequencies that can be exactly expressed as $f=f_\mathrm{c}/(P\cdot N \cdot \mathrm{TableSize})$ can be accurately produced. Still, this simple and efficient method may be used where fine tuning is not required to take advantage of its fully asynchronous operation.
 
 \subsection{Direct Digital Synthesis} \label{sec:theory-dac-dds}
 
-There are situations where the simple waveform generation method is not sufficient, particularly when a fine tuning or on-line frequency and phase changes are required. Those are the strengths of \gls{DDS}, an advanced digital waveform generation method well explained in~\cite{all-about-dds}.
+There are situations where the simple waveform generation method is not sufficient, particularly when fine tuning, or on-line frequency and phase changes are required. Those are the strengths of \gls{DDS}, an advanced digital waveform generation method well explained in~\cite{all-about-dds}.
 
 \begin{figure}[h]
 	\centering
@@ -108,7 +108,7 @@ There are situations where the simple waveform generation method is not sufficie
 
 A diagram of a possible \gls{DDS} implementation in the STM32 firmware is shown in \cref{fig:wavegen-dds}. It is based on a \gls{NCO}. The \gls{NCO} consists of a \textit{phase accumulator} register and a \textit{tuning word} which is periodically added to it at a constant rate in a timer interrupt handler. The value of the tuning word determines the output waveform frequency. The look-up table must have a power-of-two length so that it can be addressed by the \textit{n} most significant bits of the phase accumulator. An additional control word could be added to this address to implement a phase offset for applications like a phase-shift modulation.
 
-The output frequency is calculated as \(f_\mathrm{out} = \dfrac{M\cdot f_\mathrm{c}}{2^n}\), where $M$ is the tuning word, $n$ is the bit length of the phase accumulator, and $f_c$ is the frequency of the phase-updating interrupt. The number of bits used to address the look-up table does not affect the output frequency; the table can be as large as the storage space allows. A tuning word value exceeding the lower part of the phase accumulator (including bits which directly enter the look-up address) will cause some values from the table to be skipped. A smaller tuning word, conversely, makes some values appear on the output more than once. This can be observed as steps or flat areas on the output. When the tuning word does not evenly divide $2^n$, that is, the modulo is non-zero, we can also observe jitter.
+The output frequency is calculated as \(f_\mathrm{out} = \dfrac{M\cdot f_\mathrm{c}}{2^n}\), where $M$ is the tuning word, $n$ is the bit length of the phase accumulator, and $f_c$ is the frequency of the phase-updating interrupt. The number of bits used to address the look-up table does not affect the output frequency; the table can be as large as the storage space allows. A tuning word value exceeding the lower part of the phase accumulator (including bits which directly enter the look-up address) will cause some values from the table to be skipped. A smaller tuning word, conversely, makes some values appear at the output more than once. This can be observed as steps or flat areas on the output. When the tuning word does not evenly divide $2^n$, that is, the modulo is non-zero, we can also observe jitter.
 
 \subsubsection{DDS Implemented in Hardware}
 
@@ -116,9 +116,9 @@ DDS may be implemented in hardware, including the look-up table, often together 
 
 \section{Touch Sensing} \label{sec:theory-touch}
 
-The used microcontroller, STM32F072, includes a \gls{TSC} peripheral block. It can be accessed from GEX as a demonstration of capacitive touch sensing, and could possibly be used for simple touch sensors as well, such as measuring the level of water in a tank.
+The STM32F072 microcontroller includes a \gls{TSC} peripheral block. This device is meant to be used in touch-based user interfaces, e.g., for kitchen appliances or toys. We include it in GEX to serve as a demonstration of capacitive touch sensing, and it could possibly be used for simple capacitive sensors as well, such as a water level measurement.
 
-The TSC requires a specific topology with a sampling capacitor connected close to the microcontroller pin, which may not be possible on a universal GEX module; for this reason, the touch sensing feature is best demonstrated on the STM32F072 Discovery development kit, which includes a 4-segment touch slider shown in \cref{fig:disco-touch}.
+The \gls{TSC} requires a specific topology with a sampling capacitor connected close to the microcontroller pin, which may not be possible on a universal GEX module; for this reason, the touch sensing feature is best demonstrated on the STM32F072 Discovery development kit, which includes a 4-segment touch slider shown in \cref{fig:disco-touch}.
 
 \begin{figure}[h]
 	\centering
@@ -126,7 +126,7 @@ The TSC requires a specific topology with a sampling capacitor connected close t
 	\caption{\label{fig:disco-touch}The touch slider on a STM32F072 Discovery board}
 \end{figure}
 
-The principle of capacitive touch sensing using the \gls{TSC} is well explained in the microcontroller's reference manual~\cite{f072-rm}, the \gls{TSC} product training materials~\cite{stm-tsc-training, stm-tsc-ppt} and application notes from ST Microelectronics~\cite{stm-tsc-an1, stm-tsc-an2, stm-tsc-an3, stm-tsc-an4}. A key part of the \gls{TSC} is a set of analog switches which can be combined to form several different signal paths between external pins, Vdd, \gls{GND}, and an analog comparator. Two input pins are needed for every touch sensing channel: the sensing pad connects to one, the other is connected through a sampling capacitor  (47\,nF on the Discovery board) to \gls{GND}.
+The principle of capacitive touch sensing using the \gls{TSC} is well explained in the microcontroller's reference manual~\cite{f072-rm}, the \gls{TSC} product training materials~\cite{stm-tsc-training, stm-tsc-ppt} and application notes from ST Microelectronics~\cite{stm-tsc-an1, stm-tsc-an2, stm-tsc-an3, stm-tsc-an4}. A key part of the \gls{TSC} is a set of analog switches which can be combined to form several different signal paths between external pins, V$_\mathrm{DD}$, \gls{GND}, and an analog comparator. Two input pins are needed for every touch sensing channel: the sensing pad connects to one, the other is connected through a sampling capacitor  (47\,nF on the Discovery board) to \gls{GND}.
 
 \begin{figure}[h]
 	\centering
@@ -139,7 +139,7 @@ Capacitive sensing is a sequential process described in the following steps:
 
 \begin{enumerate}
 	\item The sampling capacitor is discharged by connecting its free end to \gls{GND}.
-	\item The sensing pad is connected to +3.3\,V and, acting as a capacitor, charged to this voltage. It stores a small amount of charge, depending on its capacitance---this is the variable property we are trying to measure.
+	\item The sensing pad is connected to V$_\mathrm{dd}$ (+3.3\,V) and, acting as a capacitor, charged to this voltage. It stores a small amount of charge, depending on its capacitance---this is the variable property we are trying to measure.
 	\item The free terminals of the two capacitors (the sensing pad and the sampling capacitor) are connected together and their voltages reach an equilibrium as a portion of the stored charge leaves the sensing pad and flows into the bigger capacitor.
 	\item The steps (2) and (3) are repeated until the sampling capacitor's voltage exceeds a fixed threshold (set to a half of the supply voltage). The number of cycles needed to charge the sampling capacitor corresponds to the capacitance of the sensing pad.
 \end{enumerate}
