@@ -14,7 +14,7 @@ The \acrfull{USART} has a long history and is still in widespread use today. It 
 
 \gls{UART} and \gls{USART} are two variants of the same interface. \gls{USART} includes a separate clock signal, while the \gls{UART} timing relies on a well-known clock speed and the bit clock is synchronized by start bits. \gls{USART} was historically used in modems to achieve higher bandwidth, but is now mostly obsolete.
 
-\gls{USART}, as implemented by microcontrollers such as the STM32 family, is a two-wire full duplex interface that uses 3.3\,V or 5\,V logic levels. The data lines are in the high logical level when idle. An \gls{USART} frame, shown in \cref{fig:uart-frame}, starts by a start-bit (low level for the period of one bit) followed by \textit{n} data bits (typically eight), an optional parity bit and a period of high level called a stop bit (or stop bits), dividing consecutive frames.
+\gls{USART}, as implemented by microcontrollers such as the STM32 family, is a two-wire full duplex interface that uses 3.3\,V or 5\,V logic levels. The data lines are in the high logical level when idle. A \gls{USART} frame, shown in \cref{fig:uart-frame}, starts by a start-bit (low level for the period of one bit) followed by \textit{n} data bits (typically eight), an optional parity bit, and a period of high level called a stop bit (or stop bits), dividing consecutive frames.
 
 RS-232 uses the \gls{UART} framing, but its levels are different: logical 1 is represented by negative voltages $-3$ to $-25$\,V and logical 0 uses the same range, but positive. To convert between RS-232 levels and \gls{TTL} (5\,V) levels, a level-shifting circuit such as the MAX232 can be used. In RS-232, the two data lines (Rx and Tx) are accompanied by \gls{RTS}, \gls{CTS}, and \gls{DTR}, which facilitate handshaking and hardware flow control. In practice, those additional signals are often unused or their function differs from their historical meaning; for instance, Arduino boards (using a USB-serial converter) use the \gls{DTR} line as a reset signal to automatically enter their bootloader for firmware flashing~\cite{arduinodtr}.
 
@@ -64,18 +64,18 @@ Transmission and reception on the \gls{SPI} bus happen simultaneously. A bus mas
 	\item SPI-interfaced EEPROM and Flash memories
 \end{itemize}
 
-\section{I\textsuperscript{2}C} \label{sec:theory-i2c}
+\section{\texorpdfstring{\IIC}{I2C}} \label{sec:theory-i2c}
 
 \acrfull{I2C} is a two-wire, open-drain bus that supports multi-master operation.
 It uses two connections (plus \gls{GND}): \gls{SDA} and \gls{SCL}, both open-drain with a pull-up resistor.
 
-The protocol was developed by Philips Semiconductor (now NXP Semiconductors) and its implementors were required to pay licensing fees, until 2006, leading to the development of compatible implementations with different names, such as Atmel's \gls{TWI} or Dallas Semiconductor's ``Serial 2-wire Interface'' (e.g., used in the DS1307 \gls{RTC} chip). \gls{I2C} is a basis of the \gls{SMBus} and \gls{PMBus}, which add additional constraints and rules for a more robust operation.
+The protocol was developed by Philips Semiconductor (now NXP Semiconductors), and its implementors were, until 2006, required to pay licensing fees, leading to the development of compatible implementations with different names, such as Atmel's \gls{TWI} or Dallas Semiconductor's ``Serial 2-wire Interface'' (e.g., used in the DS1307 \gls{RTC} chip). \gls{I2C} is a basis of the \gls{SMBus} and \gls{PMBus}, which add additional constraints and rules for a more robust operation.
 
 The frame format is shown and explained in \cref{fig:i2c-frame}; more details may be found in the specification~\cite{i2c-spec} or application notes and datasheets offered by chip vendors, such as the white paper from Texas Instruments~\cite{understanding-i2c}. A frame starts with a start condition and stops with a stop condition, defined by an \gls{SDA} edge while the \gls{SCL} is high. The address and data bytes are acknowledged by the slave by sending a 0 on the open-drain \gls{SDA} line in the following clock cycle. A slave can terminate the transaction by sending 1 in place of the acknowledge bit. Slow slave devices may stop the master from sending more data by holding the SCL line low at the end of a byte, a feature called \textit{Clock Stretching}. As the bus is open-drain, the line cannot go high until all participants release it.
 
 Two addressing modes are defined: 7-bit and 10-bit. Due to the small address space, exacerbated by many devices implementing only the 7-bit addressing, collisions between different chips on a shared bus are common; many devices thus offer several pins to let the board designer choose a few bits of the address by connecting them to different logic levels.
 
-The bus supports multi-master operation, which leads to the problem of collisions. Multi-master capable devices must implement a bus arbitration scheme as specified by the \gls{I2C} standard~\cite{i2c-spec}. This feature is not used often in intelligent sensors and modules; the most common topology is multi-drop single-master, similar to \gls{SPI}, with the advantage of using only two pins on the microcontroller.
+The bus supports multi-master operation, which leads to the problem of collisions. Multi-master capable devices must implement a bus arbitration scheme as specified by the \gls{I2C} standard~\cite{i2c-spec}. This feature is, however, rarely used in practice; the most common topology for \gls{I2C} is multi-drop single-master, similar to \gls{SPI}, with the advantage of using only two microcontroller pins.
 
 \begin{figure}[h]
 	\centering
@@ -83,7 +83,7 @@ The bus supports multi-master operation, which leads to the problem of collision
 	\caption[\IIC message diagram]{\label{fig:i2c-frame}An \gls{I2C} message diagram (\textit{taken from the \gls{I2C} specification~\cite{i2c-spec}})}
 \end{figure}
 
-\subsection{Examples of Devices Using \IIC}
+\subsection{Examples of Devices Using \texorpdfstring{\IIC}{I2C}}
 
 \begin{itemize}
 	\item \textbf{APDS-9960} -- ambient light, proximity and gesture sensor
@@ -99,7 +99,7 @@ The 1-Wire bus, developed by Dallas Semiconductor (acquired by Maxim Integrated)
 
 1-Wire uses an open-drain connection for the data line, similar to \gls{I2C}, though the protocol demands it to be connected directly to V$_dd$ in some places when the parasitic mode is used; this is accomplished using an external transistor, or by reconfiguring the GPIO pin as output and setting it to 1, provided the microcontroller is able to supply a sufficient current.
 
-The communication consists of short pulses sent by the master and (for bit reading) the line continuing to be held low by the slave for a defined amount of time. The pulse timing determines whether it is a read or write operation and which value is encoded. It can be implemented either in software as delay loops, or by abusing \gls{UART} peripheral, as explained in~\cite{ow-uart}. Detailed timing diagrams can be found in the DS18x20~\cite{ow-datasheet}. 1-Wire transactions include a checksum byte to ensure an error-free communication.
+The communication consists of short pulses sent by the master and (for bit reading) the line continuing to be held low by the slave for a defined amount of time. The pulse timing determines whether it is a read or write operation and which value is encoded. It can be implemented either in software as delay loops, or by abusing a \gls{UART} peripheral, as explained in~\cite{ow-uart}. Detailed timing diagrams can be found in the DS18x20~\cite{ow-datasheet}. 1-Wire transactions include a checksum byte to ensure an error-free communication.
 
 \begin{figure}[h]
 	\centering
@@ -130,7 +130,7 @@ Since 1-Wire is a proprietary protocol, there is a much smaller choice of availa
 
 \section{NeoPixel} \label{sec:theory-neo}
 
-NeoPixel is a marketing name of the \textbf{WS2812} and compatible intelligent \gls{LED} drivers that are commonly used in ``addressable \gls{LED} strips''. Additional technical details about the chips and their protocol may be found in the WS2812B datasheet~\cite{neopixel-ds}. Those chips include the control logic, PWM drivers and the \gls{LED} diodes all in one 5$\times$5\,mm SMD package.
+NeoPixel is a marketing name of the \textbf{WS2812} and compatible intelligent \gls{LED} drivers that are commonly used in ``addressable \gls{LED} strips''. Additional technical details about the chips and their protocol may be found in the WS2812B datasheet~\cite{neopixel-ds}. These chips include the control logic, PWM drivers and the \gls{LED} diodes all in one 5$\times$5\,mm SMD package.
 
 The NeoPixel protocol is unidirectional, using only one data pin. The \gls{LED} drivers are chained together. Ones and zeros are encoded by pulses of a defined length on the data pin; after the color data was loaded into the \gls{LED} string, a longer ``reset'' pulse (low level) is issued by the bus master and the set colors are displayed. The timing constraints are listed in \cref{fig:ws2812-dia}.
 
