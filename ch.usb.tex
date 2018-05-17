@@ -22,14 +22,14 @@ Communication between the host and a function is organized into virtual channels
 	\caption{\label{fig:usb-logical}The logical structure of USB}
 \end{figure}
 
-Endpoints can be either unidirectional or bidirectional; the direction from the host to a function is called OUT, the other direction (function the host) is called IN. A bidirectional endpoint is technically composed of a IN and OUT endpoint with the same number. All transactions (both IN and OUT) are initiated by the host; functions have to wait for their turn. Endpoint 0 is bidirectional, always enabled, and serves as a \textit{control endpoint}. The host uses the control endpoint to read information about the device and configure it as needed.
+Endpoints can be either unidirectional or bidirectional; the direction from the host to a function is called OUT, the other direction (function to host) is called IN. A bidirectional endpoint is technically composed of IN and OUT endpoints with the same number. All transactions (both IN and OUT) are initiated by the host; functions have to wait for their turn. Endpoint 0 is bidirectional, always enabled, and serves as a \textit{control endpoint}. The host uses the control endpoint to read information about the device and configure it as needed.
 
 \subsection{Transfer Types}
 
 There are four types of data transfers defined in \gls{USB}: control, bulk, isochronous, and interrupt. Each endpoint is configured for a fixed transfer type:
 
 \begin{itemize}
-	\item \textit{Control} -- initial configuration after device plug-in; also used for other aplication-specific control messages that can affect other pipes.
+	\item \textit{Control} -- initial configuration after device plug-in; also used for other application-specific control messages that can affect other pipes.
 	\item \textit{Bulk} -- used for burst transfers of large messages
 	\item \textit{Isochronous} -- streaming with guaranteed low latency; designed for audio or video streams where some data loss is preferred over stuttering
 	\item \textit{Interrupt} -- low latency short messages, used for human interface devices like mice and keyboards
@@ -58,7 +58,7 @@ The descriptor table used by GEX is captured in \cref{fig:gex-descriptors} for i
 
 \section{USB Physical Layer}
 
-\gls{USB} uses differential signaling with \gls{NRZI} encoding and bit stuffing (the insertion of dummy bits to prevent long intervals in the same \gls{DC} level). The encoding, together with frame formatting, checksum verification, retransmission, and other low-level aspects of the \gls{USB} connection are entirely handled by the \gls{USB} physical interface block in the microcontroller's silicon. Normally we do not need to worry about those details; nonetheless, a curious reader may find more information in chapters 7 and 8 of~\cite{usbif-spec}. What needs our attention are the electrical characteristics of the physical connection, which need to be understood correctly for a successful schematic and \gls{PCB} design.
+\gls{USB} uses differential signaling with \gls{NRZI} encoding and bit stuffing (the insertion of dummy bits to prevent long intervals in the same \gls{DC} level). The encoding, together with frame formatting, checksum verification, retransmission, and other low-level aspects of the \gls{USB} connection are entirely handled by the \gls{USB} physical interface block in the microcontroller's silicon. Normally we do not need to worry about those details; nonetheless, a curious reader may find more information in chapters 7 and 8 of~\cite{usbif-spec}. The electrical characteristics of the physical connection deserve more attention, as they need to be understood correctly for a successful schematic and \gls{PCB} design.
 
 The \gls{USB} cable contains 4 conductors: V$_\mathrm{BUS}$ (+5\,V), D+, D--, and \gls{GND}. The data lines, D+ and D--, are also commonly labeled DP and DM. This differential pair should be routed in parallel on the \gls{PCB} and kept at the same length.
 
@@ -82,7 +82,7 @@ This section explains the classes used in the GEX firmware. A list of all standa
 
 \subsection{Mass Storage Class} \label{sec:msc}
 
-The \gls{MSC} is supported by all modern operating systems (MS Windows, MacOS, GNU/Linux, FreeBSD etc.) to support thumb drives, external disks, memory card readers and other storage devices.
+The \gls{MSC} is supported by all modern \gls{PC} operating systems to support \gls{USB} thumb drives, external disks, memory card readers, and other storage devices.
 
 %http://www.usb.org/developers/docs/devclass_docs/Mass_Storage_Specification_Overview_v1.4_2-19-2010.pdf
 %http://www.usb.org/developers/docs/devclass_docs/usbmassbulk_10.pdf
@@ -94,7 +94,7 @@ For the mass storage device to be recognized by the host operating system, it mu
 
 Unfortunately, the \gls{SCSI} Transparent command set appears to have been deliberately left unspecified for license or copyright reasons (see discussion in~\cite{usb-tscsi-wtf} and the surrounding thread) and the protocol now used under this name is an industry standard without a clear definition. Some pointers may be found in~\cite{usb-tscsi} and by examining the source code of the USB Device driver library provided by ST Microelectronics.
 
-This command set lets the host read information about the attached storage, such as its capacity, and check for media presence and readiness to write or detach. This is used, e.g., for the ``Safely Remove'' function, which ensures that all internal buffers have been written to Flash.
+This command set lets the host read information about the attached storage device, such as its capacity, and check for media presence and readiness to write or detach. This is used, e.g., for the ``Safely Remove'' function, which ensures that all internal buffers have been written to the flash memory.
 
 In order to emulate a mass storage device without having a physical storage medium, we need to generate and parse the file system on-the-fly as the host \gls{OS} tries to access it. This will be discussed in \cref{sec:fat16}.
 
@@ -106,7 +106,7 @@ Historically meant for modem communication, \gls{CDCACM} is now the de facto sta
 
 The interrupt endpoint is used for control commands, such as toggling the auxiliary lines of RS-232 or setting the baud rate. Since GEX does not translate the data communication to any physical UART, those commands are not applicable and can be silently ignored.
 
-An interesting property of the \gls{CDC} class is that the bulk endpoints transport raw data without any wrapping frames. By changing the interface's class in the descriptor table to 255 (\textit{Vendor Specific Class}), we can retain the messaging functionality of the designated endpoints, while accessing the endpoints device directly using, e.g., libUSB, without any interference from the \gls{OS}. This approach is also used to hide the \gls{MSC} interface when its not needed.
+An interesting property of the \gls{CDC} class is that the bulk endpoints transport raw data without any wrapping frames. By changing the interface's class in the descriptor table to 255 (\textit{Vendor Specific Class}), we can retain the messaging functionality of the designated endpoints, while accessing the endpoints device directly using, e.g., libUSB, without any interference from the \gls{OS}. This approach is also used to hide the \gls{MSC} interface when it is not needed.
 
 \subsection{Interface Association: Composite Class}
 
@@ -114,5 +114,5 @@ The original \gls{USB} specification expected that each function will have only 
 
 The \gls{IAD} is an entry in the descriptor table that defines which interfaces belong together and should be handled by the same software driver. To use the \gls{IAD}, the function's class must be set to 0xEF, subclass 0x02, and protocol 0x01 in the top level descriptor, so that the \gls{OS} knows to look for this descriptor before binding drivers to any interfaces.
 
-In GEX, the \gls{IAD} is used to tie together the \gls{CDC} and \gls{ACM} interfaces while leaving out the \gls{MSC} interface which should be handled by a different driver. To make this work, a new \textit{composite class} had to be created as a wrapper for the library-provided \gls{MSC} and \gls{CDCACM} implementation.
+In GEX, the \gls{IAD} is used to tie together the \gls{CDC} and \gls{ACM} interfaces while leaving out the \gls{MSC} interface which should be handled by a different driver. To make this work, a new \textit{composite class} was created as a wrapper for the library-provided \gls{MSC} and \gls{CDCACM} implementation.
 

@@ -19,11 +19,11 @@ The idea of making it easier to interact with low-level hardware from a \gls{PC}
 	\caption{\label{fig:rpi}Raspberry Pi minicomputers}
 \end{figure}
 
-The Raspberry Pi's \gls{GPIO} header, a row of pins which can be directly controlled by user applications running on the minicomputer, was one of the inspirations behind GEX. It can be controlled using C and Python (among others) and offers \gls{GPIO}, \gls{SPI}, \gls{I2C}, \gls{UART} and \gls{PWM}, with other protocols and functions easy to emulate thanks to the high speed of the system processor.
+The Raspberry Pi's \gls{GPIO} header, a row of pins which can be directly controlled by user applications running on the minicomputer, was one of the inspirations behind GEX. It can be controlled using C and Python (among others) and offers \gls{GPIO}, \gls{SPI}, \gls{I2C}, \gls{UART}, and \gls{PWM}, with other protocols and functions easy to emulate thanks to the high speed of the system processor.
 
 The Raspberry Pi is used in schools as a low-cost PC alternative that encourage students' interest in \gls{STEM}. The board is often built into more permanent projects that make use of its powerful processor, such as wildlife camera traps, fish feeders etc.
 
-The Raspberry Pi could be used for the same quick evaluations or experiments we want to perform with GEX, however they would either have to be performed directly on the minicomputer, with an attached monitor and a keyboard, or use some form of remote access (e.g., \gls{SSH}, screen sharing).
+The Raspberry Pi could be used for the same quick evaluations or experiments we want to perform with GEX, however they would either have to be performed directly on the minicomputer, with an attached monitor and a keyboard, or use some form of remote access (e.g., \gls{SSH}, or screen sharing).
 
 \section{Bus Pirate}
 
@@ -36,7 +36,7 @@ The Raspberry Pi could be used for the same quick evaluations or experiments we 
 %http://dangerousprototypes.com/blog/about/
 
 % Dangerous Prototypes and manufactured by Seeed Studio\todo{link}
-Bus Pirate, a project by Ian Lesnet, is a USB-attached device providing access to hardware interfaces like \gls{SPI}, \gls{I2C}, \gls{USART} and 1-Wire, as well as frequency measurement and direct pin access. The board aims to make it easy for users to familiarize themselves with new chips and modules; it also provides a range of programming interfaces for flashing microcontroller firmwares and memories. It communicates with the \gls{PC} using a FTDI USB-serial bridge.
+Bus Pirate, a project by Ian Lesnet, is a USB-attached device providing access to hardware interfaces like \gls{SPI}, \gls{I2C}, \gls{USART}, and 1-Wire, as well as frequency measurement and direct pin access. The board aims to make it easy for users to familiarize themselves with new chips and modules; it also provides a range of programming interfaces for flashing microcontroller firmwares and memories. It communicates with the \gls{PC} using a FTDI USB-serial bridge.
 
 Bus Pirate is open source and is, in its scope, similar to GEX. It can be scripted and controlled from the PC, connects to USB and provides a wide selection of hardware interfaces.
 
@@ -46,7 +46,7 @@ The board is based on a PIC16 microcontroller running at 32\,MHz. Its \gls{ADC} 
 
 Various professional tools that would fulfill our needs exist on the market, but their high price makes them inaccessible for users with a limited budget, such as hobbyists or students who would like to keep such a device for personal use. An example is the National Instruments \IIC/SPI Interface Device which also includes several \gls{GPIO} lines, their USB DAQ module, or some of the Total Phase \IIC/SPI gadgets (\cref{fig:profidaq}).
 
-The performance GEX can provide may not always match that of those professional tools, but in many cases it'll be a sufficient substitute at a fraction of the cost.
+The performance GEX can provide may not always match that of those professional tools, but in many cases it will be a sufficient substitute at a fraction of the cost.
 
 \begin{figure}[h]
 	\centering
