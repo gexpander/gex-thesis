@@ -18,7 +18,7 @@ Tasks can be in one of four states: Suspended, Ready, Blocked, Running. The Susp
 
 \subsubsection{Task Switching and Interrupts}
 
-Task switching occurs periodically in a timer interrupt, usually every 1\,ms; in Cortex-M, this is typically the SysTick interrupt, a timer designed for this purpose that is included in the Arm core itself and thus available on all derived platforms.
+Task switching occurs periodically in a timer interrupt, usually every 1\,ms; in \armcm chips this is typically the SysTick interrupt, a timer designed for this purpose that is included in the core itself and thus available on all derived platforms.
 
 After one tick of run time, the Running task is paused (enters Ready state), or continues to run if no higher priority task is available. If a higher priority task waits for an object and this is made available in an interrupt, the previously running task is paused and the waiting task is resumed immediately (enters the Running state). FreeRTOS defines an interrupt-friendly variant of some of the \gls{API} functions intended for this purpose.
 

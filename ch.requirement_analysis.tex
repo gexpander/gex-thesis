@@ -48,7 +48,7 @@ A connection using a hardware \gls{UART} is also planned, as a fallback for boar
 
 The module must be easily reconfigurable. Given the settings are almost always going to be tied on the connected external hardware, it would be practical to have an option to store them permanently in the microcontroller's non-volatile memory.
 
-We can load those settings into GEX using the serial interface, which also makes it possible to reconfigure it remotely when the wireless connection is used. With USB, we can additionally make the board appear as a mass storage device and expose the configuration as text files. This approach, inspired by ARM mbed's mechanism for flashing firmware images to development kits, avoids the need to create a configuration \gls{GUI}, instead using the built-in applications of the \gls{PC} \gls{OS}, like file explorer and notepad. We can expose additional information, such as a README file with instructions or a pin-out reference, as separate files on the virtual disk.
+We can load those settings into GEX using the serial interface, which also makes it possible to reconfigure it remotely when the wireless connection is used. With USB, we can additionally make the board appear as a mass storage device and expose the configuration as text files. This approach, inspired by \mbed's mechanism for flashing firmware images to development kits, avoids the need to create a configuration \gls{GUI}, instead using the built-in applications of the \gls{PC} \gls{OS}, like file explorer and notepad. We can expose additional information, such as a README file with instructions or a pin-out reference, as separate files on the virtual disk.
 
 \section{An Overview of Planned Features}
 
@@ -85,7 +85,7 @@ Let's now summarize the features we wish to support in the GEX firmware, based o
 
 As discussed in \cref{sec:expected-outcome}, this project will be based on microcontrollers from the STM32 family. The STM32F072 model was selected for the initial hardware and firmware design due to its low cost, advanced peripherals, and the availability of development boards. The firmware can be ported to other \glspl{MCU} later (e.g., to STM32L072, STM32F103 or STM32F303).
 
-The STM32F072 is a Cortex M0 device with 128\,KiB of flash memory, 16\,KiB of \gls{RAM} and running at 48\,MHz. It is equipped with a \gls{USB} Full Speed peripheral block, a 12-bit \gls{ADC} and \gls{DAC}, a number of general-purpose timers/counters, SPI, I$^2$C, and USART peripherals, among others. It supports crystal-less \gls{USB}, using the USB SOF packet for synchronization of the internal 48\,MHz RC oscillator; naturally, a real crystal resonator will provide better timing accuracy.
+The STM32F072 is an \armcm device with 128\,KiB of flash memory, 16\,KiB of \gls{RAM} and running at 48\,MHz. It is equipped with a \gls{USB} Full Speed peripheral block, a 12-bit \gls{ADC} and \gls{DAC}, a number of general-purpose timers/counters, SPI, I$^2$C, and USART peripherals, among others. It supports crystal-less \gls{USB}, using the USB SOF packet for synchronization of the internal 48\,MHz RC oscillator; naturally, a real crystal resonator will provide better timing accuracy.
 
 To effectively utilize the time available for this work, only the STM32F072 firmware will be developed while making sure the planned expansion is as straightforward as possible.
 

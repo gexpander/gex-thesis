@@ -101,7 +101,7 @@ The FAT16 file system is relatively straightforward to implement. However, it is
 
 \subsection{DAPLink Emulator}
 
-A FAT16 emulator was developed as part of the open-source Arm Mbed DAPLink project~\cite{daplink}. It is used there for a drag-and-drop flashing of firmware images to the target microcontroller, taking advantage of the inherent cross-platform support (it uses the same software driver as any thumb drive, as discussed in \cref{sec:msc}). Arm Mbed also uses a browser-based \gls{IDE} and cloud build servers, thus the end user does not need to install or set up any software to program a compatible development kit.
+A FAT16 emulator was developed as part of the open-source \mbed DAPLink project~\cite{daplink}. It is used there for a drag-and-drop flashing of firmware images to the target microcontroller, taking advantage of the inherent cross-platform support (it uses the same software driver as any thumb drive, as discussed in \cref{sec:msc}). \mbed also uses a browser-based \gls{IDE} and cloud build servers, thus the end user does not need to install or set up any software to program a compatible development kit.
 
 The GEX firmware adapts several parts of the DAPLink code, optimizing its \gls{RAM} usage and porting it to work with FreeRTOS. Those modified files are located in the folder \mono{User/vfs} of the GEX source code repository; the original Apache 2.0 open source software license headers, as well as file names, have been retained.
 

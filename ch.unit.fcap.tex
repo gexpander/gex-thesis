@@ -7,7 +7,7 @@ The unit has several operational modes: idle, reciprocal continuous, reciprocal 
 
 \subsection{Value Conversion Formulas}
 
-Several of the features implemented in this unit would require floating point arithmetic to provide the measured value in the desired units (Hz, seconds). That is not available in Cortex-M0, only as a software implementation. The calculation is left to the client in order to save Flash space that would be otherwise used by the arithmetic functions. This arrangement also avoids rounding errors and a possible loss of precision.
+Several of the features implemented in this unit would require floating point arithmetic to provide the measured value in the desired units (Hz, seconds). That is not available in \armcm, only as a software implementation. The calculation is left to the client in order to save Flash space that would be otherwise used by the arithmetic functions. This arrangement also avoids rounding errors and a possible loss of precision.
 
 \subsubsection{Reciprocal (Indirect) Measurement}
 
