@@ -104,7 +104,7 @@ void DMA1_Channel4_5_6_7_IRQHandler(void)
 }
 \end{minted}
 
-It is evident that multiple units might need to use the same handler, even at the same time, since each \gls{DMA} channel is configured, and works, independently. GEX implements a redirection scheme to accomplish such interrupt sharing: All interrupt handlers are defined in one place, accompanied by a table of function pointers. When a unit driver wants to register an interrupt handler, it stores a pointer to it in this redirection table. Then, once an interrupt is invoked, the common handler checks the corresponding entry in the table and calls the referenced routine, if any. Conversely, when a unit driver de-initializes a unit, it removes all interrupt handlers it used, freeing the redirection table slots for other use.
+It is evident that multiple units might need to use the same handler, even at the same time, since each \gls{DMA} channel is configured, and works, independently. GEX implements a redirection scheme to accomplish such interrupt sharing: all interrupt handlers are defined in one place, accompanied by a table of function pointers. When a unit driver wants to register an interrupt handler, it stores a pointer to it in this redirection table. Then, once an interrupt is invoked, the common handler checks the corresponding entry in the table and calls the referenced routine, if any. Conversely, when a unit driver de-initializes a unit, it removes all interrupt handlers it used, freeing the redirection table slots for other use.
 
 \section{FreeRTOS Synchronization Objects Usage} \label{sec:rtos_in_gex}
 
@@ -116,6 +116,6 @@ The message and job queue, seen in \cref{fig:gex_internal}, is used to decouple 
 
 \subsection{Lock Objects}
 
-The ``transmission complete'' interrupt signals the readiness to transmit more data to the message-sending task using a binary semaphore. This semaphore is taken by the task before sending a block of data, and  released by the \gls{ISR}, ensuring that the task waits for the transmission to complete before attempting to send more data.
+The ``transmission complete'' interrupt signals the readiness to transmit more data to the message-sending task using a binary semaphore. This semaphore is taken by the task before sending a block of data, and released by the \gls{ISR}, ensuring that the task waits for the transmission to complete before attempting to send more data.
 
 Two mutexes are used in the firmware: one that guards access to the TinyFrame Builder until the previous message was fully transmitted, and one to guard a shared memory buffer (reused in several places to save memory and avoid its re-allocation). The hardware resource registry (explained in \cref{sec:res_allocation}) does not need mutexes for individual resources, as concurrent access to those fields can never happen thanks to the way the system is organized; resources are always taken or released sequentially by the same task.

@@ -193,14 +193,15 @@ We can now send the file as a series of frames of type \CmdBulkData, or \CmdBulk
 
 \subsection{Persisting the Changed Configuration to Flash}
 
-The written INI file is immediately parsed and the settings are applied. However, those changes are not persistent: they exist only in RAM and will be lost when the module restarts. To save the current state to Flash, issue a frame \CmdPersistConfig. This has the same effect as pressing the LOCK button (or replacing the LOCK jumper) when the INI files are edited using the virtual mass storage.
+The written INI file is immediately parsed and the settings are applied. However, these changes are not persistent: they exist only in \gls{RAM} and will be lost when the module restarts. To save the current state to Flash, issue a frame \CmdPersistConfig. This has the same effect as closing the virtual mass storage by pushing the Lock button.
 
+\iffalse
 It should be noted that after flashing a firmware, the Flash control registers may remain in an unexpected state and the module must first be manually restarted before attempting to persist settings. Otherwise an assertion will fail and the module is restarted by a watchdog, losing the temporary changes.
-
 % TODO there must be a workaround, and then this paragraph can be removed.
+\fi
 
 
-\section{Reading a List of Units}
+\section{Reading the List of Units}
 
 The frame \CmdListUnits requests a list of all available units in the GEX module. The list includes all units' callsigns, names and types. The response payload has the following format:
 
@@ -229,7 +230,7 @@ Unit requests deliver a message from the host to a unit instance. Unit drivers i
 	\cfield{u8[]} command payload, handled by the unit driver; its size and content depend on the unit driver and the particular command number, as defined in \cref{sec:units_overview}
 \end{boxedpayload}
 
-The most significant bit of the command byte (0x80) has a special meaning: when set, the message delivering routine responds with 0x00 (Success) after the command completes, unless an error occurred. That is used to get a confirmation that the message was delivered and the module operates correctly (as opposed to, e.g., a lock-up resulting in a watchdog reset). Requests which normally generate a response (e.g., reading a value from the unit) should not be sent with this flag, as that would produce two responses at once.
+The most significant bit of the command byte (0x80) has a special meaning: when set, the message delivering routine responds with \CmdSuccess after the command completes, unless an error occurred. That is used to get a confirmation that the message was delivered and the module operates correctly (as opposed to, e.g., a lock-up resulting in a watchdog reset). Requests which normally generate a response (e.g., reading a value from the unit) should not be sent with this flag, as that would produce two responses at once.
 
 \subsection{Unit Reports}\label{sec:unit_reports_format}
 

@@ -1,8 +1,6 @@
 \chapter{Wireless Interface} \label{sec:wireless}
 
-Four methods of a wireless connection have been considered: Bluetooth (perhaps with CC2541), WiFi with ESP8266, a 868\,MHz long range link with SX1276, and a 2.4\,GHz link with nRF24L01+. Bluetooth was dismissed early for its complexity, and ESP8266 for its high consumption in continuous reception mode, although both solutions might be viable for certain applications and with more development time.
-
-The Semtech SX1276~\cite{semtech-manual} and Nordic Semiconductor nRF24L01+ ~\cite{nrf-manual} transceivers have both been tested using the first GEX prototype, proving its usefulness as a hardware development tool, and it has been confirmed they could fulfill the requirements of our application.
+Four methods of a wireless connection have been considered: Bluetooth (perhaps with the Texas Instruments CC2541), WiFi with the Espressif ESP8266, a 868\,MHz long range radio link with the Semtech SX1276, and a 2.4\,GHz radio link with the nRF24L01+. Bluetooth was dismissed early for its complexity, and the ESP8266 for its high power consumption, although both solutions might be viable for certain applications and with more development time.
 
 \begin{figure}[h]
 	\centering
@@ -36,11 +34,13 @@ In \gls{OOK}, the carrier generator is switched on and off to transmit ones and 
 
 \subsection{LoRa Modulation}
 
-LoRa is a patented proprietary modulation developed by Semtech. It uses a direct sequence frequency hopping spread spectrum modulation and can achieve very long range transmission (over 10\,km is not uncommon). LoRa is available only with transceiver \glspl{IC} produced by Semtech and for this reason it is rather expensive.
+LoRa uses a direct sequence frequency hopping spread spectrum modulation scheme and can achieve very long range transmission. A higher-level specification defines how the devices using LoRa should behave in a large area network, though the modulation may be used for point-to-point connections as well.
+
+LoRa is a proprietary technology developed by Semtech; it is free to use, but is available only with transceiver \glspl{IC} produced by the company.
 
 \section{Comparing SX1276 and nRF24L01+}
 
-The two transceivers are compared in \cref{fig:nrf_sx_comparison}. It is apparent that each of them has its strengths and weaknesses, which will be discussed below.
+The SX1276and nRF24L01+ transceivers have both been tested using the first GEX prototype, proving its usefulness as a hardware development tool, they proved capable of fulfilling the requirements of the GEX radio link use-case. We compared them in \cref{fig:nrf_sx_comparison} using data from their datasheets~\cite{semtech-manual,nrf-manual}. It is apparent, after inspecting the table, that each has its strengths and weaknesses and the choice depends on the particular application's needs.
 
 \begin{table}[h]
 	\centering
@@ -58,7 +58,7 @@ The two transceivers are compared in \cref{fig:nrf_sx_comparison}. It is apparen
 		\textbf{Consumption Tx} & 20--120\,mA & 7--11.3\,mA \\
 		\textbf{Idle power (max)} & 1\,$\mu$A sleep, 2\,mA stand-by & 0.9\,$\mu$A sleep, 320\,$\mu$A stand-by \\
 		\textbf{Max packet size} & 300 bytes & 32 bytes \\
-		\textbf{Reset} & NRESET pin & Vdd disconnect \\
+		\textbf{Software reset} & NRESET pin & not available \\
 		\textbf{Extra} & LoRa FHSS, packet engine & ShockBurst protocol engine \\
 		\textbf{Price} & \$7.3 & \$1.6 \\
 		\bottomrule
@@ -66,36 +66,40 @@ The two transceivers are compared in \cref{fig:nrf_sx_comparison}. It is apparen
 	\caption[Comparison of the SX1276 and nRF24L01+ wireless transceivers]{\label{fig:nrf_sx_comparison}Comparison of the SX1276 and nRF24L01+ wireless transceivers, using data from their datasheets (price in USD from DigiKey in a 10\,pcs. quantity, recorded on May 6th 2018)}
 \end{table}
 
-SX1276 supports additional modulation modes, including a proprietary LoRa scheme with a frequency-hopping spread spectrum modulation that can be received at a distance up to 20\,km in ideal conditions. The long-range capability is reflected in a higher consumption during transmission. However, its consumption in receiver mode is slightly lower than that of the nRF24L01+.
+The SX1276 supports additional modulation modes, including the proprietary LoRa scheme that can be received at long distances. The power consumption required to achieve this long-range communication makes it impractical for continuous operation on battery or solar power.
 
-nRF24L01+ provides higher data rates at short distances. Its power consumption is comparable or lower than that of the SX1276. It lacks a dedicated reset pin, but that can be easily worked around using an external transistor to momentarily disconnect its Vdd pin.
+The nRF24L01+ provides higher data rates at short distances. Its power consumption is comparable or lower than that of the SX1276. It lacks a dedicated reset pin, but that can be worked around using an external transistor to momentarily disconnect it from the power supply.
 
-Both devices implement some form of a packet engine with error checking; that of the nRF24L01+, called ShockBurst, is more advanced as it implements acknowledgment responses and automatic re-transmission, leading to a potentially more robust communication without an additional overhead on the side of the microcontroller.
+Both devices implement some form of a packet engine with error checking; that of the nRF24L01+, called ShockBurst, is more advanced, as it implements acknowledgment responses and automatic re-transmission, leading to potentially more robust communication without additional overhead in the control software.
 
 
-\section{Integration of the nRF24L01+ into GEX}
+\section{Wireless Link with the nRF24L01+}
 
-The nRF24L01+ was selected to be integrated into GEX thanks to its inclusion of the ShockBurst engine, higher possible data rates and significantly lower price. The SX1276, nonetheless, remains an interesting option that could be used as an alternative in the future, should the need for a long range communication arise.
+The nRF24L01+ was selected to be integrated into GEX thanks to its inclusion of the ShockBurst engine, higher possible data rates and significantly lower price. The SX1276, nonetheless, remains an interesting option, should the need for a long range communication arise.
 
-A separate device, the \textit{GEX wireless gateway}, was developed to provide the PC connection to a nRF24L01+ module. It is based on the STM32F103 microcontroller in its smallest package (LQFP48), selected for its low cost and good availability.
+A pair of these radio modules can form a bidirectional data connection, functionally replacing \gls{USB} or \gls{UART} as a communication interface. However, we need to connect the second module to the \gls{PC} to control GEX through the radio link. A separate \gls{USB} device, a \textit{wireless gateway}, was developed for this purpose; its hardware will be presented in \cref{sec:rfgateway}.
 
-\todo[inline]{TODO the above --remove/update/link to the hw chapter}
+\subsection{The Wireless Gateway}
 
-\subsection{The Wireless Gateway Protocol} \label{sec:gw_protocol}
-
-\begin{wrapfigure}[17]{r}{0.38\textwidth}
+\begin{wrapfigure}[18]{r}{0.38\textwidth}
 	\vspace{-1em}
 	\centering
 	\includegraphics[scale=0.9]{img/rf-gw.pdf}
 	\caption{A block diagram of the wireless connection}
 \end{wrapfigure}
 
-The gateway presents itself to the host as a \gls{CDCACM} device, much like the GEX modules themselves (here called \textit{nodes}) when connected over \gls{USB}. It implements a simple protocol which encapsulates the binary data sent to or from a connected node. The wrapped GEX protocol, which is described in \cref{sec:tinyframe}, remains unchanged.
+The gateway presents itself to the host as a \gls{CDCACM} device, much like the GEX modules themselves (here called \textit{nodes}) when connected over \gls{USB}. However, the standard GEX communication protocol cannot be used directly, as the gateway itself needs to be managed through the interface, and it can connect to more than one GEX module at once, necessitating an addressing scheme. This problem could be solved by adding a side channel, additional \gls{USB} endpoints, to interact with the gateway itself; that option was not explored further, but it is clear that it would compromise our ability to use the simple virtual COM port \gls{USB} driver. 
 
-The gateway has a 4-byte network ID, a number derived from the \gls{MCU}'s unique ID by calculating its 32-bit \gls{CRC}. The network ID must be entered into all nodes that wish to communicate with the gateway. Additionally, each module is assigned a 1-byte number which serves as its address in the network. The gateway can receive messages from up to 6 nodes.
 
-All messages sent to or from the gateway are a multiple of 64 bytes long, padded with zeros if shorter. The message starts with a control byte determining its type, as summarized in the following table:
+The gateway has a 4-byte \textit{network ID}, a number derived from the \gls{MCU}'s unique ID number. The network ID must be entered into the system settings file of all nodes that wish to communicate with the gateway. Additionally, each module is assigned a 1-byte number serving as its address in the network. These addresses are loaded into the gateway by the user application, and are used to configure the nRF24L01+ to listen to messages from the corresponding nodes. The nRF24L01+ uses 5-byte addressing; the full node addresses are composed of the network ID and the one additional address byte.
 
+\subsection{The Gateway Protocol} \label{sec:gw_protocol}
+
+The gateway protocol, when used to communicate with a node, encapsulates the raw binary data sent to or from connected nodes; the wrapped TinyFrame protocol remains unchanged.
+
+All messages sent to or from the gateway are a multiple of 64 bytes long, padded with zeros if shorter. A message starts with a control byte determining its type, as summarized in the following table listing the structure of all supported messages.
+
+\newpage
 {
 \tabulinesep=5pt
 \begin{longtabu} to \textwidth {P{5em}  X[5] X[4,l]}
@@ -159,10 +163,10 @@ All messages sent to or from the gateway are a multiple of 64 bytes long, padded
 A host program connecting to a node or nodes through the gateway should follow the following procedure to initialize and configure the gateway:
 
 \begin{enumerate}
-	\item Send the `GET\_NET\_ID' command to test if the gateway is connected (and obtain its network ID as a side effect)
-	\item Restart the gateway using the `RESTART' command to clean any possible previous configuration.
-	\item Add the node address(es) using `ADD\_NODES'
-	\item Ping the connected node(s) via TinyFrame (passed through `SEND\_MSG' and `INCOMING\_MSG') to test if the connection works.
+	\item Send the ``GET\_NET\_ID'' command to test if the gateway is connected (and obtain its network ID as a side effect)
+	\item Restart the gateway using the ``RESTART'' command to clean any possible previous configuration; this is not needed when the gateway was restarted or freshly connected to the \gls{USB} port.
+	\item Add the node address(es) using the ``ADD\_NODES'' command.
+	\item Ping the connected node(s) through the GEX communication protocol to test the connection. Note that GEX will not use the radio module if \gls{USB} is connected and enumerated, as it has lower priority. 
 \end{enumerate}
 
 

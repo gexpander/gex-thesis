@@ -4,7 +4,7 @@
 
 It has been proposed earlier in the text that STM32 Nucleo and Discovery development boards might be used as the hardware platform for this project. Indeed, a Discovery board with STM32F072~\cite{disco-f072} was used as a development platform for the majority of the GEX firmware. This inexpensive board may be used to try the GEX firmware without having access to the custom hardware.
 
-\subsection{Discovery F072 Configuration and Pin Mapping}
+\subsection{Discovery STM32F072 Configuration and Pin Mapping}
 
 This Discovery board is fitted with four \glspl{LED} on \gls{GPIO} pins PC6 through PC9, in a compass arrangement. The ``north'' \gls{LED}, PC6, is used as the GEX status indicator. The ``User'' button, connected to PA0, is mapped as the GEX Lock button, controlling the settings storage.
 
@@ -85,7 +85,7 @@ Like our STM32 microcontroller, the Broadcom processor on the Raspberry Pi multi
 \end{figure}
 
 
-\section{Wireless Gateway}
+\section{Wireless Gateway} \label{sec:rfgateway}
 
 \cref{fig:gwxgw}
 

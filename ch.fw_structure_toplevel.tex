@@ -48,11 +48,9 @@ All GEX hardware platforms have some common characteristics (\cref{fig:users_vie
 		
 	\item \textbf{Wireless connection}
 	
-		A wireless connection is implemented using a radio module on the GEX board. To use it we need a counterpart, the \textit{wireless gateway}, which connects to the \gls{PC} using \gls{USB} with \gls{CDCACM}.
+		A wireless connection is implemented using a radio module on the GEX board. To use it we need a counterpart, the \textit{wireless gateway}, which connects to the \gls{PC} via \gls{USB} and acts as a \gls{CDCACM} device.
 	
 \end{itemize}
-
-All three interfaces share the same binary communication protocol (see below). The wireless connection is an exception, as the gateway itself needs to be managed by the host application, and it can connect to more than one GEX board, necessitating an addressing scheme. Its modified protocol will be explained in \cref{sec:wireless}.
 
 The \gls{USB} connection is always enabled first on start-up. GEX waits its for enumeration by the host \gls{PC}. When not enumerated in a few seconds, it concludes that the interface is not active and tries other enabled options. The wireless module, connected through \gls{SPI}, can be detected by reading one of its registers that should have a known value. A \gls{UART} interface cannot be tested so reliably, thus it is always considered active\footnote{A detection of the UART connection would be possible by measuring the Rx pin voltage, which should idle at a high level (here 3.3\,V). This was not implemented in the initial firmware version.}.
 

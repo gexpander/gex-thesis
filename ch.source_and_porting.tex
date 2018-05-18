@@ -79,10 +79,9 @@ The rest of the porting process, after generating the base project, can be summa
 	
 	\item Update other platform-dependent code (such as the debug \gls{UART} configuration). The compiler should warn about those occurrences when trying to build the project.	
 	
-	\item Try to build the project by running ``\verb|make|'' in the terminal. After all errors are corrected, the firmware may be flashed using ST-Link by running ``\verb|make flash|'', or through the \gls{DFU} interface with ``\verb|make dfu|''.
+	\item Try to build the project by running ``\verb|make|'' in the terminal.
 \end{itemize}
 
-After succeeding with the compilation, we can test the firmware image. It is highly probable that there will be errors that need correcting. 
+After the firmware successfully compiles, we can flash it to the \gls{MCU} using ST-Link by running ``\verb|make flash|'', or through the \gls{DFU} interface with ``\verb|make dfu|''. 
 
-A good first step is to ensure the debug \gls{UART}'s configuration is correct so that we can see the log output. It should be available on the pin PA9 at 115200\,baud. Thanks to the generous usage of assertions, most errors should produce helpful log messages, leading us to their probable cause. We proceed to experiment with the device, trying the features described in \cref{sec:conceptual}, while observing the debug log for any anomalies.
-
+The first thing to verify after flashing the firmware is that the debug \gls{UART}'s configuration is correct and we can see the log output, which should be available on pin PA9 at 115200\,baud. Thanks to a generous usage of assertions, most errors should produce helpful log messages in the log. We can then proceed to experiment with the device, testing the features described in \cref{sec:conceptual} while observing the debug log for any anomalies.
