@@ -7,7 +7,7 @@ This chapter presents an overview of the \acrfull{USB} Full Speed interface, wit
 \begin{figure}[h]
 	\centering
 	\includegraphics[scale=1] {img/usb-hierarchy-redraw.pdf}
-	\caption[USB hierarchical structure]{\label{fig:usb-hierarchy}The hierarchical structure of the USB bus}
+	\caption[USB hierarchical structure]{\label{fig:usb_hierarchy}The hierarchical structure of the USB bus}
 \end{figure}
 
 \gls{USB} is a hierarchical bus with a single master (\textit{host}) and multiple slave devices. A \gls{USB} device that provides functionality to the host is called a \textit{function}~\cite{usb-function}.
@@ -19,7 +19,7 @@ Communication between the host and a function is organized into virtual channels
 \begin{figure}[h]
 	\centering
 	\includegraphics[scale=1] {img/usb-logical-redraw.pdf}
-	\caption{\label{fig:usb-logical}The logical structure of USB}
+	\caption{\label{fig:usb_logical}The logical structure of USB}
 \end{figure}
 
 Endpoints can be either unidirectional or bidirectional; the direction from the host to a function is called OUT, the other direction (function to host) is called IN. A bidirectional endpoint is technically composed of IN and OUT endpoints with the same number. All transactions (both IN and OUT) are initiated by the host; functions have to wait for their turn. Endpoint 0 is bidirectional, always enabled, and serves as a \textit{control endpoint}. The host uses the control endpoint to read information about the device and configure it as needed.
@@ -51,7 +51,7 @@ Each descriptor starts with a declaration of its length (in bytes), followed by 
 
 The topmost descriptor holds information about the entire function, including the vendor and product IDs which uniquely identifies the device model. It is followed by a Configuration descriptor, grouping a set of interfaces. More than one configuration may be present and available for the host to choose from; however, this is rarely used or needed. Each configuration descriptor is followed by one or more interface descriptors, each with its class-specific sub-descriptors and/or endpoint descriptors.
 
-The descriptor table used by GEX is captured in \cref{fig:gex-descriptors} for illustration. The vendor and product IDs were obtained from the pid.codes repository~\cite{pidcodes} providing free product codes to open source projects. The official way of obtaining the unique code involves high recurring fees (\$4000 per annum) to the USB Implementers Forum, Inc. and is therefore not affordable for non-commercial use; alternatively, a product code may be obtained from some \gls{MCU} vendors if their product is used in the device.
+The descriptor table used by GEX is captured in \cref{fig:gex_descriptors} for illustration. The vendor and product IDs were obtained from the pid.codes repository~\cite{pidcodes} providing free product codes to open source projects. The official way of obtaining the unique code involves high recurring fees (\$4000 per annum) to the USB Implementers Forum, Inc. and is therefore not affordable for non-commercial use; alternatively, a product code may be obtained from some \gls{MCU} vendors if their product is used in the device.
 \newpage
 
 \input{fig.gex-descriptors}
@@ -62,12 +62,12 @@ The descriptor table used by GEX is captured in \cref{fig:gex-descriptors} for i
 
 The \gls{USB} cable contains 4 conductors: V$_\mathrm{BUS}$ (+5\,V), D+, D--, and \gls{GND}. The data lines, D+ and D--, are also commonly labeled DP and DM. This differential pair should be routed in parallel on the \gls{PCB} and kept at the same length.
 
-\gls{USB} versions that share the same connector are backward compatible. The desired bus speed is requested by the device using a 1.5\,k$\Omega$ pull-up resistor to 3.3\,V on one of the data lines: D+ pulled high for Full Speed (shown in \cref{fig:usb-pullup-fs}), D-- pulled high for Low Speed. The polarity of the differential signals is also inverted depending on the used speed, as the idle level changes. Some microcontrollers integrate the correct pull-up resistor inside the \gls{USB} peripheral block (including out STM32F072), removing the need for an external resistor.
+\gls{USB} versions that share the same connector are backward compatible. The desired bus speed is requested by the device using a 1.5\,k$\Omega$ pull-up resistor to 3.3\,V on one of the data lines: D+ pulled high for Full Speed (shown in \cref{fig:usb_pullup_fs}), D-- pulled high for Low Speed. The polarity of the differential signals is also inverted depending on the used speed, as the idle level changes. Some microcontrollers integrate the correct pull-up resistor inside the \gls{USB} peripheral block (including out STM32F072), removing the need for an external resistor.
 
 \begin{figure}[h]
 	\centering
 	\includegraphics[scale=1]{img/usb-resistors.pdf}
-	\caption[USB pull-ups]{\label{fig:usb-pullup-fs}Pull-up and pull-down resistors near the host and a Full Speed function, as prescribed by the USB specification rev. 2.0}
+	\caption[USB pull-ups]{\label{fig:usb_pullup_fs}Pull-up and pull-down resistors near the host and a Full Speed function, as prescribed by the USB specification rev. 2.0}
 \end{figure}
 
 When a function needs to be re-enumerated by the host, which causes a reload of the descriptor table and the re-attachment of software drivers, it can momentarily remove the pull-up resistor, which the host will interpret as if the device was disconnected. With an internal pull-up, this can be done by flipping a bit in a control register. An external resistor may be connected through a transistor controlled by a \gls{GPIO} pin. As discussed in~\cite{eev-gpio-pu}, a GPIO pin might be used to drive the pull-up directly, though this has not been verified by the author.
@@ -76,7 +76,7 @@ The V$_\mathrm{BUS}$ line supplies power to \textit{bus-powered} devices. \texti
 
 \noindent More details about the electrical and physical connection may be found in~\cite{usb-nutshell}, sections \textit{Connectors} through \textit{Power}.
 
-\section{USB Classes} \label{sec:usb-classes}
+\section{USB Classes} \label{sec:usb_classes}
 
 This section explains the classes used in the GEX firmware. A list of all standard classes with a more detailed explanation can be found in~\cite{usb-class-list}.
 
@@ -98,7 +98,7 @@ This command set lets the host read information about the attached storage devic
 
 In order to emulate a mass storage device without having a physical storage medium, we need to generate and parse the file system on-the-fly as the host \gls{OS} tries to access it. This will be discussed in \cref{sec:fat16}.
 
-\subsection{CDC/ACM Class} \label{sec:cdc-acm}
+\subsection{CDC/ACM Class} \label{sec:cdc_acm}
 
 %https://www.keil.com/pack/doc/mw/USB/html/group__usbd__cdc_functions__acm.html
 

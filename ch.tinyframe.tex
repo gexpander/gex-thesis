@@ -6,7 +6,7 @@ GEX can be controlled through a hardware \gls{UART}, the \gls{USB}, or over a wi
 	\vspace{-1em}
 	\centering
 	\includegraphics[scale=1]{img/tf-conceptual.pdf}
-	\caption{\label{fig:tf-conceptual}TinyFrame API}
+	\caption{\label{fig:tf_conceptual}TinyFrame API}
 \end{wrapfigure}
 
 GEX uses the \textit{TinyFrame}~\cite{tinyframerepo} framing library, developed, likewise, by the author, but kept as a separate project for easier re-use in different applications. The library implements frame building and parsing, including checksum calculation, and provides high-level \gls{API}.
@@ -81,7 +81,7 @@ Message frames have the following structure (all little-endian):
 
 \textit{Frame ID}, which could be better described as \textit{Transaction ID}, uniquely identifies each transaction. The most significant bit is set to a different value in each peer to avoid ID conflicts, and the rest of the ID field is incremented with each initiated transaction.
 
-\section{Message Listeners} \label{sec:tf-listeners}
+\section{Message Listeners} \label{sec:tf_listeners}
 
 After sending a message that should receive a response, the peer registers an \textit{ID listener} with the ID of the sent message. A response reuses the original frame ID and when it is received, this listener is called to process it. ID listeners can also be used to receive multi-part messages re-using the original ID.
 
@@ -91,7 +91,7 @@ Each message can be handled by only one listener, unless the listener explicitly
 
 \section{Designated Frame Types}
 
-\Cref{fig:tf-types} lists the frame types defined by GEX. It is divided into four logical sections: General, Bulk Read/Write, Unit Access, and Settings. The payloads belonging to those frame types will be outlined in the following sections.
+\Cref{fig:tf_types} lists the frame types defined by GEX. It is divided into four logical sections: General, Bulk Read/Write, Unit Access, and Settings. The payloads belonging to those frame types will be outlined in the following sections.
 
 \begin{table}[h]
 	\centering
@@ -119,11 +119,11 @@ Each message can be handled by only one listener, unless the listener explicitly
 		0x23 & Persist Config & \textit{Write updated configuration to flash} \\
 		\bottomrule
 	\end{tabular}
-\caption{\label{fig:tf-types}Frame types used by GEX}
+\caption{\label{fig:tf_types}Frame types used by GEX}
 \end{table}
 
 
-\section{Bulk Read and Write Transactions} \label{sec:tf-bulk-rw}
+\section{Bulk Read and Write Transactions} \label{sec:tf_bulk_rw}
 
 The bulk read and write transactions are generic, multi-message exchanges which are used to transfer the INI configuration files. They could additionally be used by some future unit requiring to transfer a large amount of data (e.g., to read image data from a camera).
 
@@ -131,12 +131,12 @@ The reason for splitting a long file into multiple messages, rather than sending
 
 A read or write transaction can be aborted by a frame \CmdBulkAbort at any time, though aborting a write transaction may leave the configuration in a corrupted state. As hinted in the introduction of this chapter, a transaction is defined by sharing a common frame ID. Thus, all frames in a bulk transaction must have the same ID, otherwise the ID listeners would not be called for the subsequent messages.
 
-\Cref{fig:bulk-rw} shows a diagram of the bulk read and write data flow.
+\Cref{fig:bulk_rw} shows a diagram of the bulk read and write data flow.
 
 \begin{figure}
 	\centering
 	\includegraphics[scale=1.5]{img/bulk-read-write.pdf}
-	\caption{\label{fig:bulk-rw}A diagram of the bulk read and write transaction.}
+	\caption{\label{fig:bulk_rw}A diagram of the bulk read and write transaction.}
 \end{figure}
 
 \subsection{Bulk Read}
@@ -226,7 +226,7 @@ Unit requests deliver a message from the host to a unit instance. Unit drivers i
 \begin{boxedpayload}[Frame \CmdUnitRequest payload structure]
 	\cfield{u8} unit callsign
 	\cfield{u8} command number, handled by the unit driver
-	\cfield{u8[]} command payload, handled by the unit driver; its size and content depend on the unit driver and the particular command number, as defined in \cref{sec:units-overview}
+	\cfield{u8[]} command payload, handled by the unit driver; its size and content depend on the unit driver and the particular command number, as defined in \cref{sec:units_overview}
 \end{boxedpayload}
 
 The most significant bit of the command byte (0x80) has a special meaning: when set, the message delivering routine responds with 0x00 (Success) after the command completes, unless an error occurred. That is used to get a confirmation that the message was delivered and the module operates correctly (as opposed to, e.g., a lock-up resulting in a watchdog reset). Requests which normally generate a response (e.g., reading a value from the unit) should not be sent with this flag, as that would produce two responses at once.
@@ -239,7 +239,7 @@ Several unit types can produce asynchronous events, such as reporting a pin chan
 	\cfield{u8} unit callsign
 	\cfield{u8} report type, defined by the unit driver
 	\cfield{u64} event time (microseconds since power-on)
-	\cfield{u8[]} report payload; similar to requests, the payload structure depends on the unit driver and the particular report type, as defined in \cref{sec:units-overview}
+	\cfield{u8[]} report payload; similar to requests, the payload structure depends on the unit driver and the particular report type, as defined in \cref{sec:units_overview}
 \end{boxedpayload}
 
 

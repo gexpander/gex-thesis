@@ -4,7 +4,7 @@ FreeRTOS is a free, open-source real-time operating system kernel targeted at em
 
 FreeRTOS provides a task scheduler, forming the central part of the system, and implements queues, semaphores, and mutexes for message passing and the synchronization of concurrent tasks. Those features are summarily called \textit{synchronization objects}, or simply \textit{objects}.
 
-The system is used in GEX for its synchronization objects that allow us to safely pass messages between interrupts and working threads, without deadlocks or race conditions; the particular usage of FreeRTOS features will be explained in \cref{sec:rtos-in-gex}. The built-in stack overflow protection helps us optimize task memory allocation\footnote{The stack monitor reports how much stack space was really used, so we can expand or shrink it as needed to make the application work reliably, without wasting memory that would never be used.}, and the heap allocator provided by FreeRTOS enables thread-safe dynamic allocation with a shared heap.
+The system is used in GEX for its synchronization objects that allow us to safely pass messages between interrupts and working threads, without deadlocks or race conditions; the particular usage of FreeRTOS features will be explained in \cref{sec:rtos_in_gex}. The built-in stack overflow protection helps us optimize task memory allocation\footnote{The stack monitor reports how much stack space was really used, so we can expand or shrink it as needed to make the application work reliably, without wasting memory that would never be used.}, and the heap allocator provided by FreeRTOS enables thread-safe dynamic allocation with a shared heap.
 
 \section{Basic FreeRTOS Concepts and Functions}
 
@@ -12,13 +12,13 @@ The system is used in GEX for its synchronization objects that allow us to safel
 
 Threads in FreeRTOS are called \textit{tasks}. Each task is assigned a memory area to use as its stack space, and a holding structure with its name, saved \textit{context}, and other metadata used by the kernel. A task context includes the program counter, stack pointer and other register values. Task switching is done by saving and restoring this context by manipulating the values on the stack before leaving an \gls{ISR}. The FreeRTOS website provides an example with the AVR port~\cite{freertos-task-switching} demonstrating how its internal functionality is implemented, including the context switch.
 
-At start-up the firmware initializes the kernel, registers tasks to run, and starts the scheduler. From this point onward the scheduler is in control and runs the tasks using a round robin scheme, always giving a task one tick of run time (usually 1\,ms) before interrupting it. Which task should run is determined primarily by their priority numbers, but there are other factors, as will be shown in \cref{sec:task-switching}.
+At start-up the firmware initializes the kernel, registers tasks to run, and starts the scheduler. From this point onward the scheduler is in control and runs the tasks using a round robin scheme, always giving a task one tick of run time (usually 1\,ms) before interrupting it. Which task should run is determined primarily by their priority numbers, but there are other factors, as will be shown in \cref{sec:task_switching}.
 
 \subsubsection{Task Run States}
 
 Tasks can be in one of four states: Suspended, Ready, Blocked, and Running. The Suspended state does not normally occur in a task's life cycle, it is entered and left using API calls from the application. A task is in the Ready state when it can run, but is currently paused because a higher priority task is running. It enters the Running state when the scheduler switches to it. A Running task can wait for a synchronization object (e.g., a mutex) to be available; at this point it enters a Blocked state and the scheduler runs the next Ready task. When no tasks can run, the Idle Task takes control; it can either enter a sleep state to save power, or wait in a loop until another task is available. The Idle task is always either Ready or Running and has the lowest priority of all tasks.
 
-\subsubsection{Task Switching and Interrupts} \label{sec:task-switching}
+\subsubsection{Task Switching and Interrupts} \label{sec:task_switching}
 
 Task switching occurs periodically in a timer interrupt, usually every 1\,ms; in \armcm chips this is typically the SysTick interrupt, a timer designed for this purpose that is included in the core itself and thus available on all derived platforms.
 

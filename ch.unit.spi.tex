@@ -1,6 +1,6 @@
 \section{SPI Unit}
 
-The \gls{SPI} unit provides access to one of the microcontroller's \gls{SPI} peripherals. The unit can be configured to any of the hardware-supported speeds, clock polarity, and clock phase settings. Explanation of those options, including diagrams, can be found in \cref{sec:theory-spi}.
+The \gls{SPI} unit provides access to one of the microcontroller's \gls{SPI} peripherals. The unit can be configured to any of the hardware-supported speeds, clock polarity, and clock phase settings. Explanation of those options, including diagrams, can be found in \cref{sec:theory_spi}.
 
 The unit handles up to 16 slave select (\gls{NSS}) signals and supports message multi-cast (addressing more than one slaves at once). Protection resistors should be used if a multi-cast transaction is issued with \gls{MISO} connected to prevent a short circuit between slaves transmitting the opposite logical level.
 

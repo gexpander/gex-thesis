@@ -4,7 +4,7 @@ We'll now investigate some situations where GEX could be used, to establish its 
 
 \section{Desired Features}
 
-\subsection{Interfacing Intelligent Modules}\label{sec:uses-digital-ifaces}
+\subsection{Interfacing Intelligent Modules}\label{sec:uses_digital_ifaces}
 
 When adding a new digital sensor or a module to a hardware project, we want to test it first, learn how to properly communicate with it, and confirm its performance. Based on this evaluation we decide whether the module matches our expectations and learn how to properly connect it, which is needed for a successful \gls{PCB} layout.
 
@@ -28,7 +28,7 @@ Generating an analog signal is possible using a \gls{PWM} or by a dedicated digi
 
 \subsection{Logic Level Input and Output}
 
-We have covered some more advanced features, but skipped the simplest feature: direct access to \gls{GPIO} pins. Considering the latencies of \gls{USB} and the \gls{PC}'s \gls{OS}, this cannot be used reliably for ``bit banging''; however, we can still accomplish a lot with just changing logic levels---e.g., to control character \glspl{LCD}, or emulate some interfaces that include a clock line, like \gls{SPI}. As mentioned in \cref{sec:uses-digital-ifaces}, many digital sensors and modules use plain \glspl{GPIO} in addition to the communication bus for out-of-band signaling or features like chip selection or reset.
+We have covered some more advanced features, but skipped the simplest feature: direct access to \gls{GPIO} pins. Considering the latencies of \gls{USB} and the \gls{PC}'s \gls{OS}, this cannot be used reliably for ``bit banging''; however, we can still accomplish a lot with just changing logic levels---e.g., to control character \glspl{LCD}, or emulate some interfaces that include a clock line, like \gls{SPI}. As mentioned in \cref{sec:uses_digital_ifaces}, many digital sensors and modules use plain \glspl{GPIO} in addition to the communication bus for out-of-band signaling or features like chip selection or reset.
 
 \subsection{Pulse Generation and Measurement}
 
@@ -82,7 +82,7 @@ Summarizing the preceding discussion, we obtain the following list of features t
 
 \section{Microcontroller Selection}
 
-As discussed in \cref{sec:expected-outcome}, this project will be based on microcontrollers from the STM32 family. The STM32F072 model was selected for the initial hardware and firmware design due to its low cost, advanced peripherals, and the availability of development boards. The firmware can be ported to other \glspl{MCU} later (e.g., to STM32L072, STM32F103 or STM32F303).
+As discussed in \cref{sec:expected_outcome}, this project will be based on microcontrollers from the STM32 family. The STM32F072 model was selected for the initial hardware and firmware design due to its low cost, advanced peripherals, and the availability of development boards. The firmware can be ported to other \glspl{MCU} later (e.g., to STM32L072, STM32F103 or STM32F303).
 
 The STM32F072 is an \armcm device with 128\,KiB of flash memory, 16\,KiB of \gls{RAM} and running at 48\,MHz. It is equipped with a \gls{USB} Full Speed peripheral block, a 12-bit \gls{ADC} and \gls{DAC}, a number of general-purpose timers/counters, SPI, I$^2$C, and USART peripherals, among others. It supports crystal-less \gls{USB}, using the USB SOF packet for synchronization of the internal 48\,MHz RC oscillator; naturally, a real crystal resonator will provide better timing accuracy.
 
@@ -92,7 +92,7 @@ To effectively utilize the time available for this work, only the STM32F072 firm
 
 While the GEX firmware can be used with existing evaluation boards from ST Microelectronics (see \cref{fig:discovery} for an example of one such board), we wish to design and realize a few custom hardware prototypes that will be smaller and more convenient to use.
 
-Three possible form factors are drawn in \cref{fig:ff-sketches}. The use of a common connector layout and pin assignments, here Arduino and Raspberry Pi, makes it possible to reuse add-on boards from those platforms. When we copy the physical form factor of another product, in this example the Raspberry Pi Zero, we can further take advantage of existing enclosures designed for it.
+Three possible form factors are drawn in \cref{fig:ff_sketches}. The use of a common connector layout and pin assignments, here Arduino and Raspberry Pi, makes it possible to reuse add-on boards from those platforms. When we copy the physical form factor of another product, in this example the Raspberry Pi Zero, we can further take advantage of existing enclosures designed for it.
 
 \begin{figure}[h]
 	\centering
@@ -103,7 +103,7 @@ Three possible form factors are drawn in \cref{fig:ff-sketches}. The use of a co
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=\textwidth] {img/gex-ff-sketches.png}
-	\caption[Form factor sketches]{\label{fig:ff-sketches}A sketch of three possible form factors for a GEX hardware realization}
+	\caption[Form factor sketches]{\label{fig:ff_sketches}A sketch of three possible form factors for a GEX hardware realization}
 \end{figure}
 
 

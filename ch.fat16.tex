@@ -24,7 +24,7 @@ The storage medium is organized into \textit{sectors} (or \textit{blocks}), usua
 		Data area & Organized in \textit{clusters} \\
 		\bottomrule
 	\end{tabular}
-	\caption{\label{tab:fat16-disk-areas}Areas of a FAT-formatted disk}
+	\caption{\label{tab:fat16_disk_areas}Areas of a FAT-formatted disk}
 \end{table}
 
 \subsection{Boot Sector}
@@ -51,7 +51,7 @@ The bad cluster mark, 0xFFF7, is used for clusters which are known to corrupt da
 
 A directory is a record on the disk that can span several clusters and holds information about the files and sub-directories contained in it. The root directory has the same structure as any other directory; the difference lies in the fact that it is allocated with a fixed position and size when the disk is formatted, whereas other directories are stored in the same way as ordinary files and their capacity can be increased by simply expanding to another cluster.
 
-Directories are organized in 32-byte entries representing individual files. \Cref{tab:fat16-dir-entry} shows the structure of one such entry. The name and extension fields form the well-known ``8.3'' file name format known from MS DOS\footnote{``8.3'' refers to the byte size of the name and extension fields in the directory entry.}. Longer file names are encoded using the \gls{LFN} scheme~\cite{fat-lfn} as special hidden entries stored in the directory table alongside the regular ``8.3'' ones kept for backward compatibility.
+Directories are organized in 32-byte entries representing individual files. \Cref{tab:fat16_dir_entry} shows the structure of one such entry. The name and extension fields form the well-known ``8.3'' file name format known from MS DOS\footnote{``8.3'' refers to the byte size of the name and extension fields in the directory entry.}. Longer file names are encoded using the \gls{LFN} scheme~\cite{fat-lfn} as special hidden entries stored in the directory table alongside the regular ``8.3'' ones kept for backward compatibility.
 
 \begin{table}
 	\centering
@@ -69,7 +69,7 @@ Directories are organized in 32-byte entries representing individual files. \Cre
 		28 & 4 & File size (bytes) \\
 		\bottomrule
 	\end{tabular}
-	\caption{\label{tab:fat16-dir-entry}Structure of a FAT16 directory entry}
+	\caption{\label{tab:fat16_dir_entry}Structure of a FAT16 directory entry}
 \end{table}
 
 \noindent
@@ -84,12 +84,12 @@ The first byte of the file name has special meaning:
 
 The attributes field contains flags such as \textit{directory}, \textit{volume label}, \textit{read-only} and \textit{hidden}. Volume label is a special entry in the root directory defining the disk's label shown by the host \gls{OS}. A file with the directory bit set is actually a pointer to a subdirectory, meaning that when we open the linked cluster, we will find another directory table.
 
-\Cref{fig:fat-example} shows a possible organization of the GEX file system with two INI files, one spanning two clusters, the other being entirely inside one. The clusters need not be used completely; the exact sizes are stored in the files' directory entries.
+\Cref{fig:fat_example} shows a possible organization of the GEX file system with two INI files, one spanning two clusters, the other being entirely inside one. The clusters need not be used completely; the exact sizes are stored in the files' directory entries.
 
 \begin{figure}[h]
 	\centering
 	\includegraphics[scale=1.3] {img/fat-links.pdf}
-	\caption{\label{fig:fat-example}An example of the GEX virtual file system}
+	\caption{\label{fig:fat_example}An example of the GEX virtual file system}
 \end{figure}
 
 
@@ -103,7 +103,7 @@ A FAT16 emulator was developed as part of the open-source \mbed DAPLink project~
 
 The GEX firmware adapts several parts of the DAPLink code, optimizing its \gls{RAM} usage and porting it to work with FreeRTOS. The emulator source code is located in the \mono{User/vfs} folder of the GEX repository; the original Apache 2.0 open-source software license headers, as well as the file names, have been retained.
 
-As shown in \cref{tab:fat16-disk-areas}, the disk consists of several areas. The boot sector is immutable and can be loaded from the flash memory when requested. The handling of the other disk areas (\gls{FAT}, data area) depends on the type of access: read or write.
+As shown in \cref{tab:fat16_disk_areas}, the disk consists of several areas. The boot sector is immutable and can be loaded from the flash memory when requested. The handling of the other disk areas (\gls{FAT}, data area) depends on the type of access: read or write.
 
 \subsection{Read Access}
 

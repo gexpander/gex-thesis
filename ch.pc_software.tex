@@ -1,6 +1,6 @@
 \chapter{Client Software} \label{sec:clientsw}
 
-With the communication protocol clearly defined in \cref{sec:tinyframe,sec:units-overview}, respective \cref{sec:wireless} for the wireless gateway, the implementation of a client software is relatively straightforward. Two client libraries have been developed, in languages C and Python.
+With the communication protocol clearly defined in \cref{sec:tinyframe,sec:units_overview}, respective \cref{sec:wireless} for the wireless gateway, the implementation of a client software is relatively straightforward. Two client libraries have been developed, in languages C and Python.
 
 \section{General Library Structure}
 
@@ -21,7 +21,7 @@ The structure of a GEX client library is in all cases similar:
 
         The host side of the communication protocol described in \cref{sec:tinyframe} should be implemented as a part of the library. This includes the reading and writing of configuration files, unit list read-out, command payload building, and asynchronous event parsing.
 
-        Additional utilities may be defined on top of this basic protocol support for the command API of different GEX units, as described in \cref{sec:units-overview}. Those unit-specific ``drivers'' are available in the provided Python library.
+        Additional utilities may be defined on top of this basic protocol support for the command API of different GEX units, as described in \cref{sec:units_overview}. Those unit-specific ``drivers'' are available in the provided Python library.
 \end{itemize}
 
 \section{Python Library}
@@ -153,7 +153,7 @@ This low-level library is intended for applications where the performance of the
 	    GEX_DeInit(gex);
 	}    
 	\end{ccode}
-	\caption{\label{lst:c_api_full} An example C program (GNU C99) controlling GEX using the low-level GEX library; this code has the same effect as the Python script shown in \cref{lst:py_api}, with payloads built following the command tables from \cref{sec:units-overview}.}
+	\caption{\label{lst:c_api_full} An example C program (GNU C99) controlling GEX using the low-level GEX library; this code has the same effect as the Python script shown in \cref{lst:py_api}, with payloads built following the command tables from \cref{sec:units_overview}.}
 \end{listing}
 
 \subsection{Structure-based Payload Construction}

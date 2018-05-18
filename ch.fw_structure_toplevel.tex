@@ -8,7 +8,7 @@ GEX is designed to be modular and easy to extend. The user-facing functionality 
 	\caption[GEX conceptual overview]{\label{fig:conceptual}The ``GEX stack'', from a user application down to hardware}
 \end{figure}
 
-When we work with GEX, it is through units. The platform without units would be just an empty shell, the bare core framework; this underlying system will be described in \cref{sec:coreframework}. We will explore the individual units in \cref{sec:units-overview}, after going through the hardware realizations in \cref{sec:hwreal} and covering the communication protocol in \cref{sec:tinyframe}. 
+When we work with GEX, it is through units. The platform without units would be just an empty shell, the bare core framework; this underlying system will be described in \cref{sec:coreframework}. We will explore the individual units in \cref{sec:units_overview}, after going through the hardware realizations in \cref{sec:hwreal} and covering the communication protocol in \cref{sec:tinyframe}. 
 
 \section{Physical User Interface}
 
@@ -17,11 +17,11 @@ The firmware can be flashed to a STM32 development board, or a custom \gls{PCB}.
 \begin{figure}[h]
 	\centering
 	\includegraphics[scale=.95] {img/users-view.pdf}
-	\caption{\label{fig:users-view-of-gex}Physical user interface of a GEX module}
+	\caption{\label{fig:users_view_of_gex}Physical user interface of a GEX module}
 \end{figure}
 
 \noindent
-All GEX hardware platforms have some common characteristics (\cref{fig:users-view-of-gex}):
+All GEX hardware platforms have some common characteristics (\cref{fig:users_view_of_gex}):
 
 \begin{itemize}	
 	\item \textbf{Power \gls{LED}} -- a simple indication that the board is powered on
@@ -35,12 +35,12 @@ All GEX hardware platforms have some common characteristics (\cref{fig:users-vie
 
 \section{GEX-PC Connection}
 
-\Cref{fig:users-view-of-gex} shows three ways to connect the module to a \gls{PC}. Each communication interface has its advantages and drawbacks, and is suitable for different use-cases.
+\Cref{fig:users_view_of_gex} shows three ways to connect the module to a \gls{PC}. Each communication interface has its advantages and drawbacks, and is suitable for different use-cases.
 
 \begin{itemize}
 	\item \textbf{Direct \gls{USB} connection}
 		
-		This is the primary and most straightforward connection method. We use the \gls{CDCACM} and \gls{MSC} \gls{USB} classes to have the module appear as a virtual serial port and a mass storage device, as described in \cref{sec:usb-classes}. This method is the fastest of the three and works out-of-the-box on Linux and MacOS. On MS Windows it may require the right software driver to be installed and assigned manually\footnote{The STM32 Virtual COM port driver~\cite{stm-vcom} has been tested to work with GEX on MS Windows version 7 and 8, though it must be manually assigned to the device in the Device Manager. MS Windows 10 and later should support \gls{CDCACM} natively.}.
+		This is the primary and most straightforward connection method. We use the \gls{CDCACM} and \gls{MSC} \gls{USB} classes to have the module appear as a virtual serial port and a mass storage device, as described in \cref{sec:usb_classes}. This method is the fastest of the three and works out-of-the-box on Linux and MacOS. On MS Windows it may require the right software driver to be installed and assigned manually\footnote{The STM32 Virtual COM port driver~\cite{stm-vcom} has been tested to work with GEX on MS Windows version 7 and 8, though it must be manually assigned to the device in the Device Manager. MS Windows 10 and later should support \gls{CDCACM} natively.}.
 	
 	\item \textbf{Hardware \gls{UART}}
 	
