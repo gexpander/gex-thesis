@@ -6,6 +6,8 @@ Each unit's description will be accompanied by a corresponding snippet from the 
 
 The number in the first column of the command (or event) tables, marked as ``Code'', is the command number (or report type) used in the payload to identify how the message data should be treated. When the request or response payload is empty, it is omitted from the table. The same applies to commands with no response, in which case adding 0x80 to the command number triggers a SUCCESS response after the command is finished.
 
+\section{General Notes}
+
 \subsection{Unit Naming}
 
 Unit types are named in uppercase (SPI, 1WIRE, NPX) in the INI file and in the list of units. Unit instances can be named in any way the user desires; using lowercase makes it easier to distinguish them from unit types. It is advisable to use descriptive names, e.g., not ``pin1'', but rather ``button''.

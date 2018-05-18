@@ -46,7 +46,7 @@ The WRITE and CLEAR\_DIRECT commands are the only ones normally used. The others
 	Load the shift registers and leave the data outputs in the ``trailing data'' state before sending the \textit{Store} pulse.
 	&
 	\begin{cmdreq}
-		\cfield{u16} trailing data
+		\cfield{u16} trailing data (packed pins)
 		\item For each output (same size)
 		\begin{pldlist}
 			\cfield{u8[]} data to load
@@ -58,7 +58,7 @@ The WRITE and CLEAR\_DIRECT commands are the only ones normally used. The others
 	Directly write to the data pin(s)
 	&
     \begin{cmdreq}
-		\cfield{u16} values to write
+		\cfield{u16} values to write (packed pins)
 	\end{cmdreq} \\
 
 	2 &

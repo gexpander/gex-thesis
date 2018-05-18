@@ -22,27 +22,27 @@ parasitic=N
 	0 & \cname{CHECK\_PRESENCE}
 	Test if there are any devices attached to the bus.
 	& \begin{cmdresp}
-		\cfield{u8} presence detected (0, 1)
+		\cfield{bool} presence detected
 	 \end{cmdresp} \\
 
 	1 & \cname{SEARCH\_ADDR}
 	Start the search algorithm.
 	& \begin{cmdresp}
-		\cfield{u8} should continue (0, 1)
+		\cfield{bool} should continue
 		\cfield{u64[]} ROM codes
 	 \end{cmdresp} \\
 
 	2 & \cname{SEARCH\_ALARM}
 	Start the search algorithm, finding only devices in an alarm state.
 	& \begin{cmdresp}
-		\cfield{u8} should continue (0, 1)
+		\cfield{bool} should continue
 		\cfield{u64[]} ROM codes
 	 \end{cmdresp} \\
 
 	3 & \cname{SEARCH\_CONTINUE}
 	Continue a previously started search
 	& \begin{cmdresp}
-		\cfield{u8} should continue (0, 1)
+		\cfield{bool} should continue
 		\cfield{u64[]} ROM codes
 	 \end{cmdresp} \\
 
@@ -65,7 +65,7 @@ parasitic=N
 	\begin{cmdreq}
 		\cfield{u64} ROM code
 		\cfield{u16} read length
-		\cfield{u8} verify checksum (0, 1)
+		\cfield{bool} verify checksum
 		\cfield{u8[]} request bytes
 	\end{cmdreq}
 	\cjoin

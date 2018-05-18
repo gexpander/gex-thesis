@@ -84,7 +84,7 @@ avg_factor=500
 	Get the averaged values from enabled channels. Not available for high sample rates and when disabled.
 	&
 	\begin{cmdresp}
-		\cfield{float32[]} smoothed values 0--4095
+		\cfield{float[]} smoothed values 0--4095
 	\end{cmdresp}
 	\\
 
@@ -92,13 +92,13 @@ avg_factor=500
 	Read factory calibration constants from the \gls{MCU}'s \gls{ROM}
 	&
 	\begin{cmdresp}
-		\cfield{u16} VREFINT\_CAL (raw word)
-		\cfield{u16} VREFINT\_CAL\_VADCREF (mV)
-		\cfield{u16} TSENSE\_CAL1 (raw word)
-		\cfield{u16} TSENSE\_CAL2 (raw word)
-		\cfield{u16} TSENSE\_CAL1\_TEMP (°C)
-		\cfield{u16} TSENSE\_CAL2\_TEMP (°C)
-		\cfield{u16} TSENSE\_CAL\_VADCREF (mV)
+		\cfield{u16} V$_\mathrm{REF\_INT}$ voltage (raw ADC word)
+		\cfield{u16} ADC reference voltage (mV) during V$_\mathrm{REF\_INT}$ measurement
+		\cfield{u16} Temperature sensor voltage in point 1 (raw ADC word)
+		\cfield{u16} Temperature sensor voltage in point 2 (raw ADC word)
+		\cfield{u16} Temperature in point 1 (°C)
+		\cfield{u16} Temperature in point 2 (°C)
+		\cfield{u16} ADC reference voltage (mV) during temp. sensor calibration
 	\end{cmdresp}
  	\\
 
@@ -117,7 +117,7 @@ avg_factor=500
 	&
 	\begin{cmdresp}
 		\cfield{u32} requested sample rate
-		\cfield{float32} real sample rate
+		\cfield{float} achieved sample rate
 	\end{cmdresp}
 	\\
 

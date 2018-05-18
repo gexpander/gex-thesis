@@ -4,12 +4,12 @@ The firmware is built around a \textit{core framework} which provides services t
 
 \section{Internal Structure Block Diagram}
 
-The data flows and other internal logic of the firmware are depicted in \cref{fig:gex-internal}, with more explanation following in this chapter. The interchangeable role of the three communication interfaces can be clearly seen in the diagram, as well as the central role of the message queue, which decouples interrupts from the processing thread.
+The data flows and other internal logic of the firmware are depicted in \cref{fig:gexinternal}, with more explanation following in this chapter. The interchangeable role of the three communication interfaces can be clearly seen in the diagram, as well as the central role of the message queue, which decouples interrupts from the processing thread.
 
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=\textwidth] {img/gex-internal.pdf}
-	\caption{\label{fig:gex-internal}Block diagram showing the internal logic in the GEX firmware}
+	\caption{\label{fig:gexinternal}Block diagram showing the internal logic in the GEX firmware}
 \end{figure}
 
 The core framework forms the skeleton of the firmware and usually does not need any changes when new user-facing features are added. When the firmware is ported to a different STM32 microcontroller, the framework is not difficult to adjust and the whole process can be accomplished in a few hours. The porting of units to a different platforms is significantly more challenging.
@@ -24,18 +24,6 @@ The framework provides the following services to units:
 	\item Message sending and delivery (\cref{sec:message_passing})
 	\item Interrupt routing (\cref{sec:irq-routing})
 \end{itemize}
-
-\section{FreeRTOS Synchronization Objects Usage} \label{sec:rtos-in-gex}
-
-The firmware is built around FreeRTOS (\cref{sec:freertos}) and a number of its synchronization objects and patterns are used to make its operation more robust.
-
-\subsection{Message and Job Queue}
-
-The message and job queue, seen in \cref{fig:gex-internal}, is used to decouple asynchronous interrupts from message transmission. All three communication interfaces use interrupts for the asynchronous handling of incoming messages. The same interrupt handler receives an event after a transmission was completed. The queue ensures that messages can be received during the transmission of a large response that demands the use of multiple transmissions.
-
-The ``transmission complete'' interrupt signals this fact to the message processing task using a binary semaphore. The semaphore is released in the \gls{ISR} and taken when a new block of data is to be transmitted. If more data needs to be transmitted, the queue task waits for the semaphore and enters a Blocked state until the semaphore becomes available again.
-
-Two mutexes are used in the firmware: one that guards access to TinyFrame until the previous message was fully transmitted, and one to guard a shared memory buffer (reused in several different places to save memory and avoid its re-allocation). The hardware resource registry (explained in \cref{sec:res-allocation}) does not need mutexes for individual resources, as concurrent access to those fields can never happen; resources are always taken or released sequentially by the same task.
 
 \section{Unit Life Cycle and Internal Structure} \label{sec:units-function}
 
@@ -72,12 +60,12 @@ To prevent multiple access, the firmware includes a \textit{resource registry} (
 The resources used by the core framework are taken by a virtual unit \verb|SYSTEM| on start-up to prevent conflicts with the user's units. This is the case of the status \gls{LED}, the Lock button, \gls{USB} pins, the communication \gls{UART}, the pins and an \gls{SPI} peripheral connecting the wireless module, pins used for the crystal oscillator, and the timer/counter which provides the system timebase.
 
 
-\section{Settings Storage} \label{sec:settings-storage}
+\section{Settings Storage} \label{sec:settings_storage}
 
 \begin{figure}[h]
 	\centering
 	\includegraphics[scale=1.2] {img/settings-storage.pdf}
-	\caption{\label{fig:settings-storage}Structure of the settings subsystem}
+	\caption{\label{fig:settings_storage}Structure of the settings subsystem}
 \end{figure}
 
 The system and unit settings are written, in a binary form, into designated pages of the microcontroller's Flash memory. The unit settings serialization and parsing is implemented by the respective unit drivers.
@@ -90,7 +78,7 @@ The INI files, which can be edited through the communication \gls{API} or using 
 
 \section{Message Passing} \label{sec:message_passing}
 
-One of the key functions of the core framework is to deliver messages from the host \gls{PC} to the right units.
+One of the key functions of the core framework is to deliver messages from the host \gls{PC} to the right units. The \textit{TinyFrame} protocol is used, described in detail in \cref{sec:tinyframe}; it is represented by the blocks ``TinyFrame Parser'' and ``TinyFrame Builder'' in \cref{fig:gex-internal}.
 
 Two groups of messages exist: \textit{system messages} and \textit{unit messages}. System messages can, for instance, access the INI files, or request a list of available units. Unit messages are addressed to a particular unit, and their payload format is defined by the unit's driver. An incoming message is inspected and delivered to the appropriate recipient, or responded to with an error message.
 
@@ -120,6 +108,17 @@ void DMA1_Channel4_5_6_7_IRQHandler(void)
 
 It is evident that multiple units might need to use the same handler, even at the same time, since each \gls{DMA} channel is configured, and works, independently. GEX implements a redirection scheme to accomplish such interrupt sharing: All interrupt handlers are defined in one place, accompanied by a table of function pointers. When a unit driver wants to register an interrupt handler, it stores a pointer to it in this redirection table. Then, once an interrupt is invoked, the common handler checks the corresponding entry in the table and calls the referenced routine, if any. Conversely, when a unit driver de-initializes a unit, it removes all interrupt handlers it used, freeing the redirection table slots for other use.
 
+\section{FreeRTOS Synchronization Objects Usage} \label{sec:rtos-in-gex}
+
+The firmware is built around FreeRTOS (\cref{sec:freertos}) and a number of its synchronization objects and patterns are used to make its operation more robust.
+
+\subsection{Message and Job Queue}
+
+The message and job queue, seen in \cref{fig:gexinternal}, is used to decouple asynchronous interrupts from message transmission. All three communication interfaces use interrupts for the asynchronous handling of incoming messages. The same interrupt handler receives an event after a transmission was completed. The queue ensures that messages can be received during the transmission of a large response that demands the use of multiple transmissions.
+
+The ``transmission complete'' interrupt signals this fact to the message processing task using a binary semaphore. The semaphore is released in the \gls{ISR} and taken when a new block of data is to be transmitted. If more data needs to be transmitted, the queue task waits for the semaphore and enters a Blocked state until the semaphore becomes available again.
+
+Two mutexes are used in the firmware: one that guards access to TinyFrame until the previous message was fully transmitted, and one to guard a shared memory buffer (reused in several different places to save memory and avoid its re-allocation). The hardware resource registry (explained in \cref{sec:res-allocation}) does not need mutexes for individual resources, as concurrent access to those fields can never happen; resources are always taken or released sequentially by the same task.
 
 
 \section{Source Code Layout}

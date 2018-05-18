@@ -44,7 +44,7 @@ open-drain=
 	Generate a pulse on the selected pins. The microsecond scale may be used only for 0--999\,$\mu$s.
 	& \begin{cmdreq}
 		\cfield{u16} pins to pulse
-		\cfield{u8} active level (0, 1)
+		\cfield{bool} active level
 		\cfield{u8} scale: 0-ms, 1-$\mu$s
 		\cfield{u16} duration
 	\end{cmdreq}

@@ -27,3 +27,21 @@
 \newcommand{\arm}{Arm\xspace}
 \newcommand{\armcm}{Arm Cortex-M\xspace}
 \newcommand{\mbed}{Arm Mbed\xspace}
+
+\newcommand*\xCmdName[2]{#1~(#2)\xspace}
+
+\newcommand*\CmdSuccess{\xCmdName{0x00}{Success}}
+\newcommand*\CmdPing{\xCmdName{0x01}{Ping}}
+\newcommand*\CmdError{\xCmdName{0x02}{Error}}
+\newcommand*\CmdBulkReadOffer{\xCmdName{0x03}{Bulk~Read~Offer}}
+\newcommand*\CmdBulkReadPoll{\xCmdName{0x04}{Bulk~Read~Poll}}
+\newcommand*\CmdBulkWriteOffer{\xCmdName{0x05}{Bulk~Write~Offer}}
+\newcommand*\CmdBulkData{\xCmdName{0x06}{Bulk~Data}}
+\newcommand*\CmdBulkEnd{\xCmdName{0x07}{Bulk~End}}
+\newcommand*\CmdBulkAbort{\xCmdName{0x08}{Bulk~Abort}}
+\newcommand*\CmdUnitRequest{\xCmdName{0x10}{Unit~Request}}
+\newcommand*\CmdUnitReport{\xCmdName{0x11}{Unit~Report}}
+\newcommand*\CmdListUnits{\xCmdName{0x20}{List~Units}}
+\newcommand*\CmdINIRead{\xCmdName{0x21}{INI~Read}}
+\newcommand*\CmdINIWrite{\xCmdName{0x22}{INI~Write}}
+\newcommand*\CmdPersistConfig{\xCmdName{0x23}{Persist~Config}}
