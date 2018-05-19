@@ -1,36 +1,40 @@
 \chapter{Hardware Realization} \label{sec:hwreal}
 
-\section{Using a Discovery Board}
+\section{GEX on a STM32 Discovery Board}
 
-It has been proposed earlier in the text that STM32 Nucleo and Discovery development boards might be used as the hardware platform for this project. Indeed, a Discovery board with STM32F072~\cite{disco-f072} was used as a development platform for the majority of the GEX firmware. This inexpensive board may be used to try the GEX firmware without having access to the custom hardware.
+It has been proposed earlier in the text that STM32 Nucleo and Discovery development boards might serve as the hardware platform for this project. Indeed, a Discovery board with the STM32F072 was used to development a major part of the GEX firmware. This inexpensive board may be used to try GEX without having access to the custom hardware.
 
 \subsection{Discovery STM32F072 Configuration and Pin Mapping}
 
 This Discovery board is fitted with four \glspl{LED} on \gls{GPIO} pins PC6 through PC9, in a compass arrangement. The ``north'' \gls{LED}, PC6, is used as the GEX status indicator. The ``User'' button, connected to PA0, is mapped as the GEX Lock button, controlling the settings storage.
 
-We advise the reader, as a potential user of this discovery board, to review its schematic diagram and ensure the solder-jumpers are configured correctly:
+We advise the reader, as a potential user of this discovery board, to review its schematic diagram (found in its documentation~\cite{disco-f072}) and ensure the solder-jumpers are configured correctly:
 
 \begin{itemize}
 	\item Jumpers SB20 and SB23 must be closed to enable the User \gls{USB} connector.
 	
 	\item Jumper SB17 must be open and SB19 closed to use the 8\,MHz clock signal provided by the on-board ST-Link programmer; the internal USB-synchronized 48\,MHz oscillator will be used if the clock signal is not provided (SB19 open).
 	
-	\item Jumpers SB27 through SB32 should be closed to connect the \gls{GPIO} pins normally dedicated to the touch sensing strip to the board's header. 
-	
-	\item Capacitors C26 through C28 are sampling capacitors for the \gls{TSC}. There are, unfortunately, no jumpers available to disconnect them, and they interfere in high-speed signals on the used pins (PA3, PA7, PB1). The only solution is to carefully remove them from the board if the \gls{TSC} is not needed.
+	\item Jumpers SB27 through SB32 should be closed to connect the \gls{GPIO} pins normally dedicated to the touch sensing strip to the board's header.
 \end{itemize} 
 
-An accelerometer \gls{IC} L3GD20 is fitted on the board. The chip is attached to SPI2 on pins PB13 (\gls{SCK}), PB14 (\gls{MISO}) and PB15 (\gls{MOSI}), with \gls{NSS} on pin PC0, and PC1 and PC2 used for interrupt flags. This chip cannot be disconnected or disabled and it is difficult to remove; care must be taken to avoid its interference on the used pins.
+Capacitors C26, C27, and C28 are sampling capacitors for the \gls{TSC}. There are, unfortunately, no jumpers available to disconnect them, and they interfere in high-speed signals on the used pins (PA3, PA7, PB1). The only solution, when those pins are needed for another purpose, is to desolder the capacitors.
+
+An accelerometer \gls{IC} L3GD20 is fitted on the board, attached to SPI2 on pins PB13 (\gls{SCK}), PB14 (\gls{MISO}), and PB15 (\gls{MOSI}), with \gls{NSS} on pin PC0, and pins PC1 and PC2 used for interrupt flags. This chip cannot be disconnected or disabled and it is difficult to remove; care must be taken to avoid its interference on the used pins.
 
 \section{GEX Hub}
 
 GEX Hub was the first custom \gls{PCB} designed for GEX. It uses the same microcontroller as the Discovery board, thus the firmware modifications needed to make it work with this new platform were minimal.
 
-The Hub board provides access to all the \gls{GPIO} pins using three flat-cable connectors, one for each port; they also contain a ground and power supply connection to make the connection of external boards or a breadboard easier, needing just one cable. The use of flat cables, however, is not mandatory---those connectors are based on the standard 2.54\,mm pitch pin headers, allowing the user to connect to them using widely available ``jumper wires''.
+The Hub board provides access to all the \gls{GPIO} pins\footnote{With the exception of pins used by USB and the Lock button.} through three flat-cable connectors, one for each port; they also contain a ground and power supply connection to make the attachment of external boards or a breadboard easier, requiring just one cable. The use of flat cables, however, is not mandatory---the flat cable connectors are based on the standard 2.54\,mm-pitch pin headers, allowing the user to use widely available ``jumper wires''.
 
-This board was produced in two revisions. The original model ( \cref{fig:gexhub1}) proved fully functional, except for the two connectors on the left side, the boot jumper and a programming header, which had the wrong footprints and could not be populated; this mistake was fixed by soldering the jumper from the bottom of the \gls{PCB}, and the programming header was never needed thanks to the USB bootloader working without issues. 
+\subsection{GEX Hub Errata}
 
-The updated revision removes the two problematic footprints altogether; a reorganization in the \gls{GPIO} connectors allowed them to be moved together with the other pins. Revision 1 used a dedicated header for the Boot jumper that was meant to be closed during normal operation, and removed only to enter the bootloader. Revision 2 moved the boot pin into the connector, and such arrangement would not be practical; the solution was to invert the jumper's logic by changing the Boot pull-up to a pull-down. The bootloader is now activated by inserting a regular 2.54\,mm jumper into the connector\footnote{A restart is required in all cases for the boot jumper changes to have effect}, as can be seen in \cref{fig:gexhub2}.
+The first revision of the Hub board (\cref{fig:gexhub1}) proved functional and helped us validate the power supply design, but contained one layout error that had to be manually fixed (the boot jumper and the programming header footprints, on the left side of the board, had too fine pitch and could not be populated).
+
+The second, updated revision of the board (\cref{fig:gexhub2}) removes the two problematic footprints altogether; a reorganization in the \gls{GPIO} connectors allowed them to be moved together with the other pins. The Boot jumper was meant to be closed during normal operation, to avoid it getting lost. Since revision 2 moved the boot pin into the top connector, this had to be changed; the jumper logic was inverted by changing its pull-up resistor to a pull-down. The bootloader is now activated by inserting a jumper into the connector, shorting the Boot pin (labeled ``B'') to the adjacent 3.3\,V pin.
+
+A restart is required, in all cases, for the boot jumper changes to take effect. Revision 2 adds a flat reset button on the back side of the board for this purpose, so the \gls{USB} cable no longer needs to be re-connected to reset the \gls{MCU} in order to flash a new firmware version.
 
 \begin{figure}[h]
 	\centering
@@ -44,58 +48,283 @@ The updated revision removes the two problematic footprints altogether; a reorga
 		\includegraphics[width=.98\linewidth]{img/photo-hub2.jpg}
 		\caption{\label{fig:gexhub2}Revision 2}
 	\end{subfigure}
-	\caption[The GEX Hub module]{\label{fig:gexhub} Two revisions of the GEX Hub module, rev. 2 shown with the boot jumper and a flat cable.}
-\end{figure}
-
-
-\section{GEX Zero}
-
-Our desire to re-use the form factor of the Raspberry Pi Zero to exploit the existing market with add-on boards and cases for it has been mentioned already in \cref{sec:formfactors}. It was brought to fruition with GEX Zero, the second realized prototype board (counting the two revisions of GEX Hub as one).
-
-GEX Zero exactly copies the dimensions of the Pi Zero, which introduces several challenges:
-
-\begin{itemize}
-	\item It must be a one-sided board, with no components on the bottom; this is needed for acrylic cases which sit flatly against the \gls{PCB}, with a cut-out for the pin header.
-	\item Buttons and the USB connector have to exactly align with connectors on the Pi Zero to fit the openings in its cases.
-	\item The board size is fixed, and rather small; we used only two layers to save production cost, but this proved a significant challenge and the electrical characteristics of some connections may not be ideal.
-	\item To make use of the Raspberry Pi add-on boards, called HATs or pHATs, a particular organization of the pin header is required. This is discussed in more detail below.
-\end{itemize}
-
-\subsection{Finding the Best Pin Assignment}
-
-Like our STM32 microcontroller, the Broadcom processor on the Raspberry Pi multiplexes its \gls{GPIO} pins with alternate functions, and, likewise, each function is available only on a small selection of pins. A number of compromises had to be made to achieve maximum compatibility.
-
-\todo[inline]{show the pi header mappings and the gex zero pin mappings}
-
-
-\begin{figure}[h]
-	\centering
-	\includegraphics[width=.9\textwidth]{img/photo-zero-naked.jpg} \\
-	\vspace{1mm}
-	\includegraphics[width=.9\textwidth]{img/photo-zero-naked-bottom.jpg}
-	\caption[The GEX Zero module]{\label{fig:gexz}GEX Zero, top and bottom side}
+	\caption[The GEX Hub module]{\label{fig:gexhub} Two revisions of the GEX Hub module, rev. 2 shown with the boot jumper and one flat cable.}
 \end{figure}
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=.9\textwidth]{img/photo-zero-picase.jpg} \\
+	\includegraphics[width=.85\textwidth]{img/photo-zero-picase.jpg} \\
 	\vspace{1mm}
-	\includegraphics[width=.9\textwidth]{img/photo-zero-transparent.jpg}
+	\includegraphics[width=.85\textwidth]{img/photo-zero-transparent.jpg}
 	\caption[The GEX Zero module]{\label{fig:gexzcases}GEX Zero in the official Raspberry Pi Zero case and an aftermarket acrylic case}
 \end{figure}
 
+\section{GEX Zero}
+
+Our desire to re-use the form factor of the Raspberry Pi (RPi) Zero to exploit the existing accessory market has been mentioned already in \cref{sec:formfactors}. It was brought to fruition with GEX Zero, the second realized GEX prototype. Its design involved several challenges given by constraints imposed by this form factor:
+
+\begin{itemize}
+	\item It must be a one-sided board, with no components on the bottom; this is needed for acrylic cases which sit flatly against the \gls{PCB}, with a cut-out for the pin header.
+	\item Buttons and the USB connector have to exactly align with connectors on the RPi Zero to fit the openings in its cases.
+	\item The board size is fixed, and rather small; we used only two layers to save production cost, but this proved a significant challenge when routing connections to the pin header.
+	\item To make use of the Raspberry Pi add-on boards, called HATs or pHATs, a particular organization of the pin header is required. We discuss this in more detail below.
+\end{itemize}
+
+\subsection{Pin Assignment}
+
+Like our STM32 microcontroller, the Broadcom processor on the RPi multiplexes its \gls{GPIO} pins with alternate functions, and, likewise, each function is available only on a small selection of pins. The usual alternate function assignments of the RPi \gls{GPIO} header can be found in~\cite{piheader} and~\cite{piheaderxyz}, and are reproduced in \cref{tbl:pi_assignmenets}.
+
+\begin{figure}[h]
+	\centering
+	%\includegraphics[width=.85\textwidth]{img/photo-zero-naked.jpg} \\
+	%\vspace{1mm}
+	\includegraphics[width=.85\textwidth]{img/photo-zero-naked-bottom.jpg}
+	\caption[GEX Zero back side]{\label{fig:gexz}Pin assignment diagram on the back side of GEX Zero}
+\end{figure}
+
+{
+	\def\ptcw{.07\textwidth}
+	\def\rpnl{\newline \footnotesize}
+	\begin{table}[h]
+		\begin{tabular}{
+				W{\ptcw}W{\ptcw}W{\ptcw}W{\ptcw}|W{\ptcw}
+				W{\ptcw}W{\ptcw}W{\ptcw}|W{\ptcw}W{\ptcw}
+			}       
+			\toprule
+			\textbf{\color{blue}39} \rpnl
+			GND
+			&
+			\textbf{37} \rpnl
+			$\ast$
+			&
+			\textbf{35} \rpnl
+			SPI\newline
+			\null~MISO
+			&
+			\textbf{33} \rpnl
+			PWM
+			&
+			\textbf{31} \rpnl
+			$\ast$
+			&
+			\textbf{29} \rpnl
+			$\ast$
+			&
+			\textbf{27} \rpnl
+			\IIC\newline
+			\null~SDA
+			&
+			\textbf{\color{blue}25} \rpnl
+			GND
+			&
+			\textbf{23} \rpnl
+			SPI\newline
+			\null~SCK
+			&
+			\textbf{21} \rpnl
+			SPI\newline
+			\null~MISO
+			\\
+			\midrule
+			\textbf{40} \rpnl
+			SPI\newline
+			\null~SCK
+			&
+			\textbf{38} \rpnl
+			SPI\newline
+			\null~MOSI
+			&
+			\textbf{36} \rpnl
+			UART\newline
+			\null~CTS
+			&
+			\textbf{\color{blue}34} \rpnl
+			GND
+			&
+			\textbf{32} \rpnl
+			PWM
+			&
+			\textbf{\color{blue}30} \rpnl
+			GND
+			&
+			\textbf{28} \rpnl
+			\IIC\newline
+			\null~SCL
+			&
+			\textbf{26} \rpnl
+			$\ast$
+			&
+			\textbf{24} \rpnl
+			$\ast$
+			&
+			\textbf{22} \rpnl
+			$\ast$   
+			\\
+			\bottomrule
+		\end{tabular}
+		\\[2mm]
+		\begin{tabular}{
+				W{\ptcw}W{\ptcw}|W{\ptcw}W{\ptcw}W{\ptcw}
+				W{\ptcw}|W{\ptcw}W{\ptcw}W{\ptcw}W{\ptcw}
+			}       
+			\toprule
+			\textbf{19} \rpnl
+			SPI\newline
+			\null~MOSI
+			&
+			\textbf{\color{red}17} \rpnl
+			3.3\,V
+			&
+			\textbf{15} \rpnl
+			$\ast$
+			&
+			\textbf{13} \rpnl
+			$\ast$
+			&
+			\textbf{11} \rpnl
+			UART\newline
+			\null~RTS
+			&
+			\textbf{\color{blue}9} \rpnl
+			GND
+			&
+			\textbf{7} \rpnl
+			$\ast$
+			&
+			\textbf{5} \rpnl
+			\IIC\newline
+			\null~SCL
+			&
+			\textbf{3} \rpnl
+			\IIC\newline
+			\null~SDA
+			&
+			\textbf{\color{red}1} \rpnl
+			3.3\,V
+			\\
+			\midrule
+			\textbf{\color{blue}20} \rpnl
+			GND
+			&
+			\textbf{18} \rpnl
+			$\ast$
+			&
+			\textbf{16} \rpnl
+			$\ast$
+			&
+			\textbf{\color{blue}14} \rpnl
+			GND
+			&
+			\textbf{12} \rpnl
+			PWM
+			&
+			\textbf{10} \rpnl
+			UART\newline
+			\null~RX
+			&
+			\textbf{8} \rpnl
+			UART\newline
+			\null~TX
+			&
+			\textbf{\color{blue}6} \rpnl
+			GND
+			&
+			\textbf{\color{red}4} \rpnl
+			5\,V
+			&
+			\textbf{\color{red}2} \rpnl
+			5\,V
+			\\      
+			\bottomrule
+		\end{tabular}
+		\caption[Raspberry Pi GPIO header]{\label{tbl:pi_assignmenets}Raspberry Pi GPIO header (split into two lines), top view of the board, oriented with the USB connectors facing away from the user. ``$\ast$''~marks pins without important alternate functions.}
+	\end{table}
+}
+
+The GEX Zero pin header's alternate functions should match those on the RPi Zero header, so that the existing add-on boards can be used without modifications. By inspecting the alternate function tables in the STM32F072 datasheet~\cite{f072-ds}, we found a layout that fulfills this requirement almost perfectly. The final assignment is shown in \cref{tbl:gz_rpi_compare}.
+
+\gls{GPIO} ports A and B are fully exposed in the header, with the exception of pins PA11 and PA12 that are routed to the USB connector. The remaining positions were filled pith pins from port C. The omitted ``ID \IIC'' port on pins 27 and 28 is used by the RPi Zero to read configuration from an EEPROM chip on some add-on boards. As this is the only use of the \IIC port, its lack is not a big limitation.
+
+
+\begin{table}[h]
+	  \begin{tabularx}{\textwidth}{W{.1\textwidth}XX|W{.1\textwidth}XX}
+	    	\toprule
+	    	\textbf{Pin} & \textbf{RPi} & \textbf{GEX Zero} &
+	    	\textbf{Pin} & \textbf{RPi} & \textbf{GEX Zero} \\
+	    	
+	    	\midrule
+	    	\textbf{1} & \leavevmode\color{red}3.3\,V & -- &
+	    	\textbf{2} & \leavevmode\color{red}5\,V & -- \\
+	    	\textbf{3} & \IIC SDA & PB7 (SDA1) & 
+	    	\textbf{4} & \leavevmode\color{red}5\,V & -- \\
+	    	\textbf{5} & \IIC SCL & PB6 (SCL1) & 
+	    	\textbf{6} & \leavevmode\color{blue}GND & -- \\
+	    	\textbf{7} & $\ast$ & PA8 (MCO) & 
+	    	\textbf{8} & UART TX & PB10 (TX3) \\
+	    	
+	    	\midrule
+	    	\textbf{9} & \leavevmode\color{blue}GND & --
+	    	& \textbf{10} & UART RX & PB11 (RX3) \\
+	    	\textbf{11} & UART RTS & PB1 (RTS3)
+	    	& \textbf{12} & PWM & PB8 \\
+	    	\textbf{13} & $\ast$ & PA10 
+	    	& \textbf{14} & \leavevmode\color{blue}GND & -- \\
+	    	\textbf{15} & $\ast$ & PB9
+	    	& \textbf{16} &  $\ast$ & PA0 (FCAP)\\
+	    	
+	    	\midrule
+	    	\textbf{17} & \leavevmode\color{red}3.3\,V & --
+	    	& \textbf{18} &  $\ast$ & PA1 \\
+	    	\textbf{19} & SPI MOSI & PB5 (MOSI1)
+	    	& \textbf{20} & \leavevmode\color{blue}GND & -- \\
+	    	\textbf{21} & SPI MISO & PB4 (MISO1)
+	    	& \textbf{22} &  $\ast$ & PA2 (TX2) \\
+	    	\textbf{23} & SPI SCK & PB3 (SCK1)
+	    	& \textbf{24} &  $\ast$ & PA3 (RX2) \\
+	    	
+	    	\midrule
+	    	\textbf{25} & \leavevmode\color{blue}GND & --
+	    	& \textbf{26} &  $\ast$ & PA4 (DAC$_1$) \\
+	    	\textbf{27} & ID \IIC SDA & PB2 
+	    	& \textbf{28} & ID \IIC SCL & PA5 (DAC$_2$) \\
+	    	\textbf{29} & $\ast$ & PC10 (TX4)
+	    	& \textbf{30} & \leavevmode\color{blue}GND & -- \\
+	    	\textbf{31} & $\ast$ & PC11 (RX4)
+	    	& \textbf{32} & PWM & PA7 \\
+	    	
+	    	\midrule
+	    	\textbf{33} & PWM & PB0 
+	    	& \textbf{34} & \leavevmode\color{blue}GND & -- \\
+	    	\textbf{35} & SPI MISO & PB14~(MISO2)
+	    	& \textbf{36} &  $\ast$ & PA6 (CTS3) \\
+	    	\textbf{37} & $\ast$ & PB12
+	    	& \textbf{38} & SPI MOSI & PB15~(MOSI2)\\
+	    	\textbf{39} & \leavevmode\color{blue}GND & -- 
+	    	& \textbf{40} & SPI SCK & PB13 (SCK2)\\
+	    	\bottomrule 
+	    \end{tabularx}
+	\caption[Comparison of the RPI Zero and GEX Zero GPIO headers]{\label{tbl:gz_rpi_compare}
+		Comparison of the RPI Zero and GEX Zero GPIO header pin assignments. Names in parentheses represent STM32F072 alternate functions (e.g., MISO1 is the MISO pin of the SPI peripheral 1). ``$\ast$''~marks pins without important alternate functions that could be assigned arbitrarily in the GEX Zero header. All power pins are identical in both headers.
+	}
+\end{table}
+
+\section{GEX Zero Errata}
+
+Unfortunately, neither the GEX Zero \gls{PCB} was flawless in the first revision. The errors are minor and will not interfere much in the usage of the module. Nonetheless, they should be corrected in the next revision.
+
+\begin{itemize}[itemsep=0pt]
+	\item The \IIC pull-up resistor R8 is connected to PA8 instead of PB7. This can be fixed by cutting the trace near the \gls{GPIO} header and rewiring it, or using an external 1.8\,k$\Omega$ pull-up resistor on PB7, when the \IIC connection is required.
+	\item Pins PB14 and PB15 are swapped in the \gls{GPIO} header, making the SPI port incompatible with add-on boards using this interface. Luckily, there is another SPI port on the header, which is routed correctly, somewhat mitigating this mistake.
+\end{itemize}
 
 \section{Wireless Gateway} \label{sec:rfgateway}
 
-\cref{fig:gwxgw}
+The wireless gateway was designed as a ``\gls{USB} dongle'', using the USB-A connector (\cref{fig:gwxgw}). It is fitted with a STM32F103 microcontroller, selected for its low cost and availability in small packages (in this case LQFP48). The nRF24L01+ module is partly sticking outside the board outline, allowing the \gls{PCB} to be smaller (and thus cheaper to manufacture), while reducing interference between components and copper plating on the board and the antenna.
 
-\todo[inline]{TODO about the gateway ..}
-
+Beyond the use with GEX, the gateway is a versatile tool which could be programmed with a different firmware and serve other purposes, e.g., as a wireless connection between two computers, to scan the radio spectrum for interference in order to find a clear channel, or to communicate with other devices that use the nRF24L01+ transceiver. The chosen microcontroller, unfortunately, does not include a USB bootloader, so a SWD programmer is required to change the firmware; SWD is routed to the pin header next to the wireless module.
 
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=.9\textwidth]{img/photo-rfdongle.jpg}
-	\caption{\label{fig:gwxgw}The wireless gateway module (top and bottom side)}
+	\caption{\label{fig:gwxgw}The wireless gateway (top and bottom side)}
 \end{figure}
-
-
