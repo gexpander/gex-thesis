@@ -94,3 +94,16 @@
 
 \input{pre.gex_command_tables}
 
+
+
+% custom style for the appendix
+\fancyfoot[LE,RO]{\thepage} % Left side on Even pages; Right side on Odd pages
+\fancypagestyle{appendix}{%
+	\fancyfootoffset[lef,rof]{60pt}
+	\fancyfootoffset[leh,roh]{60pt}
+	\renewcommand{\headrulewidth}{0pt}%
+	\fancyhf{}%	
+	\fancyhf[leh,roh]{\vspace{.9cm}\leftmark}%	
+	\fancyhf[lef,rof]{\thepage}%
+}
+

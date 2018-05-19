@@ -24,7 +24,7 @@ An accelerometer \gls{IC} L3GD20 is fitted on the board, attached to SPI2 on pin
 
 \section{GEX Hub}
 
-GEX Hub was the first custom \gls{PCB} designed for GEX. It uses the same microcontroller as the Discovery board, thus the firmware modifications needed to make it work with this new platform were minimal.
+GEX Hub was the first custom \gls{PCB} designed for GEX. It uses the same microcontroller as the Discovery board, thus the firmware modifications needed to make it work with this new platform were minimal. The schematic diagram is attached in \hyperref[apx:gex_hub]{Appendix A}.
 
 The Hub board provides access to all the \gls{GPIO} pins\footnote{With the exception of pins used by USB and the Lock button.} through three flat-cable connectors, one for each port; they also contain a ground and power supply connection to make the attachment of external boards or a breadboard easier, requiring just one cable. The use of flat cables, however, is not mandatory---the flat cable connectors are based on the standard 2.54\,mm-pitch pin headers, allowing the user to use widely available ``jumper wires''.
 
@@ -241,7 +241,7 @@ Like our STM32 microcontroller, the Broadcom processor on the RPi multiplexes it
 	\end{table}
 }
 
-The GEX Zero pin header's alternate functions should match those on the RPi Zero header, so that the existing add-on boards can be used without modifications. By inspecting the alternate function tables in the STM32F072 datasheet~\cite{f072-ds}, we found a layout that fulfills this requirement almost perfectly. The final assignment is shown in \cref{tbl:gz_rpi_compare}.
+The GEX Zero pin header's alternate functions should match those on the RPi Zero header, so that the existing add-on boards can be used without modifications. By inspecting the alternate function tables in the STM32F072 datasheet~\cite{f072-ds}, we found a layout that fulfills this requirement almost perfectly. The final assignment is shown in \cref{tbl:gz_rpi_compare}, and the full schematic diagram is attached in \hyperref[apx:gex_zero]{Appendix B}.
 
 \gls{GPIO} ports A and B are fully exposed in the header, with the exception of pins PA11 and PA12 that are routed to the USB connector. The remaining positions were filled pith pins from port C. The omitted ``ID \IIC'' port on pins 27 and 28 is used by the RPi Zero to read configuration from an EEPROM chip on some add-on boards. As this is the only use of the \IIC port, its lack is not a big limitation.
 
@@ -319,9 +319,10 @@ Unfortunately, neither the GEX Zero \gls{PCB} was flawless in the first revision
 
 \section{Wireless Gateway} \label{sec:rfgateway}
 
-The wireless gateway was designed as a ``\gls{USB} dongle'', using the USB-A connector (\cref{fig:gwxgw}). It is fitted with a STM32F103 microcontroller, selected for its low cost and availability in small packages (in this case LQFP48). The nRF24L01+ module is partly sticking outside the board outline, allowing the \gls{PCB} to be smaller (and thus cheaper to manufacture), while reducing interference between components and copper plating on the board and the antenna.
+The wireless gateway was designed as a ``\gls{USB} dongle'', using the \gls{USB} type A connector (\cref{fig:gwxgw}). It is fitted with a STM32F103 microcontroller, selected for its low cost and availability in small packages (in this case LQFP48). The nRF24L01+ module is partly sticking outside the board outline, allowing the \gls{PCB} to be smaller (and thus cheaper to manufacture), while reducing interference between components and copper plating on the board and the antenna. The schematic diagram of the wireless gateway is attached in \hyperref[apx:gex_wgw]{Appendix C}.
 
 Beyond the use with GEX, the gateway is a versatile tool which could be programmed with a different firmware and serve other purposes, e.g., as a wireless connection between two computers, to scan the radio spectrum for interference in order to find a clear channel, or to communicate with other devices that use the nRF24L01+ transceiver. The chosen microcontroller, unfortunately, does not include a USB bootloader, so a SWD programmer is required to change the firmware; SWD is routed to the pin header next to the wireless module.
+
 
 \begin{figure}[h]
 	\centering
