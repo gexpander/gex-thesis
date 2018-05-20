@@ -103,7 +103,7 @@ Some commands include optional parameter setting. Using 0 in the field keeps the
 	5 & \cname{FREECOUNT\_START}
 	Clear and start the pulse counter
 	& \begin{cmdreq}
-		\cfield{u8} *prescaller (1,2,4,8)
+		\cfield{u8} *prescaller (1, 2, 4, 8)
 	\end{cmdreq} \\
 
 	6 & \cname{MEASURE\_SINGLE\_PULSE}
@@ -150,13 +150,13 @@ Some commands include optional parameter setting. Using 0 in the field keeps the
 	21 & \cname{SET\_PRESCALLER}
 	Set prescaller for the direct mode
 	& \begin{cmdresp}
-		\cfield{u8} prescaller (1,2,4,8)
+		\cfield{u8} prescaller (1, 2, 4, 8)
 	\end{cmdresp} \\
 
 	22 & \cname{SET\_INPUT\_FILTER}
 	Set input filtering (a hardware feature designed to ignore glitches)
 	& \begin{cmdresp}
-		\cfield{u8} filtering factor (0-15, 0=off)
+		\cfield{u8} filtering factor (0--15, 0=off)
 	\end{cmdresp} \\
 
 	23 & \cname{SET\_DIR\_MSEC}

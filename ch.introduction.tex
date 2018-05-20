@@ -2,12 +2,12 @@
 
 Prototyping, design evaluation, and the measurement of physical properties in experiments make a daily occurrence in the engineering praxis. Those tasks often involve the generation and sampling of electrical signals coming to and from sensors, actuators, and other circuitry.
 
-Recently, a wide range of intelligent sensors became available thanks to the drive to miniaturization in the consumer electronics industry. Those devices often provide sufficient accuracy and precision while keeping the circuit complexity and cost low. In contrast to analog sensors, here the signal conditioning and processing circuits are built into the sensor itself, and we access it using a digital connection.
+Recently, a wide range of intelligent sensors became available thanks to the drive to miniaturization in the consumer electronics industry (\cref{fig:some_sensors}). Those devices often provide sufficient accuracy and precision while keeping the circuit complexity and cost low. In contrast to analog sensors, here the signal conditioning and processing circuits are built into the sensor itself, and we access it using a digital connection.
 
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.8\textwidth] {img/inteligent-sensors.jpg}
-	\caption[A collection of intelligent sensors and devices]{A collection of intelligent sensors and devices, most on breadboard adapters: (from the top left) a waveform generator, a gesture detector, a LoRa and two Bluetooth modules, an air quality and pressure sensor, a CO$_2$ sensor, a digital compass, an accelerometer, a GPS module, a camera, an ultrasonic range finder, a humidity sensor, a 1-Wire thermometer, a color detector, and an RGB LED strip}
+	\caption[A collection of intelligent sensors and devices]{\label{fig:some_sensors}A collection of intelligent sensors and devices, most on breadboard adapters: (from the top left) a waveform generator, a gesture detector, a LoRa and two Bluetooth modules, an air quality and pressure sensor, a CO$_2$ sensor, a digital compass, an accelerometer, a GPS module, a camera, an ultrasonic range finder, a humidity sensor, a 1-Wire thermometer, a color detector, and an RGB LED strip}
 \end{figure}
 
 If we wish to conduct experiments with those integrated modules, or just familiarize ourselves with a device before using it in a project, we need an easy way to interact with them. It would also be convenient to have direct access to low-level hardware, be it analog signal sampling, generation, or even just the access to logic inputs and outputs. However, advances in computer technology, namely the advent of the \gls{USB}, lead to the disappearance of low-level computer ports, such as the printer port (LPT), that would provide an easy way of doing so.

@@ -19,11 +19,11 @@ The idea of making it easier to interact with low-level hardware from a \gls{PC}
 	\caption{\label{fig:rpi}Raspberry Pi minicomputers}
 \end{figure}
 
-The Raspberry Pi's \gls{GPIO} header, a row of pins which can be directly controlled by user applications running on the minicomputer, was one of the inspirations behind GEX. It can be controlled using C and Python (among others) and offers \gls{GPIO}, \gls{SPI}, \gls{I2C}, \gls{UART}, and \gls{PWM}, with other protocols and functions easy to emulate thanks to the high speed of the system processor.
+The Raspberry Pi (\cref{fig:rpi}) is a low-cost minicomputer targeted at school environments and hobbyists. It is often used for home automation, as a simple web server, or built into projects that take advantage of its powerful processor, such as wildlife camera traps, or data acquisition devices with in-situ processing.
 
-The Raspberry Pi is used in schools as a low-cost PC alternative that encourage students' interest in \gls{STEM}. The board is often built into more permanent projects that make use of its powerful processor, such as wildlife camera traps, fish feeders etc.
+The board's \gls{GPIO} header, a row of pins supporting features such as \gls{SPI}, \gls{I2C}, \gls{UART}, or \gls{PWM}, directly accessible by user applications running on the minicomputer, was one of the inspirations behind GEX.
 
-The Raspberry Pi could be used for the same quick evaluations or experiments we want to perform with GEX, however they would either have to be performed directly on the minicomputer, with an attached monitor and a keyboard, or use some form of remote access (e.g., \gls{SSH}, or screen sharing).
+The Raspberry Pi's functionality clearly overlaps with features we wish to support in GEX. Its processor is powerful enough for a regular \gls{OS} with a graphical user interface, and after attaching a display and a keyboard, it can be used as a \gls{PC}. However, when we have a more powerful computer available and only want to extend it with the \gls{GPIO} header, having to use the Raspberry Pi seems inconvenient; this might be overcome with the use of screen sharing or \gls{SSH}, but a low-complexity solution like GEX certainly has its appeal.
 
 \section{Bus Pirate}
 
@@ -36,11 +36,13 @@ The Raspberry Pi could be used for the same quick evaluations or experiments we 
 %http://dangerousprototypes.com/blog/about/
 
 % Dangerous Prototypes and manufactured by Seeed Studio\todo{link}
-Bus Pirate, a project by Ian Lesnet, is a USB-attached device providing access to hardware interfaces like \gls{SPI}, \gls{I2C}, \gls{USART}, and 1-Wire, as well as frequency measurement and direct pin access. The board aims to make it easy for users to familiarize themselves with new chips and modules; it also provides a range of programming interfaces for flashing microcontroller firmwares and memories. It communicates with the \gls{PC} using a FTDI USB-serial bridge.
+Bus Pirate~\cite{buspirate} is a USB-attached device providing access to hardware interfaces like \gls{SPI}, \gls{I2C}, \gls{USART}, and 1-Wire, as well as features like frequency measurement and direct pin access. The board aims to make it easy for users to familiarize themselves with unknown chips and modules; it also provides a range of programming interfaces to program microcontrollers and memory chips. The board communicates with the \gls{PC} using an FTDI USB-serial adapter.
 
 Bus Pirate is open source and is, in its scope, similar to GEX. It can be scripted and controlled from the PC, connects to USB and provides a wide selection of hardware interfaces.
 
-The board is based on a PIC16 microcontroller running at 32\,MHz. Its \gls{ADC} only has a resolution of 10 bits (1024 levels). There is no \gls{DAC} available on the chip, which makes applications that require a varied output voltage more difficult to implement. Another limitation of the board is its low number of \gls{GPIO} pins, which may be insufficient for certain applications. The Bus Pirate is available for purchase at around 30\,USD, a price comparable to some Raspberry Pi models.
+The board is based on a PIC16 microcontroller running at 32\,MHz. Its \gls{ADC} only has a resolution of 10 bits (1024 levels). There is no \gls{DAC} available on the chip, which makes applications that require a varied output voltage more difficult to implement. Another limitation of the board is its low number of \gls{GPIO} pins, which may be insufficient for certain applications; this, however, is not a hindrance to its main purpose as a bus analyzer and tinkering tool. 
+
+The Bus Pirate is available for purchase at around 30\,USD (at the time of writing), a price comparable to some Raspberry Pi models.
 
 \section{Professional DAQ Modules}
 

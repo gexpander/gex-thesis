@@ -40,7 +40,7 @@ All GEX hardware platforms have some common characteristics (\cref{fig:users_vie
 \begin{itemize}
 	\item \textbf{Direct \gls{USB} connection}
 		
-		This is the primary and most straightforward connection method. We use the \gls{CDCACM} and \gls{MSC} \gls{USB} classes to have the module appear as a virtual serial port and a mass storage device, as described in \cref{sec:usb_classes}. This method is the fastest of the three and works out-of-the-box on Linux and MacOS. On MS Windows it may require the right software driver to be installed and assigned manually\footnote{The STM32 Virtual COM port driver~\cite{stm-vcom} has been tested to work with GEX on MS Windows version 7 and 8, though it must be manually assigned to the device in the Device Manager. MS Windows 10 and later should support \gls{CDCACM} natively.}.
+		This is the primary and most straightforward connection method. We use the \gls{CDCACM} and \gls{MSC} \gls{USB} classes to have the module appear as a virtual COM port and a mass storage device, as described in \cref{sec:usb_classes}. This method is the fastest of the three and works out-of-the-box on Linux and MacOS. On MS Windows it may require the right software driver to be installed and assigned manually\footnote{The STM32 virtual COM port driver~\cite{stm-vcom} has been tested to work with GEX on MS Windows version 7 and 8, though it must be manually assigned to the device in the Device Manager. MS Windows 10 and later should support \gls{CDCACM} as a virtual COM port natively.}.
 	
 	\item \textbf{Hardware \gls{UART}}
 	

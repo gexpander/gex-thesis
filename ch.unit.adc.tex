@@ -1,10 +1,22 @@
 \section{ADC Unit}
 
-The analog/digital converter unit is one of the most complicated and powerful units implemented in the project. The unit can measure the voltage on an input pin, either as its immediate value, or averaged with exponential forgetting. Isochronous sampling is available as well: it is possible to capture a fixed-length block of data on demand, or as a response to a triggering condition on any of the enabled input pins. The \gls{ADC} must continuously sample the inputs to make the averaging and level based triggering possible; as a consequence, a pre-trigger buffer is available that can be read together with the block of samples following a trigger. The \gls{ADC} unit can also be switched to a continuous streaming mode, a block capture which continues indefinitely, until the host decides to stop the stream.
+The analog/digital converter unit is one of the most complicated and powerful units implemented in the project.
 
-It is possible to activate any number of the 16 analog inputs of the \gls{ADC} peripheral simultaneously, together with the internal input channels. The maximum continuous sampling frequency, which reaches 70\,ksps with one channel, lowers with an increasing number of enabled channels, as the amount of data to transfer host increases. Those high speeds are achievable in shorter block captures, taking advantage of the (configurable) data buffer. A streamed or too long block capture may be aborted after the buffer is exhausted.
+The unit can measure the voltage on an input pin, either as its immediate value, or averaged with exponential forgetting. The smoothing formula is ($y$--averaged output, $t$--sample number, $k$--smoothing factor, $u$--raw measured value):
 
-\todo[inline]{add a diagram}
+\begin{equation}
+	y[t] = (1-k)\cdot y[t-1] + k\cdot u[t]
+\end{equation}
+
+Isochronous sampling is available as well: it is possible to capture a fixed-length block of data on demand, or as a response to a triggering condition on any of the enabled input pins. The \gls{ADC} must continuously sample the inputs to make the averaging and level based triggering possible, which is implemented using \gls{DMA}; as a consequence, a pre-trigger buffer is available that can be read together with the block of samples following a trigger (\cref{fig:adc_dma}). The \gls{ADC} unit can also be switched to a continuous streaming mode, a block capture which continues indefinitely, until the host decides to stop the stream.
+
+It is possible to activate any number of the 16 analog inputs of the \gls{ADC} peripheral simultaneously, together with the internal input channels. The maximum continuous sampling frequency, which reaches 70\,ksps with one channel, lowers with an increasing number of enabled channels, as the amount of data to transfer host increases. Those high speeds are achievable in shorter block captures, taking advantage of the (configurable) data buffer. An ongoing capture may be terminated by the unit after the buffer is exhausted.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=1]{img/adc-dma-buf.pdf}
+	\caption{\label{fig:adc_dma}Principle of DMA-based ADC sampling. The buffer is continually filled with new samples; when the triggering condition is hit, the historical records from the buffer are sent as a pre-trigger buffer, and a block capture begins. The following samples are sent to the host when either half of the buffer is filled, or the required number of samples have been sent. The sampling never stops, ensuring a pre-trigger buffer is always ready.}
+\end{figure}
 
 \subsection{ADC Configuration}
 
@@ -44,7 +56,7 @@ avg_factor=500
 	&
 	\begin{cmdpld}
 		\cfield{u32} pre-trigger length
-		\cfield{u8} triggering edge (1-falling, 2-rising, 3-forced)
+		\cfield{u8} triggering edge (1--falling, 2--rising, 3--forced)
 		\cfield{u8} stream serial number
 		\cfield{u16[]} pre-trigger data
 	\end{cmdpld}
@@ -123,16 +135,16 @@ avg_factor=500
 
 	20 &
 	\cname{SETUP\_TRIGGER}
-	Configure the triggering level and other trigger parameters. This command does \textit{not} arm the trigger!
+	Configure the triggering level and other trigger parameters. This command does \textit{not} arm the trigger.
 	&
 	\begin{cmdreq}
 		\cfield{u8} source channel number
 		\cfield{u16} triggering level
-		\cfield{u8} active edge (1-falling, 2-rising, 3-any)
+		\cfield{u8} active edge (1--falling, 2--rising, 3--any)
 		\cfield{u32} pre-trigger sample count
 		\cfield{u32} post-trigger sample count
 		\cfield{u16} hold-off time (ms)
-		\cfield{u8} auto re-arm (0,1)
+		\cfield{bool} auto re-arm
 	\end{cmdreq}
 	\\
 
@@ -140,7 +152,7 @@ avg_factor=500
 	Arm the trigger for capture.
 	&
 	\begin{cmdreq}
-		\cfield{u8} auto re-arm (0, 1, 255-no change)
+		\cfield{u8} auto re-arm (0, 1, 255--no change)
 	\end{cmdreq}
 	\\
 
@@ -173,10 +185,10 @@ avg_factor=500
 	& \\
 
 	28 & \cname{SET\_SMOOTHING\_FACTOR}
-	Set the smoothing factor ($\times10^3$). %TODO add the formula
+	Set the smoothing factor ($\times10^3$). 1000 corresponds to $k=1$.
 	&
 	\begin{cmdreq}
-		\cfield{u16} smoothing factor 0-1000
+		\cfield{u16} smoothing factor 0--1000
 	\end{cmdreq}
     \\
 

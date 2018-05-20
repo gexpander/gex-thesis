@@ -10,11 +10,11 @@ This chapter presents an overview of the \acrfull{USB} Full Speed interface, wit
 	\caption[USB hierarchical structure]{\label{fig:usb_hierarchy}The hierarchical structure of the USB bus}
 \end{figure}
 
-\gls{USB} is a hierarchical bus with a single master (\textit{host}) and multiple slave devices. A \gls{USB} device that provides functionality to the host is called a \textit{function}~\cite{usb-function}.
+\gls{USB} is a hierarchical bus (\cref{fig:usb_hierarchy}) with a single master (\textit{host}) and multiple slave devices. A \gls{USB} device that provides functionality to the host is called a \textit{function}~\cite{usb-function}.
 
 \subsection{Pipes and Endpoints}
 
-Communication between the host and a function is organized into virtual channels called \textit{pipes} connecting to the device's \textit{endpoints}, identified by endpoint numbers.
+Communication between the host and a function is organized into virtual channels called \textit{pipes} connecting to the device's \textit{endpoints}, identified by endpoint numbers. Pipes and endpoints are a high level abstraction of the connection between the host and a device  (\cref{fig:usb_logical}).
 
 \begin{figure}[h]
 	\centering

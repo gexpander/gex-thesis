@@ -4,9 +4,13 @@ The \gls{USART} unit provides access to one of the microcontroller's \gls{USART}
 
 Most \gls{USART} parameters available in the hardware peripheral's configuration registers can be adjusted to match the application's needs. The peripheral is capable of driving RS-485 transceivers, using the \gls{DE} output for switching between reception and transmission.
 
-The unit implements asynchronous reception and transmission with \gls{DMA} and a circular buffer. Received data is sent to the host in asynchronous events when a half of the buffer is filled, or after a fixed timeout from the last received byte. The write access is, likewise, implemented using \gls{DMA}.
+The unit implements asynchronous reception and transmission with \gls{DMA} and a circular buffer (\cref{fig:uart_rx_dma}). Received data is sent to the host in asynchronous events when a half of the buffer is filled, or after a fixed timeout from the last received byte. The write access is, likewise, implemented using a \gls{DMA} buffer.
 
-\todo[inline]{add a diagram of the dma-based reception}
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=1]{img/uart-dma.pdf}
+	\caption{\label{fig:uart_rx_dma}Principle of DMA-based UART reception. Interrupt is generated in the half and at the end of the buffer, at which point the write pointer wraps back to the beginning.}
+\end{figure}
 
 \subsection{USART Configuration}
 

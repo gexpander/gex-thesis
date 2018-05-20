@@ -95,7 +95,7 @@ The bus supports multi-master operation, which leads to the problem of collision
 
 \section{1-Wire} \label{sec:theory_1wire}
 
-The 1-Wire bus, developed by Dallas Semiconductor (acquired by Maxim Integrated), uses a single, bi-directional data line, which can also power the slave devices in a \textit{parasitic mode}, reducing the number of required wires to just two (compare with 3 in \gls{I2C} and 5 in \gls{SPI}, all including \gls{GND}). The parasitic operation is possible thanks to the data line resting at a high logic level most of the time, charging an internal capacitor.
+The 1-Wire bus, developed by Dallas Semiconductor (acquired by Maxim Integrated), uses a single, bi-directional data line (\cref{fig:1w_topology}), which can also power the slave devices in a \textit{parasitic mode}, reducing the number of required wires to just two (compare with 3 in \gls{I2C} and 5 in \gls{SPI}, all including \gls{GND}). The parasitic operation is possible thanks to the data line resting at a high logic level most of the time, charging an internal capacitor.
 
 1-Wire uses an open-drain connection for the data line, similar to \gls{I2C}, though the protocol demands it to be connected directly to V$_dd$ in some places when the parasitic mode is used; this is accomplished using an external transistor, or by reconfiguring the GPIO pin as output and setting it to 1, provided the microcontroller is able to supply a sufficient current.
 
@@ -130,16 +130,24 @@ Since 1-Wire is a proprietary protocol, there is a much smaller choice of availa
 
 \section{NeoPixel} \label{sec:theory_neo}
 
-NeoPixel is a marketing name of the \textbf{WS2812} and compatible intelligent \gls{LED} drivers that are commonly used in ``addressable \gls{LED} strips''. Additional technical details about the chips and their protocol may be found in the WS2812B datasheet~\cite{neopixel-ds}. These chips include the control logic, PWM drivers and the \gls{LED} diodes all in one 5$\times$5\,mm SMD package.
+NeoPixel is a marketing name of the \textbf{WS2812} and compatible intelligent \gls{LED} drivers that are commonly used in ``addressable \gls{LED} strips'' (\cref{fig:neopic}).  These chips include the control logic, PWM drivers and the \gls{LED} diodes all in one 5$\times$5\,mm SMD package.
 
 The NeoPixel protocol is unidirectional, using only one data pin. The \gls{LED} drivers are chained together. Ones and zeros are encoded by pulses of a defined length on the data pin; after the color data was loaded into the \gls{LED} string, a longer ``reset'' pulse (low level) is issued by the bus master and the set colors are displayed. The timing constraints are listed in \cref{fig:ws2812_dia}.
 
 The NeoPixel timing is sensitive to pulse length accuracy; a deviation from the specified timing may cause the data to be misinterpreted by the drivers. Some ways to implement the timing use hardware timers or the \gls{I2S} peripheral. An easier method that does not require any additional hardware resources beyond the \gls{GPIO} pin is to implement the timing using delay loops in the firmware; care must be taken to disable interrupts in the sensitive parts of the timing; it may be advantageous to implement it in assembly for a tighter control.
 
+\iffalse
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=.5\textwidth] {img/ws2812b-detail.jpg}
 	\caption{\label{fig:ws2812_detail}A close-up photo of a WS2812B pixel, showing the LED driver IC}
+\end{figure}
+\fi
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=.7\textwidth] {img/npxdriven.jpg}
+	\caption{\label{fig:neopic}GEX prototype driving a strip of 5 NeoPixels}
 \end{figure}
 
 \begin{table}[h]

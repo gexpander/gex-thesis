@@ -85,7 +85,7 @@ A pair of these radio modules can form a bidirectional data connection, function
 	\vspace{-1em}
 	\centering
 	\includegraphics[scale=0.9]{img/rf-gw.pdf}
-	\caption{A block diagram of the wireless connection}
+	\caption{Wireless connection block diagram}
 \end{wrapfigure}
 
 The gateway presents itself to the host as a \gls{CDCACM} device, much like the GEX modules themselves (here called \textit{nodes}) when connected over \gls{USB}. However, the standard GEX communication protocol cannot be used directly, as the gateway itself needs to be managed through the interface, and it can connect to more than one GEX module at once, necessitating an addressing scheme. This problem could be solved by adding a side channel, additional \gls{USB} endpoints, to interact with the gateway itself; that option was not explored further, but it is clear that it would compromise our ability to use the simple virtual COM port \gls{USB} driver. 
@@ -97,7 +97,7 @@ The gateway has a 4-byte \textit{network ID}, a number derived from the \gls{MCU
 
 The gateway protocol, when used to communicate with a node, encapsulates the raw binary data sent to or from connected nodes; the wrapped TinyFrame protocol remains unchanged.
 
-All messages sent to or from the gateway are a multiple of 64 bytes long, padded with zeros if shorter. A message starts with a control byte determining its type, as summarized in the following table listing the structure of all supported messages.
+All messages sent to or from the gateway are a multiple of 64 bytes long, padded with zeros if shorter. A message starts with a control byte determining its type, as summarized in the following table, listing the structure of all supported messages.
 
 \newpage
 {
