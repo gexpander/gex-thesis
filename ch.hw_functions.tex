@@ -4,7 +4,7 @@ In addition to communication buses, described in \cref{ch:hw_buses}, GEX impleme
 
 \section{Frequency Measurement} \label{sec:theory_fcap}
 
-Applications like motor speed measurement and the reading of a \gls{VCO} or \gls{VCO}-based sensor's output demand a tool capable of measuring frequency. This can be done using a laboratory instrument such as the Agilent 53131A. A low-cost solution can be realized using a timer/counter peripheral of a microcontroller.
+Applications like motor speed measurement or the use of sensors with \gls{PWM} output demand a tool capable of measuring frequency (and the duty cycle) of a signal. This can be done using laboratory instruments such as the Agilent 53131A. A low-cost solution can be realized using a timer/counter microcontroller peripheral.
 
 \noindent
 Two basic methods to measure frequency exist~\cite{fcap-twotypes}, each with its advantages and drawbacks:

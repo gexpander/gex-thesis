@@ -1,6 +1,7 @@
 % Buses and peripherals
-\newacronym{ADC}{ADC}{Analog/Digital Converter}
-\newacronym{DAC}{DAC}{Digital/Analog Converter}
+\newacronym{ADC}{ADC}{analog/digital converter}
+\newacronym{DAC}{DAC}{digital/analog converter}
+
 \newacronym{DDS}{DDS}{Direct Digital Synthesis}
 \newacronym{SPI}{SPI}{Serial Peripheral Interconnect}
 \newacronym{USART}{USART}{Universal Synchronous/Asynchronous Receiver/Transmitter}
@@ -12,10 +13,8 @@
 \newacronym{HART}{HART}{Highway Addressable Remote Transducer}
 \newacronym{LIN}{LIN}{Local Interconnect Network}
 \newacronym{DALI}{DALI}{Digital Addressable Lighting Interface}
-\newacronym{DMA}{DMA}{Direct Memory Access} % ???
 \newacronym{mbus}{M-Bus}{Meter Bus}
 
-\newacronym{STEM}{STEM}{Science, Technology, Engineering and Mathematics}
 \newacronym{SSH}{SSH}{Secure Shell}
 \newacronym{NRZI}{NRZI}{Non Return to Zero Inverted}
 \newacronym{MSC}{MSC}{Mass Storage Class}
@@ -26,10 +25,8 @@
 \newacronym{SCSI}{SCSI}{Small Computer System Interface}
 \newacronym{IAD}{IAD}{Interface Association Descriptor}
 \newacronym{FAT}{FAT}{File Allocation Table}
-\newacronym{FS}{FS}{file system}
-\newacronym{IDE}{IDE}{integrated development environment}
 \newacronym{LFN}{LFN}{Long File Name}
-\newacronym{MBR}{MBR}{master boot record}
+\newacronym{MBR}{MBR}{Master Boot Record}
 \newacronym{NVIC}{NVIC}{Nested Vectored Interrupt Controller}
 \newacronym{GPS}{GPS}{Global Positioning System}
 \newacronym{TWI}{TWI}{Two-Wire Interface}
@@ -37,10 +34,13 @@
 \newacronym{PMBus}{PMBus}{Power Management Bus}
 \newacronym{DFU}{DFU}{Device Firmware Update}
 
-\newacronym{CPOL}{CPOL}{clock polarity}
-\newacronym{CPHA}{CPHA}{clock phase}
+\newacronym{CPOL}{CPOL}{Clock Polarity}
+\newacronym{CPHA}{CPHA}{Clock Phase}
 
 % Common names
+\newacronym{IDE}{IDE}{integrated development environment}
+\newacronym{FS}{FS}{file system}
+\newacronym{STEM}{STEM}{science, technology, engineering and mathematics}
 \newacronym{RMS}{RMS}{root mean square}
 \newacronym{PC}{PC}{personal computer}
 \newacronym{PCB}{PCB}{printed circuit board}
@@ -53,12 +53,10 @@
 \newacronym{OS}{OS}{operating system}
 \newacronym{API}{API}{application programming interface}
 \newacronym{LED}{LED}{light emitting diode}
-\newacronym{MCU}{MCU}{microcontroller unit}
 \newacronym{MCO}{MCO}{Microcontroller Clock Output}
-\newacronym{RAM}{RAM}{random-access memory}
-\newacronym{ROM}{ROM}{read-only memory}
+\newacronym{NFC}{NFC}{Near-Field Communication}
 
-\newacronym{TTL}{TTL}{transistor-transistor logic}
+% Pin / Config Option names
 \newacronym{RTS}{RTS}{Ready To Send}
 \newacronym{CTS}{CTS}{Clear To Send}
 \newacronym{SCK}{SCK}{Serial Clock}
@@ -66,16 +64,20 @@
 \newacronym{MISO}{MISO}{Master In, Slave Out}
 \newacronym{NSS}{NSS}{Negated Slave Select}
 \newacronym{DE}{DE}{Driver Enable}
-\newacronym{CSB}{CSB}{Chip Select Bar}
+\newacronym{CSB}{CSB}{Chip Select with Bar}
 \newacronym{SS}{SS}{Slave Select}
 \newacronym{SDA}{SDA}{Serial Data Line}
 \newacronym{SCL}{SCL}{Serial Clock Line}
 \newacronym{DTR}{DTR}{Data Terminal Ready}
-\newacronym{NDIR}{NDIR}{nondispersive infrared}
-\newacronym{NFC}{NFC}{near-field communication}
-\newacronym{RTC}{RTC}{real-time clock}
 \newacronym{GND}{GND}{ground}
+
+\newacronym{TTL}{TTL}{Transistor-Transistor Logic}
+\newacronym{NDIR}{NDIR}{nondispersive infrared}
 \newacronym{CRC}{CRC}{cyclic redundancy check}
+
+\newacronym{RTC}{RTC}{Real-Time Clock}
+\newacronym{TSC}{TSC}{Touch Sensing Controller}
+\newacronym{DMA}{DMA}{Direct Memory Access} % ???
 
 \newacronym{VCO}{VCO}{voltage-controlled oscillator}
 \newacronym{TCO}{TCO}{temperature-compensated oscillator}
@@ -83,9 +85,12 @@
 \newacronym{DC}{DC}{direct current}
 \newacronym{SAR}{SAR}{successive approximation register}
 \newacronym{AC}{AC}{alternating current}
-\newacronym{TSC}{TSC}{Touch Sensing Controller}
 \newacronym{ISR}{ISR}{interrupt service routine}
 \newacronym{IRQ}{IRQ}{interrupt request}
+\newacronym{MCU}{MCU}{microcontroller unit}
+
+\newacronym{RAM}{RAM}{random-access memory}
+\newacronym{ROM}{ROM}{read-only memory}
 
 \newacronym{OOK}{OOK}{on-off keying}
 \newacronym{FSK}{FSK}{frequency-shift keying}
@@ -93,9 +98,30 @@
 \newacronym{MSK}{MSK}{minimum-shift keying}
 \newacronym{GMSK}{GMSK}{Gaussian minimum-shift keying}
 \newacronym{BFSK}{BFSK}{binary frequency-shift keying}
-\newacronym{GSM}{GSM}{Global System for Mobile communications}
 \newacronym{SCCB}{SCCB}{Serial Camera Control Bus}
 
-\glsunset{UART}
+\newacronym{GSM}{GSM}{Global System for Mobile communications}
+
+% --- pre-defined (not in text) ---
+
+\glsunset{UART} % introduced together with USART
+
+% those are used after introducing CDC/ACM, so their meaning is already clear
 \glsunset{CDC}
 \glsunset{ACM}
+
+\glsunset{SCSI} % used only in one place and looks wrong
+
+% obvious
+\glsunset{AC}
+%\glsunset{TTL}
+%\glsunset{GND}
+%\glsunset{API}
+%\glsunset{LED}
+\glsunset{DC}
+%\glsunset{PC}
+%\glsunset{OS}
+%\glsunset{GPS}
+\glsunset{GSM} % mentioned only once
+%\glsunset{RAM}
+%\glsunset{ROM}
