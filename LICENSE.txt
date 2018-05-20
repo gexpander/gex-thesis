@@ -12,6 +12,8 @@ Schematics CC-BY-SA
   (Creative Commons Attribution Share Alike)
   per github.com/gexpander/gex-hardware
 
+References attached for convenience retain their original copyright (see the files for details)
+
 ---
 
 Macros and other LaTeX code may be reused freely.
