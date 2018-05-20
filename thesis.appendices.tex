@@ -9,7 +9,7 @@
 % ok so this is ugly as sin, but \leftmark and \rightmark didn't work with 
 %  the phantom sections, so we redefine leftmark manually and use it on both sides
 
-\renewcommand{\leftmark}{Appendix A: GEX Hub Schematics, Revision 1}
+\renewcommand{\leftmark}{Appendix A.1: GEX Hub Schematics, Revision 1}
 \includepdf[angle=90,pagecommand={%
 	\phantomsection\addcontentsline{toc}{chapter}{A{\enspace}GEX Hub Schematics}%
 	\label{apx:gex_hub}%
@@ -17,14 +17,14 @@
 	\label{apx:gex_hub1}%
 }]{schema/GexHubSchemRev1.pdf}
 
-\renewcommand{\leftmark}{Appendix A: GEX Hub Schematics, Revision 2}
+\renewcommand{\leftmark}{Appendix A.2: GEX Hub Schematics, Revision 2}
 \includepdf[angle=90,pagecommand={%
 	\phantomsection\addcontentsline{toc}{section}{A.2 GEX Hub Revision 2}%
 	\label{apx:gex_hub2}%
 }]{schema/GexHubSchemRev2.pdf}
 
 
-\renewcommand{\leftmark}{Appendix B: GEX Zero Schematics, Revision 1}
+\renewcommand{\leftmark}{Appendix B.1: GEX Zero Schematics, Revision 1}
 \includepdf[angle=90,pagecommand={%
 	\phantomsection\addcontentsline{toc}{chapter}{B{\enspace}GEX Zero Schematics}%
 	\label{apx:gex_zero}%
@@ -32,14 +32,14 @@
 	\label{apx:gex_zero1}%
 }]{schema/GexZeroSchemRev1.pdf}
 
-\renewcommand{\leftmark}{Appendix B: GEX Zero Schematics, Revision 2}
+\renewcommand{\leftmark}{Appendix B.2: GEX Zero Schematics, Revision 2}
 \includepdf[angle=90,pagecommand={%
 	\phantomsection\addcontentsline{toc}{section}{B.2 GEX Zero Revision 2}%
 	\label{apx:gex_zero2}%
 }]{schema/GexZeroSchemRev2.pdf}
 
 
-\renewcommand{\leftmark}{Appendix C: Wireless Gateway Schematics, Revision 1}
+\renewcommand{\leftmark}{Appendix C.1: Wireless Gateway Schematics, Revision 1}
 \includepdf[angle=90,pagecommand={%
 	\phantomsection\addcontentsline{toc}{chapter}{C{\enspace}Wireless Gateway Schematics}%
 	\label{apx:gex_wgw}%
