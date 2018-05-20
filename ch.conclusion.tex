@@ -1,3 +1,49 @@
 \chapter{Conclusion}
 
-\todo[inline]{TODO}
+We developed an open source software and hardware platform providing access to low-level hardware buses and circuitry from user applications running on a \gls{PC}. The platform consists of an embedded firmware for the STM32F072 microcontroller, three hardware prototypes (two models of a \gls{GPIO} module, and a wireless gateway), and software libraries in programming languages C and Python. The Python library can be used in MATLAB scripts through the MATLAB/Python integration, or directly in Python, with the SciPy scientific calculations library. The firmware may be used with STM32 Discovery development boards, and can be relatively easily ported to other STM32 \gls{MCU} models.
+
+\noindent
+The following features are available, implemented as independent functional blocks that can be used in one or more instances: 
+
+\begin{itemize}[itemsep=1pt]
+	\item \textbf{Digital input} with asynchronous pin change detection
+	\item \textbf{Digital output} 
+		\begin{itemize}
+			\item Simultaneous update of up to 16 output pins
+			\item Pulse generation on any pin, with microsecond or millisecond resolution
+		\end{itemize}	
+	\item \textbf{Digital communication interfaces:}
+\begin{itemize}
+\item \textbf{\gls{SPI}} with up to 16 slaves and multicast support
+\item \textbf{\gls{I2C}} master
+\item \textbf{\gls{USART}} with optional RS-485 driver support
+\item \textbf{1-Wire} master implementing the \gls{ROM} Search algorithm
+\end{itemize}
+	\item \textbf{Analog signal acquisition}
+		\begin{itemize}
+			\item Immediate or averaged voltage measurement
+			\item Isochronous sampling: fixed sample count, or a continuous stream
+			\item Threshold-based triggering with a pre-trigger buffer
+		\end{itemize}
+	\item \textbf{Analog signal output}
+		\begin{itemize}
+			\item Sine, triangle, sawtooth, or rectangle waveform generation using \gls{DDS}
+			\item \gls{DC} level output
+			\item Optional dithering with a noise signal
+		\end{itemize}
+	\item \textbf{Frequency, pulse width, and duty cycle measurement}
+	\item \textbf{Pulse counting}
+	\item \textbf{\gls{PWM} signal generation}	
+	\item \textbf{NeoPixel RGB \gls{LED} strip control}
+	\item \textbf{Multi-channel shift register loading}
+	\item \textbf{Capacitive touch sensing}
+\end{itemize}
+
+The firmware is configured by editing INI files exposed in a virtual file system through a \gls{USB} connection, or programmatically via the communication interface. The configuration may be stored permanently in the \gls{MCU}'s flash memory, or temporarily in its \gls{RAM}.
+
+The devices are connected to the \gls{PC} by one of three interfaces: \gls{USB} as a virtual COM port or using raw endpoint access, a hardware \gls{UART}, or a radio link with the nRF24L01+ transceiver. While the firmware has not yet been optimized for low power consumption, the wireless connection allows it to be used in battery-powered applications such as mobile robotics, or outdoor data harvesting.
+
+The developed platform is versatile and may be used as an learning tool, as an inexpensive development tool replacing expensive laboratory equipment, or for automatisation purposes, taking advantage of its hardware interfacing capabilities with a control program running on a PC.
+
+Future development shall focus on thorough testing and optimization of all existing features, porting the firmware to other hardware platforms (such as the STM32L073 for battery-based applications), improving the C library, and implementing client libraries in other programming languages, such as Java or \CS.
+
