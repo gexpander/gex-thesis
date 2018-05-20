@@ -1,0 +1,22 @@
+GEX thesis license
+==================
+
+Copyright 2018 (c) Ondřej Hruška <ondra@ondrovo.com>
+
+All original content (text and figures) CC-BY-NC
+  (Creative Commons Attribution Non-Commercial)
+  - reuse permitted with proper citations of the original work
+  - hosting of the original or derived work behind a paywall (e.g. subscription-only journals) is forbidden
+
+Schematics CC-BY-SA 
+  (Creative Commons Attribution Share Alike)
+  per github.com/gexpander/gex-hardware
+
+---
+
+Macros and other LaTeX code may be reused freely.
+
+The original ctuthesis template is governed by the LICENSE file at github.com/tohecz/ctuthesis
+The template was modified, changes can be found using `diff`
+
+END OF FILE.
