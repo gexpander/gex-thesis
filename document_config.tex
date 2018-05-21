@@ -1,21 +1,23 @@
 % extra balíky a jejich nastavení
 
+% this fixes a latex bug with 'not enough writes'
 \usepackage{morewrites}
-\usepackage{calc}
+
+\usepackage{calc} % fixes calculations in width params not working right
 \usepackage{todonotes} % todos
 \usepackage{blindtext} % lorem
-\usepackage{csquotes}  % quotes
-\usepackage{wrapfig}
+\usepackage{csquotes}  % some macros for nice quotes or whatever
+\usepackage{wrapfig} % figs floating next to text
 
 \usepackage{svg}
 \svgpath{img/}
 
 \usepackage[all]{nowidow} % fix for orphaned lines of text
 \usepackage{fancyvrb}
-\usepackage{siunitx}
+\usepackage{siunitx} % this was not used, but should have been
 \usepackage{sectsty}
 \usepackage{titlecaps}
-\usepackage{cprotect}
+\usepackage{cprotect} % this is for some hacks with math in caption or whatever
 \usepackage{framed}
 \usepackage{subcaption}
 
@@ -24,10 +26,10 @@
 \usepackage{longtable}
 \usepackage{tabu} % longtabu
 
-\usepackage{pmboxdraw}
+\usepackage{pmboxdraw} % ???
 
 \usepackage{xcolor}
-\definecolor{RubineRed}{HTML}{C30067}
+\definecolor{RubineRed}{HTML}{C30067} % used in command tables bc it's pretty
 
 \usepackage{flafter} % ensures embeds won't go before their references
 \usepackage{enumitem} % better list spacing
@@ -37,6 +39,7 @@
 \usepackage{tabto} % tabs, but kinda buggy
 \usepackage{ragged2e} % this was supposed to improve text alignment
 
+% typesetting C# lol
 \newcommand{\CS}{C\nolinebreak\hspace{-.05em}\raisebox{.4ex}{\scriptsize\bf \#}}
 
 % some symbols. skip integrals because asmmath also defines them and is loaded by the thesis class
@@ -110,7 +113,7 @@
 }
 
 
-
+% this moves table captions above the float, which is apparently The Way to Do It
 \usepackage{float}
 \floatstyle{plaintop}
 \restylefloat{table}

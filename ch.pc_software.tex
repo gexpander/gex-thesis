@@ -49,27 +49,27 @@ An example Python program displaying a test pattern on a \gls{LED} matrix using 
 
 \begin{listing}[h]
 	\begin{pythoncode}
-		#!/bin/env python3
-		# The I2C unit, called 'i2c', is configured to use PB6 and PB7
-		import gex
-		with gex.Client(gex.TrxRawUSB()) as client:
-		bus = gex.I2C(client, 'i2c')
-		addr = 0x61
-		bus.write_reg(addr, 0x00, 0b00011000) # dual matrix
-		bus.write_reg(addr, 0x0D, 0b00001110) # 34 mA
-		bus.write_reg(addr, 0x19, 64) # set brightness
-		# matrix 1
-		bus.write_reg(addr, 0x01, [
-		0xAA, 0x55, 0xAA, 0x55,
-		0xAA, 0x55, 0xAA, 0x55
-		])
-		# matrix 2
-		bus.write_reg(addr, 0x0E, [
-		0xFF, 0x00, 0xFF, 0x00,
-		0xFF, 0x00, 0xFF, 0x00
-		])
-		# update display
-		bus.write_reg(addr, 0x0C, 0x01)
+#!/bin/env python3
+# The I2C unit, called 'i2c', is configured to use PB6 and PB7
+import gex
+with gex.Client(gex.TrxRawUSB()) as client:
+    bus = gex.I2C(client, 'i2c')
+    addr = 0x61
+    bus.write_reg(addr, 0x00, 0b00011000) # dual matrix
+    bus.write_reg(addr, 0x0D, 0b00001110) # 34 mA
+    bus.write_reg(addr, 0x19, 64) # set brightness
+    # matrix 1
+    bus.write_reg(addr, 0x01, [
+        0xAA, 0x55, 0xAA, 0x55,
+        0xAA, 0x55, 0xAA, 0x55
+    ])
+    # matrix 2
+    bus.write_reg(addr, 0x0E, [
+        0xFF, 0x00, 0xFF, 0x00,
+        0xFF, 0x00, 0xFF, 0x00
+    ])
+    # update display
+    bus.write_reg(addr, 0x0C, 0x01)
 	\end{pythoncode}
 	\caption{\label{lst:py_api} An example Python program using the GEX client library}
 \end{listing}
@@ -98,8 +98,7 @@ The example in \cref{lst:matlab_api} demonstrates the use of MATLAB to calculate
 	client = py.gex.Client(trx);
 	adc = py.gex.ADC(client, 'adc');
 	
-	L = 1000;
-	Fs = 1000;
+	L = 1000; Fs = 1000;
 	adc.set_sample_rate(uint32(Fs)); % casting to unsigned integer
 	data = adc.capture(uint32(L));
 	data = double(py.array.array('f',data)); % numpy array to matlab format
@@ -135,13 +134,11 @@ This low-level library is intended for applications where the performance of the
 	    GexClient *gex = GEX_Init("/dev/ttyACM0", 200);
 	    assert(NULL != gex);        
 	    GexUnit *bus = GEX_GetUnit(gex, "i2c", "I2C");
-	    assert(NULL != bus);
-	    	    
+	    assert(NULL != bus);	    	    
 	    // Configure the matrix driver
 	    GEX_Send(bus, 2, (uint8_t*) "\x61\x00\x00\x18", 4);
 	    GEX_Send(bus, 2, (uint8_t*) "\x61\x00\x0d\x0e", 4);
-	    GEX_Send(bus, 2, (uint8_t*) "\x61\x00\x19\x40", 4);
-	    
+	    GEX_Send(bus, 2, (uint8_t*) "\x61\x00\x19\x40", 4);	    
 	    // Load data
 	    GEX_Send(bus, 2, (uint8_t*) "\x61\x00\x01"
 	                                "\xAA\x55\xAA\x55\xAA\x55\xAA\x55", 11);
@@ -185,6 +182,7 @@ This low-level library is intended for applications where the performance of the
 
 The structure-based method utilizes C structs to access individual fields in the payload. Simple payloads can be represented by a struct without problems, but payloads of a dynamic length pose a challenge; we can either define a new struct for each required length, or, when the variable-length array is located at the end of the payload, a struct with the largest needed payload size is defined and the real length is then specified when sending the message. The latter approach is illustrated in \cref{lst:c_api_struct}.
 
+\vfill\newpage
 \subsection{Using the Payload Builder Utility}
 
 \begin{listing}

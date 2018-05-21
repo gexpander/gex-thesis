@@ -1,8 +1,8 @@
 \chapter{Conclusion}
 
-We have developed an open-source software and hardware platform providing access to \gls{GPIO} pins, hardware buses, and signal acquisition and generation functions controlled by high-level user applications running on a \gls{PC}. 
+We have developed an open-source software and hardware platform providing high-level user applications running on a \gls{PC} with access to \gls{GPIO} pins, hardware buses, and signal acquisition and generation functions.
 
-The platform consists of a FreeRTOS-based firmware for the STM32F072 microcontroller, three prototype hardware modules, and support software libraries in programming languages C and Python, the latter also compatible with MATLAB. The firmware may be used with the custom hardware, or with existing STM32 development boards.
+The platform consists of a FreeRTOS-based firmware for the STM32F072 microcontroller, custom hardware modules, and support software libraries for programming languages C and Python, the latter also compatible with MATLAB. The firmware may be used with the custom hardware, or with existing STM32 development boards.
 
 The devices are connected to the \gls{PC} by one of three interfaces: \gls{USB} as a virtual COM port or with raw endpoint access, a hardware \gls{UART}, or a radio link with the nRF24L01+ transceiver. Configuration is performed by editing INI files exposed in an emulated FAT16 file system through the \gls{USB} connection, or programmatically.
 

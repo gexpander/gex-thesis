@@ -1,6 +1,6 @@
 \chapter{Discussion}
 
-The objective of this work was to develop an extensible platform allowing the user to interact with hardware modules and circuitry from high-level applications running on their \gls{PC}, or, to rephrase it, to ``bring the Raspberry Pi GPIO header to the \gls{PC}''. It was important to design the platform in such a way that a user without much experience with embedded electronics and low level circuitry could still use it with a reasonable level of comfort and confidence.
+The objective of this work was to develop an extensible platform allowing the user to interact with hardware modules and circuitry from high-level applications running on their \gls{PC}, in other words, to ``bring the Raspberry Pi GPIO header to the \gls{PC}''. It was important to design the platform in such a way that a user without much experience with embedded electronics and low level circuitry could still use it with a reasonable level of comfort and confidence.
 
 \section{Solution Summary}
 
@@ -12,7 +12,7 @@ The initial version of the project presented in this paper provides access to di
 
 We developed a transaction-based binary protocol that is used by all three communication interfaces. As the implementation of the protocol would be an inconvenience for the user, we also developed software libraries in languages C and Python that implement it and provide high level access to the hardware module. It has been tested and verified that the Python library can be used from MATLAB scripts, should the user need MATLAB, e.g., for data processing or visualization.
 
-To make the devices easy to reconfigure for the user, the configuration options---such as, which features to enable and what pins to use for them---are represented by entries in INI configuration files. The user can access these files through a virtual mass storage with an emulated FAT16 file system presented to the host \gls{PC} on the \gls{USB} port. Because the file system emulation relies on a certain pattern of behavior from the host, it may not work well in all cases. This is mitigated by providing a programmatic access to the configuration files also through the communication interface. 
+To make the devices easy to reconfigure for the user, the configuration options---such as, which features to enable and what pins to use for them---are represented by entries in INI configuration files. The user can access these files through a virtual mass storage with an emulated FAT16 file system presented to the host \gls{PC} on the \gls{USB} port. Because the file system emulation relies on a certain pattern of behavior from the host, it may not work well in all cases. This is mitigated by making the files accessible also through the communication interface.
 
 \section{Results and Possible Applications}
 
@@ -46,7 +46,7 @@ Future development of the project might focus on expanding the number of support
 
 The client libraries need to be tested on other operating systems, and the C library may be expanded to provide a higher level of comfort to the user. The library could be ported to more programming languages, such as Java or \CS, and graphical applications could be developed to make the device more approachable to users less familiar with programming.
 
-GEX Zero, with the Raspberry Pi Zero form factor, introduced the possibility of using Raspberry Pi add-on boards. It would be interesting to test the compatibility with more such existing boards, and further to explore the possibility of designing custom ones. An add-on board could, for instance, provide access to the \gls{DALI} bus, RS-485, \gls{CAN}, or Ethernet.
+GEX Zero, with the Raspberry Pi Zero form factor, introduced the possibility of using Raspberry Pi add-on boards. It would be interesting to test the compatibility with more such existing boards, and further to explore the possibility of designing custom ones. An add-on board could, for instance, add access to the \gls{DALI} bus, RS-485, \gls{CAN}, or Ethernet.
 
 
 

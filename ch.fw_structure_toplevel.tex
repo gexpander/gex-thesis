@@ -58,9 +58,9 @@ The \gls{USB} connection is always enabled first on start-up. GEX waits its for 
 
 GEX is a platform providing access to low-level hardware to high-level applications. However, this ``high level'' is relative. As was shown in \cref{fig:conceptual}, the ``GEX stack'' ends with a \textit{client library}, a software library used by the \textit{user application}.
 
-The communication protocol (one level lower in the diagram) is robust and well defined, making it possible to implement alternative client libraries in other programming languages, or for yet-unsupported platforms. This protocol is explained in \cref{sec:tinyframe}. The client library implements the communication protocol and gives the user application access to GEX units via \textit{unit handles}. 
+The communication protocol (one level lower in the diagram), which will be explained in \cref{sec:tinyframe}, may be implemented as part of the client library in any programming language and on any platform; in theory, it is even possible to control GEX from another microcontroller. The client library implements, besides the protocol itself, other higher-level logic, and gives the user access to individual units using an abstraction called \textit{unit handles}.
 
-Any logic above the client library is in the hands of the user, which means that, to use GEX, they have to program a user application. Software libraries in languages C and Python are provided, and will be explained in \cref{sec:clientsw}. The Python library is easy to use even for beginner programmers, though we have to acknowledge that some users might not be familiar with programming at all. Making GEX more accessible to those users, e.g., through a graphical desktop application, is an appealing idea that is certainly worth pursuing in later work.
+Any logic above the client library is in the hands of the user, which means that, to use GEX, they have to program a user application. Proof-of-concept client libraries in languages C and Python are provided for this purpose, and will be explained in \cref{sec:clientsw}.
 
 \section{Device Configuration}
 
