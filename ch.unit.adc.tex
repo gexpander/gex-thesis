@@ -15,7 +15,7 @@ It is possible to activate any number of the 16 analog inputs of the \gls{ADC} p
 \begin{figure}[h]
 	\centering
 	\includegraphics[scale=1]{img/adc-dma-buf.pdf}
-	\caption{\label{fig:adc_dma}Principle of DMA-based ADC sampling. The buffer is continually filled with new samples; when the triggering condition is hit, the historical records from the buffer are sent as a pre-trigger buffer, and a block capture begins. The following samples are sent to the host when either half of the buffer is filled, or the required number of samples have been sent. The sampling never stops, ensuring a pre-trigger buffer is always ready.}
+	\caption[Principle of DMA-based ADC sampling]{\label{fig:adc_dma}Principle of DMA-based ADC sampling. The buffer is continually filled with new samples; when the triggering condition is hit, the historical records from the buffer are sent as a pre-trigger buffer, and a block capture begins. The following samples are sent to the host when either half of the buffer is filled, or the required number of samples have been sent. The sampling never stops, ensuring a pre-trigger buffer is always ready.}
 \end{figure}
 
 \subsection{ADC Configuration}
