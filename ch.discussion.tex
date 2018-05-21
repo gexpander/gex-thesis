@@ -1,3 +1,54 @@
 \chapter{Discussion}
 
-\todo[inline]{TODO}
+The objective of this work was to develop an extensible platform allowing the user to interact with hardware modules and circuitry from high-level applications running on their \gls{PC}, or, to rephrase it, to ``bring the Raspberry Pi GPIO header to the \gls{PC}''. It was important to design the platform in such a way that a user without much experience with embedded electronics and low level circuitry could still use it with a reasonable level of comfort and confidence.
+
+\section{Solution Summary}
+
+We based the \textit{GEX} platform around STM32 microcontrollers from ST Microelectronics and developed the initial version for the STM32F072. This \gls{MCU} was chosen for its native \gls{USB} Full Speed support, its interesting set of peripheral blocks, and because it is a relatively recent model in the STM32F series, expecting it to be mature and without major flaws. A wireless connection was planned together with \gls{USB} and hardware \gls{UART}, for which we chose the nRF24L01+ transceiver from Nordic Semiconductor.
+
+In total, three custom hardware modules have been developed and realized for the project: GEX Hub, GEX Zero, and the wireless gateway. GEX Hub verified the designed schematic and general functionality of the module, after first testing the firmware on a STM32 Discovery development board. GEX Zero is more advanced and compact than GEX Hub, also offering wireless connectivity for field experiments; we re-used the form factor of the Raspberry Pi Zero for this board, which makes it compatible with many existing enclosures and add-on boards. In addition to custom hardware, the GEX firmware may be used with STM32 development boards (``STM32F072B-DISCO'').
+
+The initial version of the project presented in this paper provides access to digital communications interfaces \gls{SPI}, \gls{I2C}, \gls{USART}, and 1-Wire, is capable of loading data into NeoPixel RGB \gls{LED} strips and \gls{SIPO} shift registers, and implements additional measurement and signal generation features---analog signal acquisition, waveform generation, frequency, phase, and duty cycle measurement, and \gls{PWM} output.
+
+We developed a transaction-based binary protocol that is used by all three communication interfaces. As the implementation of the protocol would be an inconvenience for the user, we also developed software libraries in languages C and Python that implement it and provide high level access to the hardware module. It has been tested and verified that the Python library can be used from MATLAB scripts, should the user need MATLAB, e.g., for data processing or visualization.
+
+To make the devices easy to reconfigure for the user, the configuration options--- such as, which features to enable and what pins to use for them---are represented by entries in INI configuration files. The user can access these files through a virtual mass storage with an emulated FAT16 file system presented to the host \gls{PC} on the \gls{USB} port. Because the file system emulation relies on a certain pattern of behavior from the host, it may not work well in all cases. This is mitigated by providing a programmatic access to the configuration files also through the communication interface. 
+
+\section{Results and Possible Applications}
+
+The designed device, and the accompanying software stack, make a practical tool for the research and development in the field of embedded electronics, and may be used as a learning aid to demonstrate the timings and format of the various supported hardware buses. The inclusion of analog signal acquisition and generation features makes it possible to measure the analog characteristics of electronic components, or acquire data from physical phenomena. 
+
+The use in automation offers itself thanks to the programmatic control from high level programming languages on the \gls{PC}; this has an advantage over programming the embedded firmware itself in that the user can focus on the behavior of the device they are developing, rather than having to deal with low level implementation details, such as memory management, or interrupt priority configuration.
+
+As the GEX platform is open source~\cite{gex-gh}, our solution may be freely expanded and adapted to support other hardware platforms, to add new features, or to further optimize its performance. The platform is modular and may be extended by adding new, independent functional blocks.
+
+\section{Comparison with Existing Solutions}
+
+The integration of the \gls{PC} with low-level hardware is an appealing idea that has already been explored in several alternative solutions, which we listed in \cref{sec:prior_art}. It is our belief that the project offers enough unique features and qualities to find its place among the competition.
+
+Compared to the Raspberry Pi, GEX is less powerful and cannot be used as a stand-alone device without the host \gls{PC}. However, it is more straightforward to use, the required configuration is minimal, and it offers features not available in the Raspberry Pi, such as the \gls{ADC} and \gls{DAC}.
+
+The Bus Pirate excels as a bus analyzer and general purpose device and implements features we did not explore in this project, while having much fewer \gls{GPIO} pins, a lower resolution of the \gls{ADC}, and completely missing a \gls{DAC}. The two projects serve a slightly different purposes and appear to be complementary.
+
+It is clear that GEX does not pose a real threat to professional tools in terms of performance, but even at the prototype cost it is significantly more affordable. By integrating many diverse features, it can replace several such tools at once when its performance is sufficient for the particular application. 
+
+\section{Limitations}
+
+Our solution was designed with the expectation that the users are familiar with programming and the requirement to develop a control script or application will not pose a problem. However, is not universally true and some users who might benefit from the platform will be left unable to use it without a more user-friendly interface.
+
+The STM32F072 microcontroller proved sufficient for the verification of the designed architecture, and in most cases provides a sufficient performance. Future expansion of the project is, unfortunately, limited by its flash and \gls{RAM} capacity, which are already used at about 85\,\%, based on the size of the binary image and the amount of allocated memory. Further, the STM32F072 has a Cortex-M0 core without any hardware support for floating point arithmetics, making any calculations with those numbers slow and requiring additional library functions, further increasing the firmware image size. Its power consumption has not yet been measured or optimized, but the inclusion of a wireless connection capability predisposes the device to be used in battery-powered applications; the microcontroller choice and the power supply design may need to be revised for efficient battery operation.
+
+Another limitation concerns the support software; our client libraries have not been tested on MS Windows, with Linux being the development platform. The C library uses POSIX \gls{API} and is not portable to the non-conforming \gls{OS}. The Python library should work on MS Windows, provided libUSB is installed correctly. Further, on MS Windows prior to version 10, the virtual COM port functionality requires the ``STM32 Virtual COM port driver'' to be manually installed and assigned in the Device Manager. 
+
+\section{Future Development}
+
+Future development of the project might focus on expanding the number of supported hardware platforms, in order to overcome the limitations of the used microcontroller model. In particular the STM32L series of low-power devices should be investigated, as it may be a better choice when a battery-based operation is needed. The hardware implementation should further be revised to maximize power efficiency.
+
+The client libraries need to be tested on other operating systems, and the C library may be expanded to provide a higher level of comfort to the user. The library could be ported to more programming languages, such as Java or \CS, and graphical applications could be developed to make the device more approachable to users less familiar with programming.
+
+GEX Zero, with the Raspberry Pi Zero form factor, introduced the possibility of using Raspberry Pi add-on boards. It would be interesting to test the compatibility with different existing add-ons, and further to explore the possibility of designing custom ones. An add-on board could, for instance, implement the support circuitry needed for the \gls{DALI} bus, RS-485, or for current loop sensors. The \gls{CAN} bus has not been added to GEX because the hardware peripheral cannot be enabled at the same time as \gls{USB}; its addition with an add-on board, or a different microcontroller model, is an interesting possibility.
+
+
+
+
+
