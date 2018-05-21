@@ -4,7 +4,7 @@ This chapter presents several applications of GEX. Those examples are the result
 
 \section{Frequency Response Measurement}
 
-The frequency response of a filter may be measured with a combination of the ADC and DAC units. The DAC is configured to generate a sine wave as a stimulus for the filter, while the ADC captures the output waveform. By varying the generated frequency and measuring the amplitude, we obtain a frequency response of the filter. If we measured both the input and output, we could calculate the phase shift and produce a real Bode diagram.
+The frequency response of a filter may be measured with a combination of the \gls{ADC} and \gls{DAC} units. The \gls{DAC} is configured to generate a sine wave as a stimulus for the filter, while the \gls{ADC} captures the output waveform. By varying the generated frequency and measuring the amplitude, we obtain a frequency response of the filter. If we measured both the input and output, we could calculate the phase shift and produce a real Bode diagram.
 
 \cref{fig:demofilter} depicts a simple test setup with a passive RC filter; its characteristics in the low-pass and high-pass configuration, as obtained with GEX, are shown in \cref{fig:demofilter_cap}.
 
@@ -32,7 +32,7 @@ The frequency response of a filter may be measured with a combination of the ADC
 \section{Measuring \texorpdfstring{CO$_2$}{CO2} Concentration}
 
 The \gls{NDIR} CO$_2$ sensor MH-Z19B provides both a \gls{UART} interface, and a pulse-width modulated signal with a duty cycle proportional to the CO$_2$ concentration. 
-We used it to verify the duty cycle measurement functionality of the frequency capture unit, and also tested the \gls{USART} unit with the digital interface. The measured concentration was displayed using the SIPO unit on a 74HC595-drive red-green LED bargraph (\cref{fig:democo2}).
+We used it to verify the duty cycle measurement functionality of the frequency capture unit, and also tested the \gls{USART} unit with the digital interface. The measured concentration was displayed using the \gls{SIPO} unit on a 74HC595-drive red-green \gls{LED} bargraph (\cref{fig:democo2}).
 
 \begin{figure}[H]
 	\centering
@@ -55,7 +55,7 @@ The ``Micro Dot pHAT'' add-on board was used to test GEX Zero's compatibility wi
 
 \section{Capturing Transient Effects}
 
-The ADC unit supports level-based triggering. This was tested first by capturing the charging waveform of a capacitor (\cref{fig:captransient}). As the triggering voltage had to be placed above the noise floor, the triggering condition occurred when a part of the waveform already passed. This was solved by using the pre-trigger feature to include past records at the beginning of the capture.
+The \gls{ADC} unit supports level-based triggering. This was tested first by capturing the charging waveform of a capacitor (\cref{fig:captransient}). As the triggering voltage had to be placed above the noise floor, the triggering condition occurred when a part of the waveform already passed. This was solved by using the pre-trigger feature to include past records at the beginning of the capture.
 
 A more interesting application of level triggering was discovered by accident during a thunderstorm, when the electromagnetic interference from a (remote) lightning strike caused a voltage spike to appear on an oscilloscope probe. Investigating the phenomenon, we devised a simple ``lightning trap'' circuit (\cref{fig:lightningtrap}). The resistor forms a discharge path for the capacitor, which acts as a high-pass filter of sorts. The voltage on the \gls{ADC} input remains at about half of the operating range, and lightning strikes produce bursts of voltage spikes which we can trigger on and record.
 
@@ -64,7 +64,7 @@ This method of lightning detection should be regarded as a mere curiosity withou
 \begin{figure}[h]
 \centering
 \includegraphics[width=\textwidth]{img/transient.pdf}
-\caption{Capacitor charging waveform captured by the ADC unit, 50\,kS/s. X: sample number, Y: ADC word. X grid: 200\,$\mu$s.}
+\caption[Capacitor charging waveform captured by the ADC unit]{Capacitor charging waveform captured by the ADC unit, 50\,kS/s. X: sample number, Y: ADC word. X grid: 200\,$\mu$s.}
 \label{fig:captransient}
 \end{figure}
 
@@ -89,7 +89,7 @@ This method of lightning detection should be regarded as a mere curiosity withou
 	\begin{subfigure}{.5\textwidth}
 	\includegraphics[width=\textwidth]{img/strike4}
 	\end{subfigure}
-	\caption{Lightning strike-generated bursts of energy captured by the ADC unit. Note the X-axis value 500 where the bursts start: that was the configured pre-trigger length}
+	\caption[Captured lightning strikes]{Lightning strike-generated bursts of energy captured by the ADC unit. Note the X-axis value 500 where the bursts start: that was the configured pre-trigger length}
 	\label{fig:strikes}
 \end{figure}
 
