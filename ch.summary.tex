@@ -1,27 +1,23 @@
-\chapter{Summary}
+\chapter{Conclusion}
 
-We developed an open source software and hardware platform providing access to hardware buses (SPI, \IIC, USART, and 1-Wire) and low-level circuitry from high-level user applications running on a \gls{PC}. The platform consists of a firmware for the STM32F072 microcontroller, three hardware prototypes, and software libraries in programming languages C and Python, the latter also compatible with MATLAB. The firmware may be used with the custom hardware or STM32 development boards.
+We have developed an open-source software and hardware platform providing access to \gls{GPIO} pins, hardware buses, and signal acquisition and generation functions controlled by high-level user applications running on a \gls{PC}. 
 
-The devices are connected to the \gls{PC} by one of three interfaces: \gls{USB} as a virtual COM port or using raw endpoint access, a hardware \gls{UART}, or a radio link with the nRF24L01+ transceiver.
+The platform consists of a FreeRTOS-based firmware for the STM32F072 microcontroller, three prototype hardware modules, and support software libraries in programming languages C and Python, the latter also compatible with MATLAB. The firmware may be used with the custom hardware, or with existing STM32 development boards.
 
-The firmware is configured by editing INI files exposed in a virtual file system through a \gls{USB} connection, or programmatically via the communication interface. The configuration may be stored permanently in the \gls{MCU}'s flash memory, or temporarily in its \gls{RAM}.
+The devices are connected to the \gls{PC} by one of three interfaces: \gls{USB} as a virtual COM port or with raw endpoint access, a hardware \gls{UART}, or a radio link with the nRF24L01+ transceiver. Configuration is performed by editing INI files exposed in an emulated FAT16 file system through the \gls{USB} connection, or programmatically.
 
 \noindent
-The following features are available, implemented as independent functional blocks that can be used in one or more instances: 
+The following features are available, implemented as independent functional blocks that can be enabled in any combination:
 
 \begin{itemize}[itemsep=1pt]
 	\item \textbf{Digital input} with asynchronous pin change detection
-	\item \textbf{Digital output} 
-		\begin{itemize}
-			\item Simultaneous update of up to 16 output pins
-			\item Pulse generation on any pin, with microsecond or millisecond resolution
-		\end{itemize}	
+	\item \textbf{Digital output} with pulse generation support
 	\item \textbf{Digital communication interfaces:}
 \begin{itemize}
 \item \textbf{\gls{SPI}} with up to 16 slaves and multicast support
 \item \textbf{\gls{I2C}} master
 \item \textbf{\gls{USART}} with optional RS-485 driver support
-\item \textbf{1-Wire} master implementing the \gls{ROM} Search algorithm
+\item \textbf{1-Wire} master, implementing the \gls{ROM} Search algorithm
 \end{itemize}
 	\item \textbf{Analog signal acquisition}
 		\begin{itemize}
@@ -29,20 +25,19 @@ The following features are available, implemented as independent functional bloc
 			\item Isochronous sampling: fixed sample count, or a continuous stream
 			\item Threshold-based triggering with a pre-trigger buffer
 		\end{itemize}
-	\item \textbf{Analog signal output}
+	\item \textbf{Analog signal generation}
 		\begin{itemize}
 			\item Sine, triangle, sawtooth, or rectangle waveform generation using \gls{DDS}
 			\item \gls{DC} level output
-			\item Optional dithering with a noise signal
 		\end{itemize}
-	\item \textbf{Frequency, pulse width, and duty cycle measurement}
-	\item \textbf{Pulse counting}
-	\item \textbf{\gls{PWM} signal generation}	
 	\item \textbf{NeoPixel RGB \gls{LED} strip control}
-	\item \textbf{Multi-channel shift register loading}
-	\item \textbf{Capacitive touch sensing}
+\item \textbf{Frequency, pulse width, and duty cycle measurement}
+\item \textbf{Pulse counting}
+\item \textbf{\gls{PWM} signal generation}	
+\item \textbf{Multi-channel shift register loading}
+\item \textbf{Capacitive touch sensing}
 \end{itemize}
 
-The developed platform may be used as an learning aid, as an inexpensive development tool replacing professional laboratory equipment, or for automation purposes, taking advantage of its hardware interfacing capabilities with a control program running on a PC.
+The developed platform may be used as an learning aid, as an inexpensive development tool replacing professional laboratory equipment, or for automation purposes, taking advantage of its hardware interfacing capabilities to connect to multiple sensors and actuators.
 
-Future development shall focus on expanding support to other hardware platforms, improving the software library, and adding support to other programming languages.
+Future development may focus on expanding support to other \gls{MCU} models, adding new features, improving the software libraries, and providing a more user-friendly control interface.
