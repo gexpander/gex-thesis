@@ -13,25 +13,31 @@ Several of the features implemented in this unit would require floating point ar
 
 Period (in seconds) is computed as:
 
-\[
+\begin{equation}
 	T = \dfrac{\mathrm{period\_sum}}{f_\mathrm{core,MHz} \cdot 10^6 \cdot \mathrm{n\_periods}}
-\]
+\end{equation}
 
 \noindent
-The frequency is obtained by simply inverting it: \[f=T^{-1}\]
+The frequency is obtained by simply inverting it:
+
+\begin{equation}
+f=T^{-1}
+\end{equation}
 
 The average duty cycle is computed as the ratio of the sum of active-level pulses and the sum of all periods:
 
-\[\mathrm{average\_duty} = \dfrac{\mathrm{ontime\_sum}}{\mathrm{period\_sum}}\]
+\begin{equation}
+\mathrm{average\_duty} = \dfrac{\mathrm{ontime\_sum}}{\mathrm{period\_sum}}
+\end{equation}
 
 \subsubsection{Direct Measurement}
 
 The frequency can be derived from the pulse count and measurement time using its definition ($t_\mathrm{ms}$ is measurement time in milliseconds):
 
-\[f = \dfrac{1000\cdot\mathrm{count}\cdot\mathrm{prescaller}}
-{t_\mathrm{ms}}\]
-
-
+\begin{equation}
+f = \dfrac{1000\cdot\mathrm{count}\cdot\mathrm{prescaller}}
+{t_\mathrm{ms}}
+\end{equation}
 
 \subsection{Frequency Capture Configuration}
 
