@@ -53,15 +53,21 @@ The Boot jumper was meant to be closed during normal operation, to avoid it gett
 
 A restart is required, in all cases, for the boot jumper changes to take effect. Revision 2 adds a flat reset button on the back side of the board for this purpose, making the firmware update process more straightforward.
 
-\section{GEX Zero}\label{sec:gzero}
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=.9\textwidth]{img/photo-zero-pi-compare.jpg}
+	\caption[GEX Zero compared to Raspberry Pi Zero]{\label{fig:zpicompare}Comparison of Raspberry Pi Zero (top) with GEZ Zero (bottom), before soldering the header, buttons, and the wireless module.}
+\end{figure}
 
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=.85\textwidth]{img/photo-zero-picase.jpg} \\
 	\vspace{1mm}
 	\includegraphics[width=.85\textwidth]{img/photo-zero-transparent.jpg}
-	\caption[The GEX Zero module]{\label{fig:gexzcases}GEX Zero in the official Raspberry Pi Zero case and an aftermarket acrylic case}
+	\caption[The GEX Zero module]{\label{fig:gexzcases}GEX Zero in the official Raspberry Pi Zero case, and an aftermarket acrylic case. The acrylic case is a better choice, as the button and the side connector are easier accessible, and the pin-out diagram on the back side of the board can be read without removing it.}
 \end{figure}
+
+\section{GEX Zero}\label{sec:gzero}
 
 Our desire to re-use the form factor of the Raspberry Pi (RPi) Zero to exploit the existing accessory market has been mentioned already in \cref{sec:formfactors}. It was brought to fruition with GEX Zero, the second realized GEX prototype (\cref{fig:gexzcases}). Its design involved several challenges given by constraints imposed by this form factor:
 
@@ -322,7 +328,7 @@ Unfortunately, neither the GEX Zero \gls{PCB} was flawless in the first revision
 
 \section{Wireless Gateway} \label{sec:rfgateway}
 
-The wireless gateway was designed as a ``\gls{USB} dongle'', using the \gls{USB} type A connector (\cref{fig:gwxgw}). It is fitted with an STM32F103 microcontroller, selected for its low cost and availability in small packages (in this case LQFP48). The nRF24L01+ module is partly sticking outside the board outline, allowing the \gls{PCB} to be smaller (and thus cheaper to manufacture), while reducing interference between components and copper plating on the board and the antenna. The schematic diagram of the wireless gateway is attached in \hyperref[apx:gex_wgw]{Appendix C}.
+The wireless gateway was designed as a ``\gls{USB} dongle'', using the \gls{USB} type A connector (\cref{fig:gwxgw}). It is fitted with an STM32F103 microcontroller, selected for its low cost and availability in small packages (in this case LQFP48)\footnote{ Ironically, the STM32F103 is more powerful than the \gls{MCU} used in GEX Zero and GEX Hub. Porting GEX to this platform is planned for future development.}. The nRF24L01+ module is partly sticking outside the board outline, allowing the \gls{PCB} to be smaller (and thus cheaper to manufacture), while reducing interference between components and copper plating on the board and the antenna. The schematic diagram of the wireless gateway is attached in \hyperref[apx:gex_wgw]{Appendix C}.
 
 Beyond the use with GEX, the gateway is a versatile tool which could be programmed with a different firmware and serve other purposes, e.g., as a wireless connection between two computers, to scan the radio spectrum for interference in order to find a clear channel, or to communicate with other devices that use the nRF24L01+ transceiver. The chosen microcontroller, unfortunately, does not include a USB bootloader, so a SWD programmer is required to change the firmware; SWD is routed to the pin header next to the wireless module.
 

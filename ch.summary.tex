@@ -1,43 +1,11 @@
 \chapter{Conclusion}
 
-We have developed an open-source software and hardware platform providing high-level user applications running on a \gls{PC} with access to \gls{GPIO} pins, hardware buses, and signal acquisition and generation functions.
+We have developed an open-source software and hardware platform providing high-level user applications running on a \gls{PC} with access to \gls{GPIO} pins, common hardware buses, and signal acquisition and generation functions.
 
-The platform consists of a FreeRTOS-based firmware for the STM32F072 microcontroller, custom hardware modules, and support software libraries for programming languages C and Python, the latter also compatible with MATLAB. The firmware may be used with the custom hardware, or with existing STM32 development boards.
+The platform consists of a FreeRTOS-based firmware for the STM32F072 microcontroller, custom hardware module designs (including realized prototypes), and support software libraries for programming languages C and Python, the latter also compatible with MATLAB. The firmware may be used with the custom hardware, or with existing STM32 development boards.
 
 The devices are connected to the \gls{PC} by one of three interfaces: \gls{USB} as a virtual COM port or with raw endpoint access, a hardware \gls{UART}, or a radio link with the nRF24L01+ transceiver. Configuration is performed by editing INI files exposed in an emulated FAT16 file system through the \gls{USB} connection, or programmatically.
 
-\noindent
-The following features are available, implemented as independent functional blocks that can be enabled in any combination:
+The developed platform can be used as an learning aid, as an inexpensive development tool replacing professional laboratory equipment, or for automation purposes, taking advantage of its hardware interfacing capabilities to connect to multiple sensors and actuators.
 
-\begin{itemize}[itemsep=1pt]
-	\item \textbf{Digital input} with asynchronous pin change detection
-	\item \textbf{Digital output} with pulse generation support
-	\item \textbf{Digital communication interfaces:}
-\begin{itemize}
-\item \textbf{\gls{SPI}} with up to 16 slaves and multicast support
-\item \textbf{\gls{I2C}} master
-\item \textbf{\gls{USART}} with optional RS-485 driver support
-\item \textbf{1-Wire} master, implementing the \gls{ROM} Search algorithm
-\end{itemize}
-	\item \textbf{Analog signal acquisition}
-		\begin{itemize}
-			\item Immediate or averaged voltage measurement
-			\item Isochronous sampling: fixed sample count, or a continuous stream
-			\item Threshold-based triggering with a pre-trigger buffer
-		\end{itemize}
-	\item \textbf{Analog signal generation}
-		\begin{itemize}
-			\item Sine, triangle, sawtooth, or rectangle waveform generation using \gls{DDS}
-			\item \gls{DC} level output
-		\end{itemize}
-	\item \textbf{NeoPixel RGB \gls{LED} strip control}
-\item \textbf{Frequency, pulse width, and duty cycle measurement}
-\item \textbf{Pulse counting}
-\item \textbf{\gls{PWM} signal generation}	
-\item \textbf{Multi-channel shift register loading}
-\item \textbf{Capacitive touch sensing}
-\end{itemize}
-
-The developed platform may be used as an learning aid, as an inexpensive development tool replacing professional laboratory equipment, or for automation purposes, taking advantage of its hardware interfacing capabilities to connect to multiple sensors and actuators.
-
-Future development may focus on expanding support to other \gls{MCU} models, adding new features, improving the software libraries, and providing a more user-friendly control interface.
+Future development should focus on expanding support to other \gls{MCU} models, adding new features, improving the software libraries, and providing a more user-friendly control interface.
