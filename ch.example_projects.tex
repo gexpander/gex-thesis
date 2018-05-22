@@ -1,19 +1,20 @@
 \chapter{Example Applications}
 
-This chapter presents several applications of GEX. Those examples are the result of testing during the firmware development, and do not cover the full range of features, but should give the reader some idea about the possibilities.
+This chapter presents several applications of GEX. Those examples are the result of evaluation during the firmware development and do not cover the full range of supported features; nonetheless, they should give the reader a good idea about the possibilities.
 
 \section{Frequency Response Measurement}
 
+\begin{wrapfigure}[16]{r}{0.42\textwidth}
+	\vspace{-1em}
+	\centering
+	\includegraphics[width=\linewidth]{img/demofilter.jpg}
+		\caption{GEX Zero measuring a passive high-pass RC filter}
+		\label{fig:demofilter}
+\end{wrapfigure}
+
 The frequency response of a filter may be measured with a combination of the \gls{ADC} and \gls{DAC} units. The \gls{DAC} is configured to generate a sine wave as a stimulus for the filter, while the \gls{ADC} captures the output waveform. By varying the generated frequency and measuring the amplitude, we obtain a frequency response of the filter. If we measured both the input and output, we could calculate the phase shift and produce a real Bode diagram.
 
-\cref{fig:demofilter} depicts a simple test setup with a passive RC filter; its characteristics in the low-pass and high-pass configuration, as obtained with GEX, are shown in \cref{fig:demofilter_cap}.
-
-\begin{figure}[h]
-	\centering
-	\includegraphics[width=0.6\textwidth]{img/demofilter.jpg}
-	\caption{GEX Zero measuring a passive high-pass RC filter}
-	\label{fig:demofilter}
-\end{figure}
+\cref{fig:demofilter} depicts a simple test setup with a passive RC filter with a 100\,nF capacitor and a 470\,$\Omega$ resistor; its characteristics in the low-pass and high-pass configuration, as obtained by GEX, are shown in \cref{fig:demofilter_cap}. The irregularity at higher frequencies is likely caused by noise and nonlinearities in the \gls{DAC} output.
 
 \begin{figure}
 	\centering

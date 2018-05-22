@@ -1,14 +1,14 @@
 \chapter{The FAT16 File System and Its Emulation} \label{sec:fat16}
 
-A \gls{FS} is used by GEX to provide the user comfortable access to the configuration files. By emulating a mass storage \gls{USB} device, the module appears as a thumb drive on the host \gls{PC}, and the user can edit its configuration using their preferred text editor. The FAT16 file system was selected for its simplicity and good cross-platform support~\cite{os-support-table}.
+A \gls{FS} is used by GEX to provide the user with comfortable access to the configuration files. By emulating a mass storage \gls{USB} device, the module appears as a thumb drive on the host \gls{PC}, and the user can edit the files using their preferred text editor. The FAT16 file system was selected for its simplicity and good cross-platform support~\cite{os-support-table}.
 
-Three variants of the \gls{FAT} file system exist: FAT12, FAT16, and FAT32. FAT12 was used on floppy disks and is similar to FAT16, except for additional size constraints and a \gls{FAT} entry packing scheme. FAT16 and FAT32 are FAT12's later developments from the time when hard disks became more common and the old addressing scheme could not support their larger capacity.
+Three variants of the \gls{FAT} file system exist: FAT12, FAT16, and FAT32. FAT12 was used on floppy disks and is similar to FAT16, except for additional size constraints and a \gls{FAT} entry packing scheme. FAT16 and FAT32 are FAT12's later developments from the time when high-capacity hard disks became more common and the old addressing scheme proved insufficient.
 
-This chapter will explain the structure of FAT16 and the challenges faced when trying to emulate it without a physical storage medium. A more detailed overview of the file system can be found in literature~\cite{ms-fat,fat16-brainy,fat16-maverick,fat16-phobos,fat-whitepaper} consulted during the GEX firmware development, with the Microsoft white paper~\cite{fat-whitepaper} giving the most complete description.
+This chapter will explain the general structure of FAT16 and the challenges faced when trying to emulate it without a physical storage medium. A more detailed overview of the file system can be found in literature consulted during the GEX firmware development~\cite{ms-fat,fat16-brainy,fat16-maverick,fat16-phobos,fat-whitepaper}, with the Microsoft white paper~\cite{fat-whitepaper} giving the most detailed description.
 
 \section{The General Structure of the FAT File System}
 
-The storage medium is organized into \textit{sectors} (or \textit{blocks}), usually 512 bytes long; that is the smallest addressing unit used by the file system. The disk starts with a \textit{boot sector}, also called the \gls{MBR}, followed by optional reserved sectors, one or two copies of the file allocation table, and the root directory. All disk areas are aligned to a sector boundary:
+The storage medium is organized into \textit{sectors} (or \textit{blocks}), usually 512 bytes long; those are the smallest addressing units used by the file system. The disk starts with a \textit{boot sector}, also called the \gls{MBR}, followed by optional reserved sectors, one or two copies of the file allocation table, and the root directory. \Cref{tab:fat16_disk_areas} shows an overview of the dis areas.
 
 \begin{table}[H]
 	\centering
@@ -29,13 +29,13 @@ The storage medium is organized into \textit{sectors} (or \textit{blocks}), usua
 
 \subsection{Boot Sector}
 
-This is a 1-sector structure which holds the \gls{OS} bootstrap code for bootable disks. The first 3 bytes are a jump instruction to the actual bootstrap code located later in the sector. What matters to us when implementing the file system is that the boot sector also contains data fields describing how the disk is organized, what file system is used, who formatted it, etc. The size of the \gls{FAT} and the root directory is defined here. The exact structure of the boot sector can be found in either of~\cite{ms-fat,fat16-brainy,fat16-maverick,fat16-phobos,fat-whitepaper} or in the attached GEX source code.
+The ``boot sector'' is a 1-sector structure which holds the \gls{OS} bootstrap code for bootable disks. The first 3 bytes are a jump instruction to the actual bootstrap code located further in the sector. What matters to us when implementing the file system is that the boot sector also contains data fields describing how the disk is organized, what file system is used, who formatted it, etc. The size of the \gls{FAT} and the root directory is defined here. The exact structure of the boot sector can be found in literature or in the attached GEX source code.
 
 \subsection{File Allocation Table}
 
-The data area of the disk is organized in clusters, logical allocation units composed of groups of sectors. The use of a larger allocation unit allows the system to use shorter addresses and thus support a larger disk capacity.
+The data area of the disk is divided into clusters, logical allocation units composed of groups of sectors. The use of a larger allocation unit allows the system to use shorter addresses and thus support a larger disk capacity.
 
-The \gls{FAT} acts as a look-up table combined with linked lists. In FAT16, it is organized in 16-bit fields, each corresponding to one cluster. The first two entries in the allocation table are reserved and hold special values set by the disk formatter and the host \gls{OS}: a ``media descriptor'' 0xFFF8 and a ``clean/dirty flag'' 0xFFFF/0x3FFF.
+The \gls{FAT}, residing before the data area, acts as a look-up table combined with linked lists. In FAT16, it is organized in 16-bit fields, each corresponding to one cluster. The first two entries in the allocation table are reserved and hold special values set by the disk formatter and the host \gls{OS}: a ``media descriptor'' 0xFFF8 and a ``clean/dirty flag'' 0xFFFF/0x3FFF.
 
 Files can span multiple clusters; each \gls{FAT} entry either holds the address of the following file cluster, or a special value:
 
@@ -49,9 +49,9 @@ The bad cluster mark, 0xFFF7, is used for clusters which are known to corrupt da
 
 \subsection{Root Directory}
 
-A directory is a record on the disk that can span several clusters and holds information about the files and sub-directories contained in it. The root directory has the same structure as any other directory; the difference lies in the fact that it is allocated with a fixed position and size when the disk is formatted, whereas other directories are stored in the same way as ordinary files and their capacity can be increased by simply expanding to another cluster.
+A directory is a record on the disk that can span several clusters and holds information about the files and sub-directories contained in it. The root directory has the same structure as any other directory; the difference lies in the fact that it is allocated with a fixed position and size when the disk is formatted, whereas other directories are stored in the same way as ordinary files, and their capacity can be increased by simply expanding to another cluster.
 
-Directories are organized in 32-byte entries representing individual files. \Cref{tab:fat16_dir_entry} shows the structure of one such entry. The name and extension fields form the well-known ``8.3'' file name format known from MS DOS\footnote{``8.3'' refers to the byte size of the name and extension fields in the directory entry.}. Longer file names are encoded using the \gls{LFN} scheme~\cite{fat-lfn} as special hidden entries stored in the directory table alongside the regular ``8.3'' ones kept for backward compatibility.
+Directories are organized into 32-byte entries representing individual files; \cref{tab:fat16_dir_entry} shows the structure of one such entry. The name and extension fields form the ``8.3'' file name format known from MS DOS\footnote{``8.3'' refers to the byte size of the fields in the directory entry}. Longer file names are encoded using the \gls{LFN} scheme~\cite{fat-lfn} as special hidden entries stored in the directory table alongside the regular ``8.3'' ones that are kept for backward compatibility.
 
 \begin{table}
 	\centering
@@ -84,7 +84,7 @@ The first byte of the file name has special meaning:
 
 The attributes field contains flags such as \textit{directory}, \textit{volume label}, \textit{read-only} and \textit{hidden}. Volume label is a special entry in the root directory defining the disk's label shown by the host \gls{OS}. A file with the directory bit set is actually a pointer to a subdirectory, meaning that when we open the linked cluster, we will find another directory table.
 
-\Cref{fig:fat_example} shows a possible organization of the GEX file system with two INI files, one spanning two clusters, the other being entirely inside one. The clusters need not be used completely; the exact sizes are stored in the files' directory entries.
+\Cref{fig:fat_example} shows a possible organization of the GEX file system with two INI files, one spanning two clusters, the other being entirely inside one. The clusters need not be used completely, as the exact sizes are stored in the files' directory entries.
 
 \begin{figure}[h]
 	\centering
@@ -95,19 +95,19 @@ The attributes field contains flags such as \textit{directory}, \textit{volume l
 
 \section{FAT16 Emulation}
 
-The FAT16 file system is relatively straightforward to implement. However, it is not practical or even possible to keep the entire file system in memory on a small microcontroller like our STM32F072. This means that we have to generate and parse disk sectors and clusters on-demand, when the host reads or writes them. The STM32 \gls{USB} Device library helpfully implements the \gls{MSC} and provides \gls{API} endpoints to which we connect our file system emulator. Specifically, those are requests to read and write a sector, and to the read disk's status and its parameters, such as the capacity.
+The FAT16 file system is relatively straightforward to implement. However, it is not practical or even possible to keep the entire file system in memory on a small microcontroller like our STM32F072. This means that we have to generate and parse disk sectors and clusters on-demand, when the host reads or writes them. The STM32 \gls{USB} Device library helpfully implements the \gls{MSC} and provides \gls{API} endpoints to which we connect our file system emulator. Specifically, those are requests to read and write a sector, and to read the disk status and parameters, such as capacity.
 
 \subsection{DAPLink Emulator}
 
-A FAT16 emulator was developed as part of the open-source \mbed DAPLink project~\cite{daplink}. It is used there for a drag-and-drop flashing of firmware images to the target microcontroller, taking advantage of the inherent cross-platform support (it uses the same software driver as any thumb drive, as discussed in \cref{sec:msc}). \mbed also uses a browser-based \gls{IDE} and cloud build servers, thus the end user does not need to install or set up any software to program a compatible development kit.
+A FAT16 emulator was developed as part of the open-source \mbed DAPLink project~\cite{daplink}. It is used there for a drag-and-drop flashing of firmware images to the target microcontroller, taking advantage of the inherent cross-platform support (it uses the same software driver as any thumb drive, as discussed in \cref{sec:msc}). \mbed also uses a browser-based \gls{IDE} and cloud build servers, thus the end user does not need to install or set up any software to program a compatible development kit. 
 
 The GEX firmware adapts several parts of the DAPLink code, optimizing its \gls{RAM} usage and porting it to work with FreeRTOS. The emulator source code is located in the \mono{User/vfs} folder of the GEX repository; the original Apache 2.0 open-source software license headers, as well as the file names, have been retained.
 
-As shown in \cref{tab:fat16_disk_areas}, the disk consists of several areas. The boot sector is immutable and can be loaded from the flash memory when requested. The handling of the other disk areas (\gls{FAT}, data area) depends on the type of access: read or write.
+As shown in \cref{tab:fat16_disk_areas}, a FAT16-formatted disk consists of several areas. The boot sector is immutable and can be loaded from the flash memory when requested. The handling of the other disk areas (\gls{FAT}, data area) depends on the type of access: read or write.
 
 \subsection{Read Access}
 
-The user can only read files that already exist on the disk; in our case, \verb|UNITS.INI| and \verb|SYSTEM.INI|. Those files are dynamically generated from the binary settings storage and, conversely, parsed as a byte stream without ever existing in their full form. This fact makes our task more challenging, as the file size cannot be easily measured and there is no obvious way to read a sector from the middle of a longer file. We solve this by implementing two additional functions in the INI file generation routine: a \textit{read window} and a \textit{dummy read mode}.
+The user can only read files that already exist on the disk, in our case INI configuration files. Those files are dynamically generated from the binary settings storage and, conversely, parsed as a byte stream without ever existing in their full form. This fact makes our task more challenging, as the file size cannot be easily measured and there is no obvious way to read a sector from the middle of a longer file. We solve this by implementing two additional functions in the INI file generation routine: a \textit{read window} and a \textit{dummy read mode}.
 
 A read window is a specification of the byte range we wish to generate. The INI generator discards bytes before the start of the read window, writes those inside the window to a holding buffer, and stops the end of the window is reached. This lets us extract a sector from anywhere in a file. The second function, dummy read, is tied to the window function: we set the start index so high that it is never reached (e.g., 0xFFFFFFFF), and have the generator count discarded characters. This character counter holds the full file size once the generation is completed.
 
@@ -154,7 +154,7 @@ The uncertain order of the written areas poses a problem when the file name has 
 
 A change to file's content is performed in a similar way to the creation of a new file, except instead of creating a new entry in the directory table, an existing one is updated with the new file size. The name of the file may be unknown until the content is written, but we could detect the file name by comparing the start sector with those of all files known to the virtual file system.
 
-In the case of GEX, the detection of a file name is not important; we expect only INI files to be written, and the particular file may be detected by its first section marker, such as \verb|[UNITS]| or \verb|[SYSTEM]|. Should a non-INI file be written by accident, the INI parser will likely detect a syntax error and discard it.
+In the case of GEX, the detection of a file name is not important; we expect only INI files to be written, and the particular file may be detected by its first section marker. Should a non-INI file be written by accident, the INI parser will likely detect a syntax error and discard it.
 
 It should be noted that a file could be updated only partially, skipping the clusters which remain unchanged, and there is also no guarantee regarding the order in which the file's sectors are written. A non-linear or partial file update is hard to process for the emulator, but it can be reliably detected and discarded. Fortunately, this host behavior has not been conclusively observed in practice, but a file update rarely fails for unknown reasons; this could be a possible cause.
 

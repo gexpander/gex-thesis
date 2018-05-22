@@ -2,11 +2,11 @@
 
 \section{GEX on a STM32 Discovery Board}
 
-It has been proposed earlier in the text that STM32 Nucleo and Discovery development boards might serve as the hardware platform for this project. Indeed, a Discovery board with the STM32F072 was used to develop a major part of the GEX firmware, and the firmware remains compatible with it. This inexpensive board may be used to try GEX without the custom hardware.
+It has been proposed earlier in the text that STM32 Nucleo and Discovery development boards might serve as the hardware platform for this project. Indeed, a Discovery board with the STM32F072 was used to develop a major part of the GEX firmware, and the firmware remains compatible with it. This inexpensive board may be used to try GEX without any custom hardware.
 
 \subsection{Discovery STM32F072 Configuration and Pin Mapping}
 
-The Discovery board is fitted with four \glspl{LED} on \gls{GPIO} pins PC6 through PC9, in a compass arrangement. The ``north'' \gls{LED}, PC6, is used as the GEX status indicator. The ``User'' button, connected to PA0, is mapped as the GEX Lock button, controlling the settings storage.
+The Discovery board is fitted with four \glspl{LED} on \gls{GPIO} pins PC6 through PC9, in a compass arrangement. The ``north'' \gls{LED}, PC6, is used as the status indicator. The ``User'' button, connected to PA0, is mapped as the Lock button, controlling the settings storage.
 
 We advise the reader, as a potential user of the board, to review its schematic diagram (found in the documentation~\cite{disco-f072}) and ensure the solder-jumpers on the back side are configured correctly:
 

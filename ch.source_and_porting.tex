@@ -36,7 +36,7 @@
 	\caption{\label{fig:repo_structure} General structure of the source code repository}
 \end{wrapfigure}
 
-Understanding the GEX source code layout is important before attempting to implement any changes or to port it to a different microcontroller type. The directory layout is shown in \cref{fig:repo_structure}. 
+Understanding the GEX source code layout is important before attempting to implement any changes or to port it to a different microcontroller model. The directory layout is shown in \cref{fig:repo_structure}. 
 
 The GEX core framework resides in the User folder, and units are defined in User/units. Each unit driver must be registered in the file \verb|platform.c|. The header file \verb|plat_compat.h| defines platform-specific constants and macros, defining parameters such as pin assignments or the clock speed. The User folder is actually a Git submodule called ``gex-core'' and is kept as a separate project; platform-specific customizations are managed using compile flags passed from the Makefile.
 

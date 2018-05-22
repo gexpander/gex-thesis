@@ -1,6 +1,6 @@
 \chapter{Conceptual Overview} \label{sec:conceptual}
 
-GEX is designed to be modular and easy to extend. The user-facing functionality is composed of independent software modules, called \textit{functional blocks} or \textit{units}, which can be configured by the user to fit their application needs. Units implement low-level logic to work with hardware peripherals of the microcontroller, and expose this functionality to the client application, running on the \gls{PC}, through a communication interface. A diagram showing the entire stack, from the user application down to hardware peripherals, is shown in \cref{fig:conceptual}.
+GEX is designed to be modular and easy to extend. The user-facing functionality is composed of independent software modules called \textit{functional blocks} or \textit{units}, which can be configured by the user to fit their application needs. Units implement low-level logic to work with hardware peripherals of the microcontroller, and expose this functionality to the client application, running on the \gls{PC}, through a communication interface. A diagram showing the entire stack, from the user application down to hardware peripherals, is shown in \cref{fig:conceptual}.
 
 \begin{figure}[h]
 	\centering
@@ -8,11 +8,11 @@ GEX is designed to be modular and easy to extend. The user-facing functionality 
 	\caption[GEX conceptual overview]{\label{fig:conceptual}The ``GEX stack'', from a user application down to hardware}
 \end{figure}
 
-When we work with GEX, it is through units. The platform without units would be just an empty shell, the bare core framework; this underlying system will be described in \cref{sec:coreframework}. We will explore the individual units in \cref{sec:units_overview}, after going through the hardware realizations in \cref{sec:hwreal} and covering the communication protocol in \cref{sec:tinyframe}. 
+When we work with GEX, it is through units. The platform without units would be just an empty shell, the bare core framework; this underlying system will be described in \cref{sec:coreframework}. We will explore the individual units in \cref{sec:units_overview}, after covering the communication protocol in \cref{sec:tinyframe}. 
 
 \section{Physical User Interface}
 
-The firmware can be flashed to a STM32 development board, or a custom \gls{PCB}. The particulars of those form factors will be discussed in \cref{sec:hwreal}.
+The firmware can be flashed to a STM32 development board, or a custom \gls{PCB}. The particulars of these form factors will be discussed in \cref{sec:hwreal}.
 
 \begin{figure}[h]
 	\centering
@@ -21,7 +21,7 @@ The firmware can be flashed to a STM32 development board, or a custom \gls{PCB}.
 \end{figure}
 
 \noindent
-All GEX hardware platforms have some common characteristics (\cref{fig:users_view_of_gex}):
+All GEX hardware platforms have some common characteristics, illustrated in \cref{fig:users_view_of_gex}:
 
 \begin{itemize}	
 	\item \textbf{Power \gls{LED}} -- a simple indication that the board is powered on
@@ -58,7 +58,7 @@ The \gls{USB} connection is always enabled first on start-up. GEX waits its for 
 
 GEX is a platform providing access to low-level hardware to high-level applications. However, this ``high level'' is relative. As was shown in \cref{fig:conceptual}, the ``GEX stack'' ends with a \textit{client library}, a software library used by the \textit{user application}.
 
-The communication protocol (one level lower in the diagram), which will be explained in \cref{sec:tinyframe}, may be implemented as part of the client library in any programming language and on any platform; in theory, it is even possible to control GEX from another microcontroller. The client library implements, besides the protocol itself, other higher-level logic, and gives the user access to individual units using an abstraction called \textit{unit handles}.
+The communication protocol (one level lower in the diagram), which will be explained in \cref{sec:tinyframe}, may be implemented as part of the client library in any programming language and on any platform; it is even possible to control GEX from another microcontroller. The client library implements, besides the protocol itself, other high-level logic, and gives the user access to individual units using an abstraction called \textit{unit handles}.
 
 Any logic above the client library is in the hands of the user, which means that, to use GEX, they have to program a user application. Proof-of-concept client libraries in languages C and Python are provided for this purpose, and will be explained in \cref{sec:clientsw}.
 
@@ -68,7 +68,7 @@ The core framework and each of the units have a number of adjustable options det
 
 \subsection{INI File Format}
 
-INI files are, in our implementation, simple text files containing three basic syntax elements: comments, sections, and key-value entries. Sections group the key-value pairs into logical blocks, e.g., the configuration of individual units.
+INI files in our implementation are simple text files containing three basic syntactic elements: comments, sections, and key-value entries. Sections group the key-value pairs into logical blocks, and act as a prefix or a namespace for the keys.
 
 \begin{itemize}	
 	\item \textbf{Comments} start with the hash symbol (\mono{\#}) and end at the end of line
@@ -90,7 +90,7 @@ pins = 1,2,3
 	
 \subsection{Configuration Files Structure}
 
-The configuration is split into two files: \mono{UNITS.INI} and \mono{SYSTEM.INI}. The system configuration file has a simple structure and does not need much explanation beyond the comments already included in it; an example of its content is captured in \cref{lst:systemini}. The other file, as its name suggests, serves to configure GEX units.
+The configuration is split into two files: \mono{UNITS.INI} and \mono{SYSTEM.INI}. The system configuration file has a simple structure and does not need much explanation beyond the comments already included in it; an example of its content is captured in \cref{lst:systemini}. The other file, as its name suggests, configures GEX units.
 
 \begin{listing}
 	\begin{inicode}
@@ -158,9 +158,9 @@ After adding a unit name next to its type, we save the file. The disk temporaril
 
 It is not uncommon that the entered (or default) configuration is invalid and the unit cannot be enabled. The error is reported by inserting a comment into the INI file, at the top of the section of the failing unit. This error message disappears when the problem is corrected.
 
-Once we are satisfied with the configuration, it may be stored to the module's permanent memory. This is done by pushing the Lock button again, which also deactivates the virtual storage device.
+Once we are satisfied with the configuration, it may be stored in the module's permanent memory. This is done by pushing the Lock button again, which also deactivates the virtual storage access.
 
-It may be interesting to know that the configuration files can also be read and modified through the communication interface. A simple configuration editor (\cref{fig:gexync}) was developed to demonstrate this feature. Besides applications like this, we can use the programmatic configuration access to change GEX settings automatically by the client application. The changes may be persisted by a command, but that is not required, which lets us use them temporarily without modifying the stored configuration.
+It may be interesting to know that the configuration files can also be read and modified through the communication interface. A simple configuration editor (\cref{fig:gexync}) was developed to demonstrate this feature. Besides editor applications like this, we can use the programmatic access to change GEX settings automatically by the user application. They may be persisted by a command, but that is not required, which lets us use them temporarily without modifying the stored configuration.
 
 \begin{figure}
 	\centering

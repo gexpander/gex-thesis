@@ -1,6 +1,6 @@
 \chapter{Wireless Interface} \label{sec:wireless}
 
-Four methods of a wireless connection have been considered: Bluetooth (perhaps with the Texas Instruments CC2541), WiFi with the Espressif ESP8266, a 868\,MHz long range radio link with the Semtech SX1276, and a 2.4\,GHz radio link with the nRF24L01+. Bluetooth was dismissed early for its complexity, and the ESP8266 for its high power consumption, although both solutions might be viable for certain applications and with more development time.
+Four methods of a wireless connection were considered: Bluetooth (perhaps with the Texas Instruments CC2541), WiFi with the Espressif ESP8266, a 868\,MHz long range radio link with the Semtech SX1276, and a 2.4\,GHz radio link with the nRF24L01+. Bluetooth was dismissed early for its complexity, and the ESP8266 for its high power consumption, although both solutions might be viable for certain applications and with more development time.
 
 \begin{figure}[h]
 	\centering
@@ -10,7 +10,7 @@ Four methods of a wireless connection have been considered: Bluetooth (perhaps w
 
 \section{Modulations Overview}
 
-A brief overview of the different signal modulation techniques is presented here to aid the reader with understanding of \cref{fig:nrf_sx_comparison} and the rest of the chapter.
+A brief overview of the different signal modulation techniques is presented here to aid the reader with the understanding of \cref{fig:nrf_sx_comparison} and the rest of the chapter.
 
 \subsection{On-Off Keying (OOK)}
 
@@ -75,7 +75,7 @@ Both devices implement some form of a packet engine with error checking; that of
 
 \section{Wireless Link with the nRF24L01+}
 
-The nRF24L01+ was selected to be integrated into GEX thanks to its inclusion of the ShockBurst engine, higher possible data rates and significantly lower price. The SX1276, nonetheless, remains an interesting option, should the need for a long range communication arise.
+We chose the nRF24L01+ to be integrated into GEX for its inclusion of the ShockBurst engine, higher possible data rates, and significantly lower price. The SX1276, nonetheless, remains an interesting option, should the need for a long range communication arise.
 
 A pair of these radio modules can form a bidirectional data connection, functionally replacing \gls{USB} or \gls{UART} as a communication interface. However, we need to connect the second module to the \gls{PC} to control GEX through the radio link. A separate \gls{USB} device, a \textit{wireless gateway}, was developed for this purpose; its hardware will be presented in \cref{sec:rfgateway}.
 

@@ -1,6 +1,6 @@
 \chapter{Client Software} \label{sec:clientsw}
 
-With the communication protocol clearly defined in \cref{sec:tinyframe,sec:units_overview}, and \cref{sec:wireless} for the wireless gateway, the implementation of client libraries is relatively straightforward. Two have been developed as a proof-of-concept, in languages C and Python.
+With the communication protocol clearly defined in \cref{sec:tinyframe,sec:units_overview}, and \cref{sec:wireless} for the wireless gateway, the implementation of client libraries is relatively straightforward. Two versions of the library have been developed as a proof-of-concept in languages C and Python.
 
 \section{General Library Structure}
 
@@ -26,7 +26,7 @@ The structure of a GEX client library is in all cases similar:
 
 \section{Python Library}
 
-The Python GEX library implements both a serial port access and raw access to \gls{USB} endpoints. Its development has been prioritized over the C library because of its potential to integrate with MATLAB, and because it promises to be the most convenient method to interact with GEX thanks to the ease-of-use that comes with the Python syntax. This library provides a high level \gls{API} above the individual unit types, removing the burden of building and parsing of the binary command payloads from the user.
+The Python GEX library implements both serial port access and raw access to \gls{USB} endpoints. Its development has been prioritized over the C library because of its potential to integrate with MATLAB, and because it promises to be the most convenient method to interact with GEX thanks to the ease-of-use that comes with the Python syntax. This library provides a high level \gls{API} above the individual unit types, removing the burden of building and parsing of the binary command payloads from the user.
 
 The library is composed of a \textit{transport} class, the core class \mono{gex.Client}, and unit classes (e.g., \mono{gex.I2C} or \mono{gex.SPI}). 
 
@@ -92,7 +92,7 @@ First, a client instance is created, receiving the transport as an argument. We 
 
 \section{MATLAB integration}
 
-The Python library can be accessed from MATLAB scripts thanks to MATLAB's two-way Python integration~\cite{matlabpy}. Controlling GEX from MATLAB may be useful when additional processing is required, e.g., with data from the \gls{ADC}; however, in many cases, an open source alternative native to Python exists that could be used for the same purpose, such as the NumPy and SciPy libraries~\cite{numpyscipy}.
+The Python library can be accessed from MATLAB scripts thanks to MATLAB's two-way Python integration~\cite{matlabpy}. Controlling GEX from MATLAB may be useful when additional processing is required, e.g., with data from the \gls{ADC}; however, in many cases, an open-source alternative native to Python exists that could be used for the same purpose, such as the NumPy and SciPy libraries~\cite{numpyscipy}.
 
 The example in \cref{lst:matlab_api} (and \cref{fig:matlabpic}) demonstrates the use of MATLAB to calculate the frequency spectrum of an analog signal captured with GEX. The syntax needed to use the serial port transport (instead of a raw access to USB endpoints) is shown in a comment.
 
@@ -134,7 +134,9 @@ The example in \cref{lst:matlab_api} (and \cref{fig:matlabpic}) demonstrates the
 
 The C library is more simplistic than the Python one; it supports only the serial port transport (\gls{UART} or \gls{CDCACM}) and does not implement asynchronous polling or the unit support drivers. The implemented features---the transport, a basic protocol handler, and payload building and parsing utilities---are sufficient for most applications, though less convenient than the Python library.
 
-This low-level library is intended for applications where the performance of the Python implementation is insufficient, or where an integration with existing C code is required. The full \gls{API} can be found in the library header files. A C version of the example Python script shown above, controlling an \gls{LED} matrix driver, is presented in \cref{lst:c_api_full}. The payloads in this example are represented as binary strings for simplicity. Two better methods of payload construction are available: using C structs, or taking advantage of the Payload Builder utility (bundled with TinyFrame).
+This low-level library is intended for applications where the performance of the Python implementation is insufficient, or where an integration with existing C code is required. The full \gls{API} can be found in the library header files. A C version of the example Python script shown above, controlling an \gls{LED} matrix driver, is presented in \cref{lst:c_api_full}. 
+
+The payloads in this example are specified as binary strings, for simplicity. Two better methods of payload construction are available: using C structs, or taking advantage of the Payload Builder utility (bundled with TinyFrame).
 
 \begin{listing}
 	\begin{ccode}

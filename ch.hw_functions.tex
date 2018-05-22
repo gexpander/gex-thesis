@@ -1,6 +1,6 @@
-\chapter{Non-communication Hardware Functions}
+\chapter{Other Hardware Functions}
 
-In addition to communication buses, described in \cref{ch:hw_buses}, GEX implements several measurement and output functions that take advantage of the microcontroller's peripheral blocks, such as timers/counters and \gls{DAC}. The more complicated ones are described here; simpler functions, such as the raw \gls{GPIO} access, will be described later together with their control \gls{API}.
+In addition to communication buses, described in \cref{ch:hw_buses}, GEX implements several measurement and output functions that take advantage of the microcontroller's peripheral blocks, such as timers/counters and \gls{DAC}. The more complicated ones are described here; simpler functions, such as the raw \gls{GPIO} access, will be described later when we look at the corresponding GEX's functional blocks.
 
 \section{Frequency Measurement} \label{sec:theory_fcap}
 
@@ -52,7 +52,7 @@ The system clock's frequency, which we use to measure pulse lengths and to gate 
 
 \section{Analog Signal Acquisition} \label{sec:theory_adc}
 
-A very common need in experiments involving the measurement of physical properties is the acquisition of analog signals, respective voltages. These can be roughly divided into \gls{DC} and \gls{AC} or time-changing signals. Analog signals are converted to digital values using \glspl{ADC}. Several principles of analog signal measurement exist with different cost, speed, resolution, and many other factors which determine their suitability for a particular application.
+A very common need in experiments involving the measurement of physical properties is the acquisition of analog signals (measured as voltage levels). These can be roughly divided into \gls{DC} and \gls{AC} or time-changing signals. Analog signals are converted to digital values using \glspl{ADC}. Several principles of analog signal measurement exist with different cost, speed, resolution, and many other factors which determine their suitability for a particular application.
 
 \gls{DC} signals can be measured by taking several samples and calculating their average value; in the presence of mains interference (50\,Hz or 60\,Hz), it is advisable to spread those samples over the 20\,ms (resp. 16.7\,ms) time of one period, so that the interfering waveform cancels out. Time-changing signals can be captured by taking isochronous samples at a frequency conforming to the Nyquist theorem, that is, at least twice that of the measured signal. In practice, a frequency several times higher is preferred for a more accurate capture.
 

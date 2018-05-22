@@ -25,7 +25,7 @@ The framework provides the following services to units:
 
 \section{Unit Life Cycle and Internal Structure} \label{sec:units_function}
 
-GEX's user-facing functions, units, are implemented in \textit{unit drivers}. Those are independent modules in the firmware that the user can enable and configure, in one or more instances. In practice, we are limited by hardware constraints: i.e., there may be only one \gls{ADC} peripheral, or two \gls{SPI} ports. The assignment of those hardware resources to units is handled by the \textit{resource registry} (\cref{sec:res_allocation}).
+GEX's user-facing functions, units, are implemented in \textit{unit drivers}. These are independent modules in the firmware that the user can enable and configure, in one or more instances. In practice, we are limited by hardware constraints: i.e., there may be only one \gls{ADC} peripheral, or two \gls{SPI} ports. The assignment of those hardware resources to units is handled by the \textit{resource registry} (\cref{sec:res_allocation}).
 
 
 
@@ -108,11 +108,11 @@ It is evident that multiple units might need to use the same handler, even at th
 
 \section{FreeRTOS Synchronization Objects Usage} \label{sec:rtos_in_gex}
 
-The firmware is built around FreeRTOS (\cref{sec:freertos}) and a number of its synchronization objects and patterns are used to make its operation more robust.
+The firmware is built around FreeRTOS (\cref{sec:freertos}) and uses a number of its synchronization objects and patterns to make the operation more robust.
 
 \subsection{Message and Job Queue}
 
-The message and job queue, seen in \cref{fig:gex_internal}, is used to decouple asynchronous interrupts from message transmission. All three communication interfaces use interrupts for the asynchronous handling of incoming messages. The same interrupt handler receives an event after a transmission was completed. The queue ensures that messages can be received during the transmission of a large response that demands the use of multiple messages.
+The message and job queue, shown in \cref{fig:gex_internal}, is used to decouple asynchronous interrupts from message transmission. All three communication interfaces use interrupts for the asynchronous handling of incoming messages. The same interrupt handler receives an event after a transmission was completed. The queue ensures that messages can be received during the transmission of a large response that demands the use of multiple messages.
 
 \subsection{Lock Objects}
 

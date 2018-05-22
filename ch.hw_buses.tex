@@ -1,10 +1,10 @@
 \chapter{Supported Hardware Buses} \label{ch:hw_buses}
 
-Hardware buses implemented in GEX are presented in this chapter. The description of each bus is accompanied by several examples of devices that can be interfaced with it. The reader is advised to consult the official specifications and particular devices' datasheets for additional details.
+In this chapter we present the hardware buses to be supported by GEX. The description of each bus is accompanied by several examples of devices that can be interfaced with it. The reader is advised to consult the official specifications and the datasheets of individual sensors and other devices for additional details.
 
 \section{UART and USART} \label{sec:theory_usart}
 
-The \acrfull{USART} has a long history and is still in widespread use today. It is the protocol used in RS-232, which was once a common way of connecting modems, printers, mice and other devices to personal computers. RS-232 can be considered the ancestor of \gls{USB} in its widespread availability and use. \gls{UART} framing is also used in the industrial bus RS-485 and the automotive interconnect bus \gls{LIN}.
+The \acrfull{USART} has a long history and is still widely used today. This is the frame format used in RS-232, which was once a common way of connecting modems, printers, mice and other devices to personal computers. RS-232 can be considered the ancestor of \gls{USB} in its popularity. \gls{UART} framing is also used in the industrial bus RS-485 and the automotive interconnect bus \gls{LIN}.
 
 \begin{figure}[h]
 	\centering
@@ -16,7 +16,7 @@ The \acrfull{USART} has a long history and is still in widespread use today. It 
 
 \gls{USART}, as implemented by microcontrollers such as the STM32 family, is a two-wire full duplex interface that uses 3.3\,V or 5\,V logic levels. The data lines are in the high logical level when idle. A \gls{USART} frame, shown in \cref{fig:uart_frame}, starts by a start-bit (low level for the period of one bit) followed by \textit{n} data bits (typically eight), an optional parity bit, and a period of high level called a stop bit (or stop bits), dividing consecutive frames.
 
-RS-232 uses the \gls{UART} framing, but its levels are different: logical 1 is represented by negative voltages $-3$ to $-25$\,V and logical 0 uses the same range, but positive. To convert between RS-232 levels and \gls{TTL} (5\,V) levels, a level-shifting circuit such as the MAX232 can be used. In RS-232, the two data lines (Rx and Tx) are accompanied by \gls{RTS}, \gls{CTS}, and \gls{DTR}, which facilitate handshaking and hardware flow control. In practice, those additional signals are often unused or their function differs from their historical meaning; for instance, Arduino boards (using a USB-serial converter) use the \gls{DTR} line as a reset signal to automatically enter their bootloader for firmware flashing~\cite{arduinodtr}.
+RS-232 uses the \gls{UART} framing, but its levels are different: logical 1 is represented by negative voltages $-3$ to $-25$\,V and logical 0 uses the same range, but positive. To convert between RS-232 levels and \gls{TTL} (5\,V)  or 3.3\,V levels, a level-shifting circuit such as the MAX232 can be used. In RS-232, the two data lines (Rx and Tx) are accompanied by \gls{RTS}, \gls{CTS}, and \gls{DTR}, which facilitate handshaking and hardware flow control. In practice, those additional signals are often unused or their function differs from their historical meaning; for instance, Arduino boards (using a USB-serial converter) use the \gls{DTR} line as a reset signal to automatically enter their bootloader for firmware flashing~\cite{arduinodtr}.
 
 \subsection{Examples of Devices Using UART}
 
