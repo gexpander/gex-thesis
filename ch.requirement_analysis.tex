@@ -6,9 +6,7 @@ We'll now investigate some situations where GEX could be used, to establish its 
 
 \subsection{Interfacing Intelligent Modules}\label{sec:uses_digital_ifaces}
 
-When adding a new digital sensor or a module to a hardware project, we want to test it first, learn how to properly communicate with it, and confirm its performance. Based on this evaluation we decide whether the module matches our expectations and learn how to properly connect it, which is needed for a successful \gls{PCB} layout.
-
-In experimental setups, this may be the only thing we need. Data can readily be collected after just connecting the module to a \gls{PC}, same as commanding motor controllers or other intelligent devices.
+When adding a new digital sensor or a module to a hardware project, we want to test it first, learn how to properly communicate with it, and confirm its performance. Based on this evaluation we decide whether the module matches our expectations, and learn how to properly connect it, which is needed for a successful \gls{PCB} design. In experimental setups, this connection may be the only thing we need. Sensor data can be collected immediately after gaining access to its communication interface, and the same applies to controlling actuators or other devices.
 
 A couple of well known hardware buses have established themselves as the standard ways to interface digital sensors and modules: \gls{SPI}, \gls{I2C} and \gls{USART} (\gls{UART} in asynchronous mode) are some of the most common ones, often accompanied by a few extra \gls{GPIO} lines for features such as Reset, Chip Enable, or Interrupt. There are exceptions where silicon vendors have developed proprietary communication protocols that continue to be used either for historical reasons, or because of their specific advantages. An example is the Dallas Semiconductor 1-Wire bus used in digital thermometers.
 
