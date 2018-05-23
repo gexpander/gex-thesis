@@ -9,7 +9,7 @@ The structure of a GEX client library is in all cases similar:
 \begin{itemize}
     \item \textbf{USB or serial port access}
 
-        This is the only platform-dependent part of the library. Unix-based systems provide a standardized POSIX API to configure the serial port. A raw access to \gls{USB} endpoints is possible using the libUSB C library. Access to the serial port or \gls{USB} from C on MS Windows has not been investigated, but should be possible using proprietary APIs.
+        This is the only platform-dependent part of the library. Unix-based systems provide a standardized POSIX API to configure the serial port. Raw access to \gls{USB} endpoints is possible using the libUSB C library. Access to the serial port or \gls{USB} from C on MS Windows has not been investigated, but should be possible using proprietary APIs.
 
         Accessing the serial port or \gls{USB} endpoints from Python is more straightforward thanks to the cross platform libraries \textit{PySerial} and \textit{PyUSB}.
 
@@ -94,7 +94,7 @@ First, a client instance is created, receiving the transport as an argument. We 
 
 The Python library can be accessed from MATLAB scripts thanks to MATLAB's two-way Python integration~\cite{matlabpy}. Controlling GEX from MATLAB may be useful when additional processing is required, e.g., with data from the \gls{ADC}; however, in many cases, an open-source alternative native to Python exists that could be used for the same purpose, such as the NumPy and SciPy libraries~\cite{numpyscipy}.
 
-The example in \cref{lst:matlab_api} (and \cref{fig:matlabpic}) demonstrates the use of MATLAB to calculate the frequency spectrum of an analog signal captured with GEX. The syntax needed to use the serial port transport (instead of a raw access to USB endpoints) is shown in a comment.
+The example in \cref{lst:matlab_api} (and \cref{fig:matlabpic}) demonstrates the use of MATLAB to calculate the frequency spectrum of an analog signal captured with GEX. The syntax needed to use the serial port transport (instead of raw access to USB endpoints) is shown in a comment.
 
 \begin{listing}
 	\begin{matlabcode}
@@ -134,7 +134,7 @@ The example in \cref{lst:matlab_api} (and \cref{fig:matlabpic}) demonstrates the
 
 The C library is more simplistic than the Python one; it supports only the serial port transport (\gls{UART} or \gls{CDCACM}) and does not implement asynchronous polling or the unit support drivers. The implemented features---the transport, a basic protocol handler, and payload building and parsing utilities---are sufficient for most applications, though less convenient than the Python library.
 
-This low-level library is intended for applications where the performance of the Python implementation is insufficient, or where an integration with existing C code is required. The full \gls{API} can be found in the library header files. A C version of the example Python script shown above, controlling an \gls{LED} matrix driver, is presented in \cref{lst:c_api_full}. 
+This low-level library is intended for applications where the performance of the Python implementation is insufficient, or where integration with existing C code is required. The full \gls{API} can be found in the library header files. A C version of the example Python script shown above, controlling an \gls{LED} matrix driver, is presented in \cref{lst:c_api_full}. 
 
 The payloads in this example are specified as binary strings, for simplicity. Two better methods of payload construction are available: using C structs, or taking advantage of the Payload Builder utility (bundled with TinyFrame).
 

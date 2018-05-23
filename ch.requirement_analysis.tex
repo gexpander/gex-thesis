@@ -32,7 +32,7 @@ Some sensors have variable frequency or \gls{PWM} output. To capture those signa
 
 \subsection{Logic Level Input and Output}
 
-We have covered some more advanced features, but skipped the simplest feature: direct access to \gls{GPIO} pins. Considering the latencies of \gls{USB} and the \gls{PC}'s \gls{OS}, this cannot be used reliably for ``bit banging'' custom protocols, unless they are tolerant to jitter, or very slow; however, we can still accomplish a lot with just changing logic levels---e.g., to control character displays with a parallel interface, or to emulate some interfaces that include a clock line. As mentioned in \cref{sec:uses_digital_ifaces}, many digital sensors and modules use plain \glspl{GPIO}, in addition to the communication bus, for out-of-band signaling or features like chip select or reset.
+We have covered some more advanced features, but skipped the simplest feature: direct  to \gls{GPIO} pins. Considering the latencies of \gls{USB} and the \gls{PC}'s \gls{OS}, this cannot be used reliably for ``bit banging'' custom protocols, unless they are tolerant to jitter, or very slow; however, we can still accomplish a lot with just changing logic levels---e.g., to control character displays with a parallel interface, or to emulate some interfaces that include a clock line. As mentioned in \cref{sec:uses_digital_ifaces}, many digital sensors and modules use plain \glspl{GPIO}, in addition to the communication bus, for out-of-band signaling or features like chip select or reset.
 
 \section{Connection to the Host Computer}
 
@@ -42,7 +42,7 @@ We have covered some more advanced features, but skipped the simplest feature: d
 
 The most straightforward method of interfacing the board is by passing binary messages in a fashion similar to \gls{UART}. This is possible either using a ``Virtual COM port'' driver, or through raw access to the corresponding \gls{USB} endpoints. Using raw access avoids potential problems with the \gls{OS}'s driver interfering or not recognizing the device correctly; on the other hand, having GEX appear as a serial port makes it easier to integrate into existing platforms that have good serial port support (such as National Instruments LabWindows~CVI, Visual C++ applications, or VBA macros).
 
-GEX may be used with development boards lacking a ``User'' \gls{USB} connector, such as STM32 Nucleo. In this case, either the board can be customized, or we use the built-in \gls{USB}/\gls{UART} converter; that requires the communication interface to be available also through hardware \gls{UART}. Another use-case is in battery-powered setups where a wired access is not possible or practical. For those cases the ideal solution is a wireless connection.
+GEX may be used with development boards lacking a ``User'' \gls{USB} connector, such as STM32 Nucleo. In this case, either the board can be customized, or we use the built-in \gls{USB}/\gls{UART} converter; that requires the communication interface to be available also through hardware \gls{UART}. Another use-case is in battery-powered setups where wired access is not possible or practical. For those cases the ideal solution is a wireless connection.
 
 \subsection{Configuration Files}
 

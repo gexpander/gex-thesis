@@ -11,7 +11,7 @@ GEX can be controlled through a hardware \gls{UART}, the \gls{USB}, or over a wi
 
 GEX uses the \textit{TinyFrame}~\cite{tinyframerepo} framing library, developed, likewise, by the author, but kept as a separate project for easier re-use in different applications. The library implements frame building and parsing, including checksum calculation, and provides high-level \gls{API}.
 
-Both peers, GEX and the client library running on the host \gls{PC}, are at an equal level: either side can independently send a message at any time. The communication is organized in transactions; a transaction consists of one or more messages going in either direction. A message can be stand-alone, or chained to another, typically a request, using the frame ID field; this is the major advantage over text-based protocols, like AT commands, where all messages are independent and their relation to each other is not always clear.
+Both peers, GEX and the client library running on the host \gls{PC}, are on an equal level: either side can independently send a message at any time. The communication is organized in transactions; a transaction consists of one or more messages going in either direction. A message can be stand-alone, or chained to another, typically a request, using the frame ID field; this is the major advantage over text-based protocols, like AT commands, where all messages are independent and their relation to each other is not always clear.
 
 \section{Binary Payload Structure Notation}
 

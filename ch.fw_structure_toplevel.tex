@@ -28,7 +28,7 @@ All GEX hardware platforms have some common characteristics, illustrated in \cre
 	\item \textbf{Status \gls{LED}} -- periodic flashing every 3\,s indicates correct operation, continuous light a software error\footnote{The microcontroller will then automatically restart within a few seconds due to a watchdog timeout.}; other light patterns may be shown as feedback to user actions or received commands
 	\item \textbf{Reset button} -- resets the \gls{MCU}; this is particularly useful during firmware development as an alternative to re-connecting the \gls{USB} cable
 	\item \textbf{Lock button} -- enables or disables access to configuration files through the virtual mass storage device
-	\item \textbf{Boot button} -- when held during restart (that is, while the reset button is released), the \gls{DFU} mode~\cite{usbif-dfu} is activated and a new firmware image can be flashed over the \gls{USB} connection using \mono{dfu-util}~\cite{dfu-util} or other firmware update application
+	\item \textbf{Boot button} -- when held during restart (that is, while the reset button is released), the \gls{DFU} mode~\cite{usbif-dfu} is activated and a new firmware image can be flashed over the \gls{USB} connection using \mono{dfu-util}~\cite{dfu-util} or another firmware update application
 	\item \textbf{\gls{GPIO} header} -- a pin header exposing the \gls{MCU}'s \gls{GPIO} pins to be connected to external circuitry
 	\item \textbf{Communication interface} -- a connection to the host \gls{PC}; multiple options may be available to choose from, a direct \gls{USB} connection being the primary and always available option
 \end{itemize}
@@ -40,7 +40,7 @@ All GEX hardware platforms have some common characteristics, illustrated in \cre
 \begin{itemize}
 	\item \textbf{Direct \gls{USB} connection}
 		
-		This is the primary and most straightforward connection method. We use the \gls{CDCACM} and \gls{MSC} \gls{USB} classes to have the module appear as a virtual COM port and a mass storage device, as described in \cref{sec:usb_classes}. This method is the fastest of the three and works out-of-the-box on Linux and MacOS. On MS Windows it may require the right software driver to be installed and assigned manually\footnote{The STM32 virtual COM port driver~\cite{stm-vcom} has been tested to work with GEX on MS Windows version 7 and 8, though it must be manually assigned to the device in the Device Manager. MS Windows 10 and later should support \gls{CDCACM} as a virtual COM port natively.}.
+		This is the primary and most straightforward connection method. We use the \gls{CDCACM} and \gls{MSC} \gls{USB} classes to have the module appear as a virtual COM port and a mass storage device, as described in \cref{sec:usb_classes}. This method is the fastest of the three and works out-of-the-box on Linux and macOS. On MS Windows it may require the right software driver to be installed and assigned manually\footnote{The STM32 virtual COM port driver~\cite{stm-vcom} has been tested to work with GEX on MS Windows version 7 and 8, though it must be manually assigned to the device in the Device Manager. MS Windows 10 and later should support \gls{CDCACM} as a virtual COM port natively.}.
 	
 	\item \textbf{Hardware \gls{UART}}
 	
@@ -52,7 +52,7 @@ All GEX hardware platforms have some common characteristics, illustrated in \cre
 	
 \end{itemize}
 
-The \gls{USB} connection is always enabled first on start-up. GEX waits its for enumeration by the host \gls{PC}. When not enumerated in a few seconds, it concludes that the interface is not active and tries other enabled options. The wireless module, connected through \gls{SPI}, can be detected by reading one of its registers that should have a known value. A \gls{UART} interface cannot be tested so reliably, thus it is always considered active\footnote{A detection of the UART connection would be possible by measuring the Rx pin voltage, which should idle at a high level (here 3.3\,V). This was not implemented in the initial firmware version.}.
+The \gls{USB} connection is always enabled on start-up. GEX waits for its enumeration by the host \gls{PC}, and when not enumerated in a few seconds, it concludes that the interface is not active and tries other available options. The wireless module, connected through \gls{SPI}, can be detected by reading one of its registers that should have a known value. The \gls{UART} interface cannot be tested so reliably, thus it is always considered active\footnote{The UART connection could be tested by measuring the Rx pin voltage, which should assume high level (here 3.3\,V) when idle}.
 
 \section{Controlling GEX}
 

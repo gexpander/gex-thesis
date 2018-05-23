@@ -319,9 +319,10 @@ The GEX Zero pin header's alternate functions had to match those on the RPi Zero
 
 \section{GEX Zero Errata}
 
-Unfortunately, neither the GEX Zero \gls{PCB} was flawless in the first revision. The errors are minor and will not interfere much in the usage of the module. Nonetheless, they should be corrected in the next revision:
+The GEX Hub \gls{PCB} had to be updated to correct some layout mistakes.
+Unfortunately, neither GEX Zero \gls{PCB} was flawless in the first revision. The errors should not interfere much in the usage of the module; nonetheless, they were fixed in the schematic for any future production of the board.
 
-\begin{itemize}[itemsep=0pt]
+\begin{itemize}
 	\item The \IIC pull-up resistor R8 is connected to PA8 instead of PB7. This can be fixed by cutting the trace near the \gls{GPIO} header and rewiring it, or using an external 1.8\,k$\Omega$ pull-up resistor on PB7, when the \IIC connection is required.
 	\item Pins PB14 and PB15 are swapped in the \gls{GPIO} header, making the SPI port incompatible with add-on boards using this interface. Luckily, there is another SPI port on the header, which is routed correctly, somewhat mitigating this mistake.
 \end{itemize}
