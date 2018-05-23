@@ -45,7 +45,7 @@ RS-232 uses the \gls{UART} framing, but its levels are different: logical 1 is r
 
 Transmission and reception on the \gls{SPI} bus happen simultaneously. A bus master asserts the \gls{SS} pin of a slave it wishes to address and then sends data on the \gls{MOSI} line while receiving a response on \gls{MISO}. The slave normally responds with 0x00 or a status register as the first byte of the response, before it can process the received command. A timing diagram is shown in \cref{fig:spi_timing}, including two configurable parameters: \gls{CPOL} and \gls{CPHA}.
 
-\gls{SPI} devices often provide a number of control, configuration and status registers that can be read and written by the bus master. The first byte of a command usually contains one bit that determines if it is a read or write access, and an address field selecting the target register. The slave then either stores the following \gls{MOSI} byte(s) into the register, or sends its content back on \gls{MISO} (or both simultaneously).
+\gls{SPI} devices often provide a number of control, configuration and status registers that can be read and written by the bus master. The first byte of a command usually contains one bit that determines if it is a read or write request, and an address field selecting the target register. The slave then either stores the following \gls{MOSI} byte(s) into the register, or sends its content back on \gls{MISO} (or both simultaneously).
 
 \pagebreak[1] % TODO
 \subsection{Examples of Devices Using SPI}

@@ -36,7 +36,7 @@ FreeRTOS provides binary and counting semaphores, mutexes, and queues, which wil
 	\item  \textbf{Counting semaphores} represent available resources in a resource pool, a set of software or hardware resources used by tasks. The pool is accompanied by a counting semaphore on which tasks wait for a resource to become available, and then subtract the semaphore value. After a resource is no longer needed by the task, the semaphore is incremented again and another task can use it.
 
 	\item \textbf{Mutexes} (locks) are similar to semaphores, but they must be taken and released in the same task. We use them to
-	guard an exclusive access to a resource, typically a hardware peripheral or a shared memory area. When a mutex is taken, any other tasks trying to take it too enter become Blocked. A Blocked task waiting for a mutex is resumed once this becomes available, at which point the task becomes its owner and is resumed.
+	guard exclusive access to a resource, typically a hardware peripheral or a shared memory area. When a mutex is taken, any other tasks trying to take it too enter become Blocked. A Blocked task waiting for a mutex is resumed once this becomes available, at which point the task becomes its owner and is resumed.
 
 	\item \textbf{Queues} are used for passing messages between tasks, or from interrupts to tasks. Both the sending and receiving of queue messages can block the task until the operation becomes possible. A queue handing task is often simply a loop which tries to read from the queue with an infinite timeout and processes the received data once the reading succeeds.
 \end{itemize}
